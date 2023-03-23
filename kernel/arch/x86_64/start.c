@@ -5,6 +5,7 @@
 #include <kern.h>
 #include <io.h>
 #include "idt.h"
+#include "serial.h"
 
 __attribute__((section(".limine")))
 static volatile struct limine_terminal_request term_req = {
@@ -12,16 +13,10 @@ static volatile struct limine_terminal_request term_req = {
     .revision = 0
 };
 
-__attribute__((section(".limine")))
-static volatile struct limine_hhdm_request hhdm_req = {
-    .id = LIMINE_HHDM_REQUEST,
-    .revision = 0
-};
-
 struct limine_terminal *_term;
 limine_terminal_write _write;
 
-uintptr_t _kern_offset;
+static int serial_ok;
 
 void main(void);
 void start(void)
@@ -32,15 +27,16 @@ void start(void)
     _term = term_req.response->terminals[0];
     _write = term_req.response->write;
 
-    if (hhdm_req.response == NULL)
-    {
-        prints("Failed to get HHDM address!");
-        freeze();
-    }
-
-    _kern_offset = hhdm_req.response->offset;
-
     idt_init();
+    if (serial_init()) prints("Serial initialization failed");
+    else serial_ok = 1;
+
+    if (serial_ok)
+    {
+        serial_write('A');
+        serial_write('B');
+        serial_write('\n');
+    }
 
     __asm__ volatile ("int $0");
 

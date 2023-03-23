@@ -91,48 +91,24 @@ void err_stub(int num, irq_frame *frame)
     prints("\n");
 }
 
-#define STUB(x)                           \
+#define X_ISR X(0) X(1) X(2) X(3) \
+    X(4) X(5) X(6) X(7) \
+    X(8) X(9) X(10) X(11) \
+    X(12) X(13) X(14) X(15) \
+    X(16) X(17) X(18) X(19) \
+    X(20) X(21) X(22) X(23) \
+    X(24) X(25) X(26) X(27) \
+    X(28) X(29) X(30) X(31)
+
+#define X(x)                           \
     __attribute__((interrupt))            \
     void irq_stub ## x (irq_frame *frame) \
     {                                     \
         err_stub(x, frame);               \
     }
 
-STUB(0)
-STUB(1)
-STUB(2)
-STUB(3)
-STUB(4)
-STUB(5)
-STUB(6)
-STUB(7)
-STUB(8)
-STUB(9)
-STUB(10)
-STUB(11)
-STUB(12)
-STUB(13)
-STUB(14)
-STUB(15)
-STUB(16)
-STUB(17)
-STUB(18)
-STUB(19)
-STUB(20)
-STUB(21)
-STUB(22)
-STUB(23)
-STUB(24)
-STUB(25)
-STUB(26)
-STUB(27)
-STUB(28)
-STUB(29)
-STUB(30)
-STUB(31)
-#undef STUB
-
-extern uintptr_t _kern_offset;
+X_ISR
+#undef X
 
 void idt_set(uint8_t i, void *isr, uint8_t flags)
 {
@@ -150,40 +126,9 @@ void idt_init(void)
     idtr.base = (uint64_t) &idt[0];
     idtr.limit = sizeof(idt_entry_t) * 256 - 1;
 
-#define REGISTER(x) idt_set(x, irq_stub ## x, 0x8E)
-    REGISTER(0);
-    REGISTER(1);
-    REGISTER(2);
-    REGISTER(3);
-    REGISTER(4);
-    REGISTER(5);
-    REGISTER(6);
-    REGISTER(7);
-    REGISTER(8);
-    REGISTER(9);
-    REGISTER(10);
-    REGISTER(11);
-    REGISTER(12);
-    REGISTER(13);
-    REGISTER(14);
-    REGISTER(15);
-    REGISTER(16);
-    REGISTER(17);
-    REGISTER(18);
-    REGISTER(19);
-    REGISTER(20);
-    REGISTER(21);
-    REGISTER(22);
-    REGISTER(23);
-    REGISTER(24);
-    REGISTER(25);
-    REGISTER(26);
-    REGISTER(27);
-    REGISTER(28);
-    REGISTER(29);
-    REGISTER(30);
-    REGISTER(31);
-#undef REGISTER
+#define X(x) idt_set(x, irq_stub ## x, 0x8E);
+    X_ISR
+#undef X
 
     __asm__ volatile ("lidt %0" : : "m"(idtr));
     __asm__ volatile ("sti");

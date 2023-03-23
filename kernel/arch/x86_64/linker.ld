@@ -12,6 +12,7 @@ SECTIONS
 {
     . = 0xffffffff80000000;
     .text : {
+        kern_load = .;
         *(.text*)
     } :text
 

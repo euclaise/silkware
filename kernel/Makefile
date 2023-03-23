@@ -2,6 +2,7 @@ ARCH ?= x86_64
 TARGET := $(ARCH)-elf
 CC ?= clang
 LD ?= $(TARGET)-ld
+ASM ?= clang -masm=intel -c
 
 CFLAGS := -target $(TARGET)   \
          -ffreestanding       \
@@ -16,27 +17,33 @@ CFLAGS := -target $(TARGET)   \
          -mno-sse             \
          -mno-sse2            \
          -mno-red-zone        \
-         -mcmodel=kernel
+         -mcmodel=kernel      \
+		 -Ilibk/include
 
 LDFLAGS := -nostdlib              \
           -static                 \
           -z max-page-size=0x1000 \
-          -T arch/$(ARCH)/linker.ld
+          -Tarch/$(ARCH)/linker.ld
 
 SRC_DIRS := arch/$(ARCH) libk .
-SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS)))
-OBJS := $(SRCS:.c=.o)
+SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
+		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS)))
+OBJS_C := $(filter %o,$(SRCS:.c=.o))
+OBJS_ASM := $(filter %.o,$(SRCS:.asm=.o))
 OPT := libk/mem.o
 
-kern.elf: $(OBJS)
+kernel.elf: $(OBJS_C) $(OBJS_ASM)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 OPT : CFLAGS+=-O3
 
+%.o: %.asm
+	$(ASM) -o $@ $<
+
 %.o: %.c
-	$(CC) $(CFLAGS) -I libk/include -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJS) kern.elf
+	rm -f $(OBJS) kernel.elf
 
 .PHONY: clean

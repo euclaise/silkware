@@ -1,4 +1,4 @@
-silkware.iso: build/kern.elf
+silkware.iso: build/kernel.elf
 	cp limine/* build/
 	xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
@@ -7,22 +7,23 @@ silkware.iso: build/kern.elf
 		build -o silkware.iso
 	limine-deploy silkware.iso
 
-build/kern.elf: build
-	cd kern && $(MAKE)
-	mv kern/kern.elf build/
+build/kernel.elf: build
+	cd kernel && $(MAKE)
+	mv kernel/kernel.elf build/
 
 build:
 	mkdir -p build
 
 run: silkware.iso
-	qemu-system-x86_64 -cdrom silkware.iso 
+	qemu-system-x86_64 -serial stdio -cdrom silkware.iso 
 
 gdb: silkware.iso
-	qemu-system-x86_64 -s -cdrom silkware.iso 
+	qemu-system-x86_64 -s -S -serial stdio -no-shutdown -no-reboot \
+		-cdrom silkware.iso
 
 clean:
 	rm -rf build
 	rm -f silkware.iso
-	cd kern && $(MAKE) clean
+	cd kernel && $(MAKE) clean
 
 .PHONY: run clean

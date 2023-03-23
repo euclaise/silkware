@@ -8,7 +8,7 @@ void prints(char *s)
 
 void printx(uintptr_t x)
 {
-    const char hex_chars[] = "0123456789abcdef";
+    const char hex_chars[] = "0123456789ABCDEF";
     char digits[20] = {0};
     char *p = digits + 20;
 
