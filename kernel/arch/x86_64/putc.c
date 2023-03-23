@@ -1,9 +1,8 @@
 #include <limine.h>
+#include "serial.h"
 
-extern struct limine_terminal *_term;
-extern limine_terminal_write _write;
-
+extern int serial_ok;
 void putc(char c)
 {
-    _write(_term, &c, 1);
+    if (serial_ok) serial_write(c);
 }

@@ -44,6 +44,6 @@ OPT : CFLAGS+=-O3
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJS) kernel.elf
+	rm -f $(OBJS_C) $(OBJS_ASM) kernel.elf
 
 .PHONY: clean
