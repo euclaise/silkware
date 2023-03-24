@@ -17,20 +17,20 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-sse2            \
          -mno-red-zone        \
          -mcmodel=kernel      \
-		 -Ilibk/include       \
-		 -I/usr/include
+		 -Iinclude            \
+		 -I/usr/include # For limine.h
 
 LDFLAGS := -nostdlib               \
           -static                  \
           -z max-page-size=0x1000  \
           -Tarch/$(ARCH)/linker.ld
 
-SRC_DIRS := arch/$(ARCH) libk .
+SRC_DIRS := arch/$(ARCH) .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
 		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS)))
 OBJS_C := $(filter %o,$(SRCS:.c=.o))
 OBJS_ASM := $(filter %.o,$(SRCS:.asm=.o))
-OPT := libk/mem.o
+OPT := mem.o
 
 kernel.elf: $(OBJS_C) $(OBJS_ASM)
 	$(LD) $(LDFLAGS) -o $@ $^

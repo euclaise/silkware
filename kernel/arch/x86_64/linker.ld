@@ -41,6 +41,8 @@ SECTIONS
         *(COMMON)
         *(.bss*)
         _kbrk_start = .;
+        . += 0x1000000; /* 16MiB heap */
+        _heap_end  =  .;
     } :data
 
     /DISCARD/ : {

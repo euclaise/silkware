@@ -1,6 +1,7 @@
 #include <io.h>
 #include <kern.h>
 #include <phys_malloc.h>
+#include <page.h>
 
 void sbrk_init(void);
 void main(void)
@@ -9,7 +10,8 @@ void main(void)
     sbrk_init();
     printf("Hello world! - 0x123abcdef is %p\n", 0x123abcdef);
 
-    char *r = phys_malloc(100);
+    memmap_init();
+    char *r = page_alloc();
     r[99] = 0;
     for (int i = 0; i < 99; ++i) r[i] = 'A';
 

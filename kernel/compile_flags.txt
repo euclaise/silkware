@@ -1,4 +1,4 @@
 -ffreestanding
 -nostdlib
--Ilibk/include
+-Iinclude
 -std=c99

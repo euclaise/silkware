@@ -483,14 +483,7 @@ extern "C" {
 */
 
 #define HAVE_MEMCPY
-
-#ifndef USE_MEMCPY
-#ifdef HAVE_MEMCPY
-#define USE_MEMCPY 1
-#else
 #define USE_MEMCPY 0
-#endif
-#endif
 
 
 #if (__STD_C || defined(HAVE_MEMCPY))
