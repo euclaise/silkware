@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <io.h>
+#include <kern.h>
 
 typedef struct
 __attribute__((packed))
@@ -72,23 +73,14 @@ char *irq_msg[] =
 __attribute__((no_caller_saved_registers))
 void err_stub(int num, irq_frame *frame)
 {
-    prints(irq_msg[num]);
-    prints("\n");
-    prints("IP: ");
-    printx(frame->ip);
-    prints("\n");
-    prints("CS: ");
-    printx(frame->cs);
-    prints("\n");
-    prints("FLAGS: ");
-    printx(frame->flags);
-    prints("\n");
-    prints("SP: ");
-    printx(frame->sp);
-    prints("\n");
-    prints("SS: ");
-    printx(frame->ss);
-    prints("\n");
+    printf("%s\n", irq_msg[num]);
+    printf("   IP: %p\n", frame->ip);
+    printf("   CS: %p\n", frame->cs);
+    printf("FLAGS: %p\n", frame->flags);
+    printf("   SP: %p\n", frame->sp);
+    printf(   "SS: %p\n", frame->ss);
+
+    /* if (num == 8) freeze();*/
 }
 
 #define X_ISR X(0) X(1) X(2) X(3) \

@@ -1,23 +1,23 @@
 #include <io.h>
 #include <stdint.h>
 
-void prints(char *s)
+#define NANOPRINTF_IMPLEMENTATION
+#define NANOPRINTF_USE_FIELD_WIDTH_FORMAT_SPECIFIERS 1
+#define NANOPRINTF_USE_PRECISION_FORMAT_SPECIFIERS 1
+#define NANOPRINTF_USE_FLOAT_FORMAT_SPECIFIERS 1
+#define NANOPRINTF_USE_LARGE_FORMAT_SPECIFIERS 1
+#define NANOPRINTF_USE_BINARY_FORMAT_SPECIFIERS 1
+#define NANOPRINTF_USE_WRITEBACK_FORMAT_SPECIFIERS 0
+#include "nanoprintf.h"
+
+static void putc_ctx(int c, void *ctx)
 {
-    do { putc(*s++); } while (*s);
+    putc(c);
 }
 
-void printx(uintptr_t x)
+void printf(char *f, ...)
 {
-    const char hex_chars[] = "0123456789ABCDEF";
-    char digits[20] = {0};
-    char *p = digits + 20;
-
-    *p-- = 0;
-    do
-    {
-        *p-- = hex_chars[x % 0x10];
-        x /= 0x10;
-    } while (x);
-
-    prints(p + 1);
+    va_list a;
+    va_start(a, f);
+    npf_vpprintf(putc_ctx, NULL, f, a);
 }

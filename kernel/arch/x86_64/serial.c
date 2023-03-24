@@ -2,7 +2,9 @@
 
 #define COM1 0x3f8
 
-int serial_init(void)
+int serial_ok;
+
+void serial_init(void)
 {
     /* https://wiki.osdev.org/Serial_Ports#Initialization */
     port_out(COM1 + 1, 0x00); /* Disable IRQs */
@@ -15,11 +17,10 @@ int serial_init(void)
     port_out(COM1 + 4, 0x1E); /* Loopback mode, test chip */
 
     port_out(COM1, 0x16); /* Test message */
-    if (port_in(COM1) != 0x16) return 1;
+    if (port_in(COM1) != 0x16) return;
 
     port_out(COM1 + 4, 0x0F); /* Set normal operation mode */
-    
-    return 0;
+    serial_ok = 1;
 }
 
 uint8_t serial_recv(void)

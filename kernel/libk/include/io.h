@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 
+void serial_init(void);
+
 void putc(char c); /* Defined in arch code */
-void prints(char *s);
-void printx(uintptr_t x);
+void printf(char *f, ...);
+
 
 #endif

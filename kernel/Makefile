@@ -1,10 +1,9 @@
 ARCH ?= x86_64
-TARGET := $(ARCH)-elf
-CC ?= clang
-LD ?= $(TARGET)-ld
-ASM ?= clang -masm=intel -c
+CC := zig cc
+LD := $(ARCH)-elf-ld
+ASM := clang -masm=intel -c
 
-CFLAGS := -target $(TARGET)   \
+CFLAGS := -target $(ARCH)-freestanding  \
          -ffreestanding       \
          -fno-stack-protector \
          -fno-stack-check     \
@@ -18,12 +17,13 @@ CFLAGS := -target $(TARGET)   \
          -mno-sse2            \
          -mno-red-zone        \
          -mcmodel=kernel      \
-		 -Ilibk/include
+		 -Ilibk/include       \
+		 -I/usr/include -g
 
-LDFLAGS := -nostdlib              \
-          -static                 \
-          -z max-page-size=0x1000 \
-          -Tarch/$(ARCH)/linker.ld
+LDFLAGS := -nostdlib               \
+          -static                  \
+          -z max-page-size=0x1000  \
+          -Tarch/$(ARCH)/linker.ld -g
 
 SRC_DIRS := arch/$(ARCH) libk .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
