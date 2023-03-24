@@ -1,3 +1,3 @@
 #include <stdint.h>
 uint8_t port_in(uint16_t port);
-uint8_t port_out(uint16_t port, uint8_t x);
+void port_out(uint16_t port, uint8_t x);

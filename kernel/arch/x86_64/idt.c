@@ -80,7 +80,8 @@ void err_stub(int num, irq_frame *frame)
     printf("   SP: %p\n", frame->sp);
     printf(   "SS: %p\n", frame->ss);
 
-    /* if (num == 8) freeze();*/
+    freeze();
+    if (num == 8) freeze();
 }
 
 #define X_ISR X(0) X(1) X(2) X(3) \

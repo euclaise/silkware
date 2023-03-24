@@ -4,6 +4,8 @@ LD := ld
 ASM := clang -masm=intel -c
 
 CFLAGS := -target $(ARCH)-freestanding  \
+		 -Wall                \
+		 -Wextra              \
          -ffreestanding       \
          -fno-stack-protector \
          -fno-stack-check     \

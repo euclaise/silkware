@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <io.h>
-extern void *_kbrk_start, *_heap_end;
+extern void *_kbrk_start, *kern_end;
 
 static void *_kbrk;
 
@@ -13,6 +13,6 @@ void *phys_sbrk(intptr_t inc)
 {
     void *old = _kbrk;
     _kbrk += inc;
-    if (_kbrk > (void *) &_heap_end) panic("Out of memory");
+    if (_kbrk > (void *) &kern_end) panic("Out of memory");
     return old;
 }
