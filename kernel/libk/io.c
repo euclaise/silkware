@@ -1,5 +1,7 @@
 #include <io.h>
 #include <stdint.h>
+#include <kern.h>
+#include <stdarg.h>
 
 #define NANOPRINTF_IMPLEMENTATION
 #define NANOPRINTF_USE_FIELD_WIDTH_FORMAT_SPECIFIERS 1
@@ -20,4 +22,16 @@ void printf(char *f, ...)
     va_list a;
     va_start(a, f);
     npf_vpprintf(putc_ctx, NULL, f, a);
+    va_end(a);
+}
+
+void panic(char *f, ...)
+{
+    va_list a;
+    va_start(a, f);
+    printf("=== KERNEL PANIC ===\n");
+    npf_vpprintf(putc_ctx, NULL, f, a);
+    putc('\n');
+    va_end(a);
+    freeze();
 }

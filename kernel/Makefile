@@ -1,6 +1,6 @@
 ARCH ?= x86_64
 CC := zig cc
-LD := $(ARCH)-elf-ld
+LD := ld
 ASM := clang -masm=intel -c
 
 CFLAGS := -target $(ARCH)-freestanding  \
@@ -18,12 +18,12 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-red-zone        \
          -mcmodel=kernel      \
 		 -Ilibk/include       \
-		 -I/usr/include -g
+		 -I/usr/include
 
 LDFLAGS := -nostdlib               \
           -static                  \
           -z max-page-size=0x1000  \
-          -Tarch/$(ARCH)/linker.ld -g
+          -Tarch/$(ARCH)/linker.ld
 
 SRC_DIRS := arch/$(ARCH) libk .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \

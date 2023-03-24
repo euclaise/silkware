@@ -40,6 +40,7 @@ SECTIONS
     .bss : {
         *(COMMON)
         *(.bss*)
+        _kbrk_start = .;
     } :data
 
     /DISCARD/ : {
