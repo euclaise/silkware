@@ -17,6 +17,7 @@ void *page_alloc(void)
             res = (void *) memmap[i].base;
             memmap[i].base += 0x1000;
             memmap[i].len += 0x1000;
+            break;
         }
     }
 
