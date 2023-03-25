@@ -22,12 +22,10 @@ void main(void)
     printf("Remapped kernel\n");
     printf("Framebuffer: %p\n", screen.address);
 
-    for (int i = 0, j = 0; i < 100; i += 1, j += 1)
-    {
-        putpixel(i, j, 0xffffffff);
-        putpixel(i, j+1, 0xffffffff);
-        putpixel(i, j+2, 0xffffffff);
-    }
+    for (int i = 0; i < 100; ++i)
+        for (int j = 0; j < 100; ++j)
+            putpixel(i, j, 0xffffffff);
 
+    putpixel(100, 100, 0xff0000);
     freeze();
 }
