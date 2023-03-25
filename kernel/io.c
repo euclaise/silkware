@@ -14,6 +14,7 @@
 
 static void putc_ctx(int c, void *ctx)
 {
+    (void)ctx;
     putc(c);
 }
 

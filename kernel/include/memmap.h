@@ -3,6 +3,7 @@ typedef struct
 {
     uintptr_t base;
     uintptr_t len;
+    int type;
 } memmap_entry;
 
 extern memmap_entry *memmap;

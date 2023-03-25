@@ -15,7 +15,7 @@ void *page_alloc(void)
     {
         if (memmap[i].base != 0 && memmap[i].len >= 0x1000)
         {
-            res = (void *) (memmap[i].base + (uintptr_t) &kern_load);
+            res = (void *) (memmap[i].base + (uintptr_t) kern_load);
             memmap[i].base += 0x1000;
             memmap[i].len += 0x1000;
             break;
