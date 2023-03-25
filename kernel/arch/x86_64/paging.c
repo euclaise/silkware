@@ -5,6 +5,7 @@
 #include <memmap.h>
 #include <limine.h>
 #include <assert.h>
+#include <screen.h>
 
 struct limine_kernel_address_request kern_addr_req = {
     .id = LIMINE_KERNEL_ADDRESS_REQUEST
@@ -30,6 +31,8 @@ pml4e_t pml4[512]  __attribute__((aligned(0x1000)));
 
 extern char kern_load[], kern_end[];
 
+extern void *high_addr;
+
 #define K2PHYS(x) (void *)( \
         (uintptr_t)(x) - kern_addr_req.response->virtual_base \
         + kern_addr_req.response->physical_base)
@@ -37,6 +40,9 @@ extern char kern_load[], kern_end[];
 #define PHYS2K(x) (void *)( \
         (uintptr_t)(x) - kern_addr_req.response->physical_base \
         + kern_addr_req.response->virtual_base)
+
+#define H2PHYS(x) (void *)((uintptr_t)(x) - (uintptr_t)high_addr)
+#define PHYS2H(x) (void *)((uintptr_t)(x) + (uintptr_t)high_addr)
 
 /* Set cr3 to a *physical* address */
 static void set_cr3(uintptr_t addr)
@@ -47,6 +53,11 @@ static void set_cr3(uintptr_t addr)
         : "r" (addr)
         : "memory"
     );
+}
+
+void refresh_pages(void)
+{
+    set_cr3((uintptr_t) K2PHYS(pml4));
 }
 
 /* 
@@ -101,5 +112,13 @@ void map_kern_pages(void)
         kern_end - kern_load,
         PAGE_PRESENT | PAGE_WRITABLE
     );
-    set_cr3((uintptr_t) K2PHYS(pml4));
+}
+
+void map_screen(void)
+{
+    map_pages(0x10000,
+            (uintptr_t) H2PHYS(screen.address),
+            screen.pitch * (screen.bpp/8) * screen.height,
+            PAGE_PRESENT | PAGE_WRITABLE);
+    screen.address = (void *) 0x10000;
 }
