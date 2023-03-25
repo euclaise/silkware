@@ -76,7 +76,7 @@ uintptr_t virt2phys_limine(uintptr_t vaddr)
     if (!(pde & PAGE_PRESENT)) return 0;
 
     pt_t pt = (pt_t)(pde & ~0xFFF);
-    pte_t pte = pt[(vaddr >> 12) & 0x1FF];
+    pte_t pte = pt[((vaddr >> 12) & 0x1FF)];
     if (!(pte & PAGE_PRESENT)) return 0;
 
     return (pte & ~0xFFF) | (vaddr & 0xFFF);

@@ -17,7 +17,8 @@ void start(void)
         "mov %%rsp, %0"
         : "=r" (stack_start)
     );
-    stack_start &= 0xFFF;
+    stack_start -= 0x10000;
+    stack_start = (stack_start & ~0xFFF) + 0x1000;
     idt_init();
     main();
 }
