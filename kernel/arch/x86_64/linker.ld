@@ -40,6 +40,9 @@ SECTIONS
     .bss : {
         *(COMMON)
         *(.bss*)
+        stack_bottom = .;
+        . += 0x10000; /* Stack */
+        stack_top = .;
         _kbrk_start = .;
         . += 0x1000000; /* 16MiB heap */
         kern_end  =  .;

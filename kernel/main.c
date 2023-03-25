@@ -4,8 +4,6 @@
 #include <page.h>
 #include <memmap.h>
 
-char test[10];
-
 void sbrk_init(void);
 void main(void)
 {
@@ -16,9 +14,7 @@ void main(void)
     memmap_init();
     map_kern_pages();
 
-    test[0] = 'X';
-    test[1] = 0;
-    printf("\n%p %s\n", test);
+    printf("Remapped kernel\n");
 
     freeze();
 }

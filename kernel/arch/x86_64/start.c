@@ -7,18 +7,13 @@
 #include "idt.h"
 #include "serial.h"
 
-uintptr_t stack_start;
-uint32_t stack_size = 0x10000;
+extern char stack_top[];
 
 void main(void);
 void start(void)
 {
-    __asm__ (
-        "mov %%rsp, %0"
-        : "=r" (stack_start)
-    );
-    stack_start -= 0x10000;
-    stack_start = (stack_start & ~0xFFF) + 0x1000;
+    __asm__ volatile ("mov %0, %%rsp" : : "r" (stack_top) : "memory");
+
     idt_init();
     main();
 }
