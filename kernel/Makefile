@@ -1,7 +1,7 @@
 ARCH ?= x86_64
 CC := zig cc
 LD := ld
-ASM := clang -masm=intel -c
+ASM := nasm -felf64
 
 CFLAGS := -target $(ARCH)-freestanding  \
 		 -Wall                \
