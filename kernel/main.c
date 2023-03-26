@@ -9,9 +9,9 @@ void main(void)
 {
     serial_init();
     sbrk_init();
-    printf("Silkware\n\n");
-
     init_fb();
+
+    printf("Silkware\n\n");
     printf("Framebuffer: %p\n", screen.address);
     printf("High: %p\n", high_addr);
     memmap_init();
@@ -22,10 +22,5 @@ void main(void)
     printf("Remapped kernel\n");
     printf("Framebuffer: %p\n", screen.address);
 
-    for (int i = 0; i < 100; ++i)
-        for (int j = 0; j < 100; ++j)
-            putpixel(i, j, 0xffffffff);
-
-    putpixel(100, 100, 0xff0000);
     freeze();
 }

@@ -19,8 +19,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-sse2            \
          -mno-red-zone        \
          -mcmodel=kernel      \
-		 -Iinclude            \
-		 -I/usr/include # For limine.h
+		 -Iinclude
 
 LDFLAGS := -nostdlib               \
           -static                  \
@@ -29,7 +28,8 @@ LDFLAGS := -nostdlib               \
 
 SRC_DIRS := arch/$(ARCH) .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
-		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS)))
+		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS))) \
+		fonts/font.c
 OBJS_C := $(filter %o,$(SRCS:.c=.o))
 OBJS_ASM := $(filter %.o,$(SRCS:.asm=.o))
 OPT := mem.o
