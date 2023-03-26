@@ -33,7 +33,6 @@ typedef struct
     uint64_t ss;
 } irq_frame;
 
-
 char *irq_msg[] =
 {
     "EXCEPTION: Division By Zero - #0\n",
@@ -150,7 +149,7 @@ X_ISR
 void idt_set(uint8_t i, void *isr, uint8_t flags)
 {
 	idt[i].isr_low    = (uintptr_t) isr & 0xFFFF;
-	idt[i].kernel_cs  = 5 << 3;
+	idt[i].kernel_cs  = 1 << 3;
     idt[i].ist        = 0;
     idt[i].attributes = flags;
     idt[i].isr_mid    = ((uintptr_t) isr >> 16) & 0xFFFF;

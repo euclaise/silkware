@@ -70,7 +70,7 @@ static struct gdt_desc gdt_descs[] = {
         .limit_low = 0xFFFF,
         .base_low = 0,
         .base_mid = 0,
-        .access = ACCESS_PRESENT | ACCESS_EXEC | ACCESS_RW,
+        .access = ACCESS_PRESENT | ACCESS_NOTSYS | ACCESS_EXEC | ACCESS_RW,
         .granularity = GRAN_4K | LONG_MODE | 0xF,
         .base_high = 0
     },
@@ -78,7 +78,7 @@ static struct gdt_desc gdt_descs[] = {
         .limit_low = 0xFFFF,
         .base_low = 0,
         .base_mid = 0,
-        .access = ACCESS_PRESENT | ACCESS_RW,
+        .access = ACCESS_PRESENT | ACCESS_NOTSYS | ACCESS_RW,
         .granularity = GRAN_4K | SZ_32 | 0xF,
         .base_high = 0
     },
@@ -92,7 +92,7 @@ tss_desc create_tss_desc(uint64_t base) {
     desc.limit_low = sizeof(tss_t) & 0xFFFF;
     desc.base_low = base & 0xFFFF;
     desc.base_middle = (base >> 16) & 0xFF;
-    desc.access = 0x89;
+    desc.access = ACCESS_PRESENT | (1 << 3) | ACCESS_EXEC;//0x89;
     desc.granularity = ((sizeof(tss_t) >> 16) & 0x0F);
     desc.base_high = (base >> 24) & 0xFF;
     desc.base_upper = (base >> 32) & 0xFFFFFFFF;
@@ -117,7 +117,7 @@ void flush_gdt(void);
 void setup_gdt(void)
 {
     init_tss();
-    gdtr.limit = sizeof(gdt_descs[0])*3 + sizeof(tss_desc) - 1;
+    gdtr.limit = sizeof(gdt_desc)*3 + sizeof(tss_desc) - 1;
     gdtr.base = (uintptr_t) &gdt_descs;
 
     flush_gdt();
