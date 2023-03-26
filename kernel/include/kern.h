@@ -6,5 +6,6 @@ void freeze(void);
 void main(void);
 void sbrk_init(void);
 void arch_init(void);
+void pause(void);
 
 #endif

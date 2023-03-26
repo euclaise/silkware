@@ -13,7 +13,7 @@ flush_gdt:
     xor rax, rax
     mov gs, ax
     
-    mov ax, 0x18 ; 3 << 3
+    mov ax, 0x28 ; 5 << 3
     ltr ax
     sti
     ret

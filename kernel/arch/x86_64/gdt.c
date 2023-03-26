@@ -3,8 +3,8 @@
 #include <kern.h>
 
 #define ACCESS_PRESENT  (1 << 7)
-#define ACCESS_DPL      (1 << 5)
-#define ACCESS_NOTSYS   (1 << 4)
+
+#define ACCESS_S        (1 << 4) /* TSS if 0 */
 #define ACCESS_EXEC     (1 << 3)
 #define ACCESS_DC       (1 << 2)
 #define ACCESS_RW       (1 << 1)
@@ -66,19 +66,35 @@ tss_t kernel_tss;
 
 static struct gdt_desc gdt_descs[] = {
     {0},
-    { /* Code */
+    { /* Kernel Code */
         .limit_low = 0xFFFF,
         .base_low = 0,
         .base_mid = 0,
-        .access = ACCESS_PRESENT | ACCESS_NOTSYS | ACCESS_EXEC | ACCESS_RW,
+        .access = ACCESS_PRESENT | ACCESS_S | ACCESS_EXEC | ACCESS_RW,
         .granularity = GRAN_4K | LONG_MODE | 0xF,
         .base_high = 0
     },
-    { /* Data */
+    { /* Kernel Data */
         .limit_low = 0xFFFF,
         .base_low = 0,
         .base_mid = 0,
-        .access = ACCESS_PRESENT | ACCESS_NOTSYS | ACCESS_RW,
+        .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW,
+        .granularity = GRAN_4K | SZ_32 | 0xF,
+        .base_high = 0
+    },
+    { /* User Code */
+        .limit_low = 0xFFFF,
+        .base_low = 0,
+        .base_mid = 0,
+        .access = ACCESS_PRESENT | ACCESS_S | ACCESS_EXEC | ACCESS_RW | 3 << 5,
+        .granularity = GRAN_4K | LONG_MODE | 0xF,
+        .base_high = 0
+    },
+    { /* User Data */
+        .limit_low = 0xFFFF,
+        .base_low = 0,
+        .base_mid = 0,
+        .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW | 3 << 5,
         .granularity = GRAN_4K | SZ_32 | 0xF,
         .base_high = 0
     },
@@ -87,39 +103,33 @@ static struct gdt_desc gdt_descs[] = {
 };
 
 char tss_stack[4096] __attribute__((aligned(16)));
-tss_desc create_tss_desc(uint64_t base) {
-    tss_desc desc;
-    desc.limit_low = sizeof(tss_t) & 0xFFFF;
-    desc.base_low = base & 0xFFFF;
-    desc.base_middle = (base >> 16) & 0xFF;
-    desc.access = 0x89;
-    desc.granularity = ((sizeof(tss_t) >> 16) & 0x0F);
-    desc.base_high = (base >> 24) & 0xFF;
-    desc.base_upper = (base >> 32) & 0xFFFFFFFF;
-    desc.reserved = 0;
-    return desc;
+
+void create_tss_desc(tss_desc *desc, uint64_t base) {
+    int limit = sizeof(tss_t) - 1;
+    desc->limit_low = limit & 0xFFFF;
+    desc->base_low = base & 0xFFFF;
+    desc->base_middle = (base >> 16) & 0xFF;
+    desc->access = 0x89;
+    desc->granularity = (limit >> 16) & 0x0F;
+    desc->base_high = (base >> 24) & 0xFF;
+    desc->base_upper = (base >> 32) & 0xFFFFFFFF;
+    desc->reserved = 0;
 }
 
 void init_tss(void)
 {
     kernel_tss.iopb = 0xFFFF;
-    /* iopb is disabled by having a value larger than sizeof(tss_desc) -1
+    /* iopb is disabled by having a value larger than limit
      * This disables I/O access */
     kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
-
-    tss_desc desc = create_tss_desc((uint64_t) &kernel_tss);
-    memcpy(
-        &gdt_descs[3],
-        &desc,
-        sizeof(tss_desc) - 1
-    );
+    create_tss_desc((tss_desc *) &gdt_descs[5], (uint64_t) &kernel_tss);
 }
 
 void flush_gdt(void);
 void gdt_init(void)
 {
     init_tss();
-    gdtr.limit = sizeof(gdt_desc)*3 + sizeof(tss_desc) - 1;
+    gdtr.limit = sizeof(gdt_desc)*5 + sizeof(tss_desc) - 1;
     gdtr.base = (uintptr_t) &gdt_descs;
 
     flush_gdt();
