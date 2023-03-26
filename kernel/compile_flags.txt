@@ -1,6 +1,7 @@
 -ffreestanding
 -nostdlib
 -Iinclude
+-Ifonts
 -std=c99
 -Wall
 -Wextra
