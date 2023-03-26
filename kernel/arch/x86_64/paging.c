@@ -44,20 +44,14 @@ extern void *high_addr;
 #define H2PHYS(x) (void *)((uintptr_t)(x) - (uintptr_t)high_addr)
 #define PHYS2H(x) (void *)((uintptr_t)(x) + (uintptr_t)high_addr)
 
-/* Set cr3 to a *physical* address */
-static void set_cr3(uintptr_t addr)
+void refresh_pages(void)
 {
     __asm__ (
         "mov %0, %%cr3\n"
         :
-        : "r" (addr)
+        : "r" (K2PHYS(pml4))
         : "memory"
     );
-}
-
-void refresh_pages(void)
-{
-    set_cr3((uintptr_t) K2PHYS(pml4));
 }
 
 /* 
