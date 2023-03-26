@@ -19,7 +19,7 @@ run: silkware.iso
 
 gdb: silkware.iso
 	qemu-system-x86_64 -s -S -serial stdio -no-shutdown -no-reboot \
-		-cdrom silkware.iso
+		-cdrom silkware.iso -d int,cpu_reset
 
 clean:
 	rm -rf build
