@@ -92,7 +92,7 @@ tss_desc create_tss_desc(uint64_t base) {
     desc.limit_low = sizeof(tss_t) & 0xFFFF;
     desc.base_low = base & 0xFFFF;
     desc.base_middle = (base >> 16) & 0xFF;
-    desc.access = ACCESS_PRESENT | (1 << 3) | ACCESS_EXEC;//0x89;
+    desc.access = 0x89;
     desc.granularity = ((sizeof(tss_t) >> 16) & 0x0F);
     desc.base_high = (base >> 24) & 0xFF;
     desc.base_upper = (base >> 32) & 0xFFFFFFFF;
