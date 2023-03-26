@@ -65,7 +65,7 @@ void err_stub(int num, irq_frame *frame)
     printf("   CS: %p\n", frame->cs);
     printf("FLAGS: %p\n", frame->flags);
     printf("   SP: %p\n", frame->sp);
-    printf(   "SS: %p\n", frame->ss);
+    printf("   SS: %p\n", frame->ss);
 
     freeze();
     if (num == 8) freeze();
