@@ -4,5 +4,5 @@
 typedef struct limine_framebuffer framebuffer;
 extern framebuffer screen;
 void init_fb(void);
-void putpixel(int x, int y, int color);
+void putpixel(uint32_t x, uint32_t y, uint32_t color);
 

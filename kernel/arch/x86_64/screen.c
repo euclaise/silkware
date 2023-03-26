@@ -12,7 +12,7 @@ void init_fb(void)
     if (fb_req.response == 0 || fb_req.response->framebuffer_count == 0)
         panic("Could not get framebuffer");
 
-    for (int i = 0; i < fb_req.response->framebuffer_count; ++i)
+    for (int i = 0; i < (int) fb_req.response->framebuffer_count; ++i)
         if (fb == 0
                 || fb_req.response->framebuffers[i]->width > fb->width
                 || (fb_req.response->framebuffers[i]->width == fb->width
