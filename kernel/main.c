@@ -5,8 +5,6 @@
 #include <screen.h>
 
 extern void *high_addr;
-void idt_init(void);
-void setup_gdt(void);
 void main(void)
 {
     serial_init();
@@ -24,9 +22,8 @@ void main(void)
     printf("Remapped kernel\n");
     printf("Framebuffer: %p\n", screen.address);
 
-    setup_gdt();
-    idt_init();
-    printf("Loaded GDT\n");
+    arch_init();
+    printf("Arch initialization complete\n");
     __asm__ ("int $0");
     freeze();
 }

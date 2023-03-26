@@ -114,7 +114,7 @@ void init_tss(void)
 }
 
 void flush_gdt(void);
-void setup_gdt(void)
+void gdt_init(void)
 {
     init_tss();
     gdtr.limit = sizeof(gdt_desc)*3 + sizeof(tss_desc) - 1;

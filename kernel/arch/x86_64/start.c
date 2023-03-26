@@ -26,3 +26,10 @@ void start(void)
     idt_init();
     main();
 }
+
+void gdt_init(void);
+void arch_init(void)
+{
+    idt_init();
+    gdt_init();
+}
