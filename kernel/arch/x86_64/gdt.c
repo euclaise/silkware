@@ -47,7 +47,7 @@ typedef struct tss_t
     uint64_t ist7;
     uint64_t reserved3;
     uint16_t reserved4;
-    uint16_t iomap_base;
+    uint16_t iopb;
 } __attribute__((packed)) tss_t;
 
 typedef struct tss_desc
@@ -102,14 +102,16 @@ tss_desc create_tss_desc(uint64_t base) {
 
 void init_tss(void)
 {
-    kernel_tss.iomap_base = 0xFFFF;
+    kernel_tss.iopb = 0xFFFF;
+    /* iopb is disabled by having a value larger than sizeof(tss_desc) -1
+     * This disables I/O access */
     kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
 
     tss_desc desc = create_tss_desc((uint64_t) &kernel_tss);
     memcpy(
         &gdt_descs[3],
         &desc,
-        sizeof(tss_desc)
+        sizeof(tss_desc) - 1
     );
 }
 
