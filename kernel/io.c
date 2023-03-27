@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <kern.h>
 #include <stdarg.h>
+#include <util.h>
 
 #define NANOPRINTF_IMPLEMENTATION
 #define NANOPRINTF_USE_FIELD_WIDTH_FORMAT_SPECIFIERS 1
@@ -30,9 +31,10 @@ void panic(char *f, ...)
 {
     va_list a;
     va_start(a, f);
-    printf("=== KERNEL PANIC ===\n");
+    printf("\n\n=== KERNEL PANIC ===\n");
+    printf("PC: %p\n\n", __ADDR__);
     npf_vpprintf(putc_ctx, NULL, f, a);
-    putc('\n');
     va_end(a);
+    putc('\n');
     freeze();
 }

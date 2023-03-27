@@ -1,6 +1,7 @@
 -ffreestanding
 -nostdlib
 -Iinclude
+-Iarch/x86_64/include
 -Ifonts
 -std=c99
 -Wall
