@@ -6,6 +6,8 @@
 #include <io.h>
 #include "idt.h"
 #include "serial.h"
+#include "addr.h"
+#include "acpi.h"
 
 extern char stack_top[];
 
@@ -18,7 +20,8 @@ struct limine_rsdp_request rsdp_req = {
 };
 
 void *high_addr;
-void *rsdp_addr;
+
+rsdp_desc rsdp;
 
 void main(void);
 void start(void)
@@ -26,9 +29,9 @@ void start(void)
     __asm__ volatile ("mov %0, %%rsp" : : "r" (stack_top) : "memory");
 
     if (hhdm_req.response == NULL || rsdp_req.response == NULL) freeze();
-
     high_addr = (void *) hhdm_req.response->offset;
-    rsdp_addr = (void *) (rsdp_req.response->address - high_addr);
+
+    rsdp = *(rsdp_desc *) H2PHYS(rsdp_req.response->address);
     main();
 }
 
@@ -37,5 +40,5 @@ void arch_init(void)
 {
     idt_init();
     gdt_init();
-    printf("RSDP: %p\n", rsdp_addr);
+    printf("RSDT: %p\n", rsdp.addr);
 }
