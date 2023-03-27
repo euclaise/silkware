@@ -40,6 +40,7 @@ SECTIONS
     .bss : {
         *(COMMON)
         *(.bss*)
+        . = ALIGN(16);
         stack_bottom = .;
         . += 0x10000; /* Stack */
         stack_top = .;

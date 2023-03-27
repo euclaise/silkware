@@ -1,0 +1,3 @@
+[submodule "external/lai/lai"]
+	path = external/lai/lai
+	url = https://github.com/managarm/lai.git

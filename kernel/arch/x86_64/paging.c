@@ -107,9 +107,9 @@ void map_kern_pages(void)
 
 void map_screen(void)
 {
-    map_pages(0x10000,
+    map_pages(0xfffffffff0000000,
             (uintptr_t) screen.paddr,
             screen.pitch * (screen.bpp/8) * screen.height,
             PAGE_PRESENT | PAGE_WRITABLE);
-    screen.vaddr = (void *) 0x10000;
+    screen.vaddr = (void *) 0xfffffffff0000000;
 }
