@@ -1,5 +1,6 @@
 #include <io.h>
 #include <kern.h>
+#include <panic.h>
 
 void assert_test(
         int test,

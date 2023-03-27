@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <io.h>
+#include <panic.h>
 extern void *_kbrk_start, *kern_end;
 
 static void *_kbrk;
