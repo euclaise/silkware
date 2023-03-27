@@ -1,0 +1,1355 @@
+            ;-- npf_vpprintf:
+            ;-- rip:
+            ; CALL XREF from dbg.npf_pprintf @ 0xffffffff800198c8(x)
+            ; CALL XREF from dbg.npf_snprintf @ 0xffffffff80019952(x)
+            ; CALL XREF from sym.npf_vsnprintf @ 0xffffffff800199ab(x)
+            ; CALL XREF from dbg.printf @ 0xffffffff80019a51(x)
+┌ 4043: dbg.npf_vpprintf (unsigned int const d, npf_int_t val, int c, int const prec_start, char case_adj, int n, char const *format, char sign_c, int const prec_adj, int y, int i, int64_t arg_74h);
+│           ; arg unsigned int const d @ rdx
+│           ; arg npf_int_t val @ rsi
+│           ; arg int c @ rdi
+│           ; arg int const prec_start @ rcx
+│           ; arg char case_adj @ r9
+│           ; arg int n @ r14
+│           ; arg char const *format @ r13
+│           ; arg char sign_c @ r8
+│           ; arg int const prec_adj @ rax
+│           ; arg int y @ r15
+│           ; arg int i @ rbx
+│           ; var char *dst @ rbp+0x0
+│           ; var int64_t var_2h @ rbp-0x2
+│           ; arg int64_t arg_74h @ rsp+0x13c
+│           ; var signed int64_t var_8h @ rsp+0x8
+│           ; var uint32_t var_ch @ rsp+0xc
+│           ; var int const fs_len @ rsp+0x10
+│           ; var signed int64_t var_18h @ rsp+0x18
+│           ; var npf_cnt_putc_ctx_t pc_cnt @ rsp+0x20
+│           ; var int64_t var_28h @ rsp+0x28
+│           ; var int64_t var_34h @ rsp+0x34
+│           ; var int64_t var_38h @ rsp+0x38
+│           ; var char *cbuf @ rsp+0x40
+│           ; var int64_t var_41h @ rsp+0x41
+│           ; var int64_t var_42h @ rsp+0x42
+│           ; var npf_putc pc @ rsp+0x60
+│           ; var int64_t var_68h @ rsp+0x68
+│           ; var signed int64_t var_70h @ rsp+0x70
+│           ; var signed int64_t var_80h @ rsp+0x80
+│           ; var __va_list_tag *args @ rsp+0x88
+│           ; var int64_t var_90h @ rsp+0x90
+│           0xffffffff80018890      55             push rbp            ; nanoprintf.h:674 ; int npf_vpprintf(npf_putc pc,void * pc_ctx,char const * format,__va_list_tag * args);
+│           0xffffffff80018891      4157           push r15
+│           0xffffffff80018893      4156           push r14
+│           0xffffffff80018895      4155           push r13
+│           0xffffffff80018897      4154           push r12
+│           0xffffffff80018899      53             push rbx
+│           0xffffffff8001889a      4881ec980000.  sub rsp, 0x98
+│           0xffffffff800188a1      4989d5         mov r13, rdx        ; arg3
+│           0xffffffff800188a4      4989f6         mov r14, rsi        ; arg2
+│           0xffffffff800188a7      4989fc         mov r12, rdi        ; arg1
+│           0xffffffff800188aa      488d4108       lea rax, [rcx + 8]  ; arg4
+│           0xffffffff800188ae      4889442428     mov qword [var_28h], rax
+│           0xffffffff800188b3      488d442440     lea rax, [cbuf]
+│           0xffffffff800188b8      83c0ff         add eax, 0xffffffff ; nanoprintf.h:602
+│           0xffffffff800188bb      89442468       mov dword [var_68h], eax
+│           0xffffffff800188bf      31c0           xor eax, eax
+│           0xffffffff800188c1      4889442420     mov qword [pc_cnt], rax
+│           0xffffffff800188c6      d9ee           fldz
+│           0xffffffff800188c8      d95c246c       fstp dword [rsp + 0x6c]
+│           0xffffffff800188cc      41bb20000000   mov r11d, 0x20      ; 32
+│           0xffffffff800188d2      48898c248800.  mov qword [args], rcx ; arg4
+│           0xffffffff800188da      4889742438     mov qword [var_38h], rsi ; nanoprintf.h:0 ; arg2
+│           0xffffffff800188df      48897c2460     mov qword [pc], rdi ; arg1
+│       ┌─< 0xffffffff800188e4      eb32           jmp 0xffffffff80018918
+..
+│       │   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018920(x)
+│      ┌──> 0xffffffff800188f0      85d2           test edx, edx       ; nanoprintf.h:682
+│     ┌───< 0xffffffff800188f2      0f84810f0000   je 0xffffffff80019879
+│     │╎│   ;-- case 38...64:                                          ; from 0xffffffff800189d0
+│     │╎│   ;-- case 67:                                               ; from 0xffffffff800189d0
+│     │╎│   ;-- case 68:                                               ; from 0xffffffff800189d0
+│     │╎│   ;-- case 73...87:                                          ; from 0xffffffff800189d0
+│     │╎│   ;-- case 89:                                               ; from 0xffffffff800189d0
+│     │╎│   ;-- case 90...96:                                          ; from 0xffffffff800189d0
+│     │╎│   ;-- case 104:                                              ; from 0xffffffff800189d0
+│     │╎│   ;-- case 106...110:                                        ; from 0xffffffff800189d0
+│     │╎│   ;-- case 113:                                              ; from 0xffffffff800189d0
+│     │╎│   ;-- case 114:                                              ; from 0xffffffff800189d0
+│     │╎│   ;-- default:                                               ; from 0xffffffff800189d0
+│     │╎│   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800189ba(x), 0xffffffff800189d0(x), 0xffffffff80018aca(x)
+│   ┌┌────> 0xffffffff800188f8      0fbefa         movsx edi, dl       ; nanoprintf.h:684
+│   ╎╎│╎│   0xffffffff800188fb      4983c501       add r13, 1
+│   ╎╎│╎│   0xffffffff800188ff      488b442420     mov rax, qword [pc_cnt] ; nanoprintf.h:0
+│   ╎╎│╎│   0xffffffff80018904      83c001         add eax, 1          ; nanoprintf.h:662
+│   ╎╎│╎│   0xffffffff80018907      4889442420     mov qword [pc_cnt], rax ; nanoprintf.h:0
+│   ╎╎│╎│   0xffffffff8001890c      4c89f6         mov rsi, r14        ; nanoprintf.h:663
+│   ╎╎│╎│   0xffffffff8001890f      41ffd4         call r12
+│   ╎╎│╎│   0xffffffff80018912      41bb20000000   mov r11d, 0x20      ; nanoprintf.h:0 ; 32
+│   ╎╎│╎│   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800188e4(x), 0xffffffff80019850(x)
+│  ┌────└─> 0xffffffff80018918      410fb65500     movzx edx, byte [r13] ; nanoprintf.h:682
+│  ╎╎╎│╎    0xffffffff8001891d      83fa25         cmp edx, 0x25       ; '%' ; 37
+│  ╎╎╎│└──< 0xffffffff80018920      75ce           jne 0xffffffff800188f0
+│  ╎╎╎│     0xffffffff80018922      410fb67501     movzx esi, byte [r13 + 1] ; nanoprintf.h:300
+│  ╎╎╎│     0xffffffff80018927      4531ff         xor r15d, r15d
+│  ╎╎╎│     0xffffffff8001892a      4084f6         test sil, sil
+│  ╎╎╎│ ┌─< 0xffffffff8001892d      7472           je 0xffffffff800189a1
+│  ╎╎╎│ │   0xffffffff8001892f      498d7d03       lea rdi, [r13 + 3]
+│  ╎╎╎│ │   0xffffffff80018933      31ed           xor ebp, ebp
+│  ╎╎╎│ │   0xffffffff80018935      31c9           xor ecx, ecx
+│  ╎╎╎│ │   0xffffffff80018937      31c0           xor eax, eax
+│  ╎╎╎│┌──< 0xffffffff80018939      eb15           jmp 0xffffffff80018950
+..
+│  ╎╎╎│││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001895c(x)
+│ ┌───────> 0xffffffff80018940      40b523         mov bpl, 0x23       ; nanoprintf.h:0 ; '#' ; 35
+│ ╎╎╎╎│││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018967(x), 0xffffffff80018980(x)
+│ ────────> 0xffffffff80018943      0fb677ff       movzx esi, byte [rdi - 1] ; nanoprintf.h:300
+│ ╎╎╎╎│││   0xffffffff80018947      4883c701       add rdi, 1
+│ ╎╎╎╎│││   0xffffffff8001894b      4084f6         test sil, sil
+│ ────────< 0xffffffff8001894e      7440           je 0xffffffff80018990
+│ ╎╎╎╎│││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018939(x)
+│ ╎╎╎╎│└──> 0xffffffff80018950      400fbede       movsx ebx, sil      ; nanoprintf.h:301
+│ ╎╎╎╎│ │   0xffffffff80018954      83fb20         cmp ebx, 0x20       ; 32
+│ ╎╎╎╎│┌──< 0xffffffff80018957      7417           je 0xffffffff80018970
+│ ╎╎╎╎│││   0xffffffff80018959      83fb23         cmp ebx, 0x23       ; '#' ; 35
+│ └───────< 0xffffffff8001895c      74e2           je 0xffffffff80018940
+│  ╎╎╎│││   0xffffffff8001895e      b02b           mov al, 0x2b        ; nanoprintf.h:0 ; '+' ; 43
+│  ╎╎╎│││   0xffffffff80018960      83fb2b         cmp ebx, 0x2b       ; nanoprintf.h:301 ; '+' ; 43
+│ ┌───────< 0xffffffff80018963      757c           jne 0xffffffff800189e1
+│ │╎╎╎│││   0xffffffff80018965      b12b           mov cl, 0x2b        ; nanoprintf.h:0 ; '+' ; 43
+│ ────────< 0xffffffff80018967      ebda           jmp 0xffffffff80018943
+..
+│ │╎╎╎│││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018957(x)
+│ │╎╎╎│└──> 0xffffffff80018970      84c0           test al, al         ; nanoprintf.h:307
+│ │╎╎╎│ │   0xffffffff80018972      0fb6c9         movzx ecx, cl
+│ │╎╎╎│ │   0xffffffff80018975      410f44cb       cmove ecx, r11d
+│ │╎╎╎│ │   0xffffffff80018979      0fb6c0         movzx eax, al
+│ │╎╎╎│ │   0xffffffff8001897c      410f44c3       cmove eax, r11d
+│ ────────< 0xffffffff80018980      ebc1           jmp 0xffffffff80018943
+..
+│ │╎╎╎│ │   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001894e(x)
+│ ────────> 0xffffffff80018990      4883c7fe       add rdi, 0xfffffffffffffffe ; nanoprintf.h:380
+│ │╎╎╎│ │   0xffffffff80018994      31c0           xor eax, eax
+│ │╎╎╎│ │   0xffffffff80018996      4531d2         xor r10d, r10d
+│ │╎╎╎│ │   0xffffffff80018999      4531c0         xor r8d, r8d
+│ │╎╎╎│ │   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018e82(x)
+│ │╎╎╎│┌──> 0xffffffff8001899c      4889fb         mov rbx, rdi        ; nanoprintf.h:0
+│ ────────< 0xffffffff8001899f      eb10           jmp 0xffffffff800189b1
+│ │╎╎╎│╎│   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001892d(x)
+│ │╎╎╎│╎└─> 0xffffffff800189a1      498d5d01       lea rbx, [r13 + 1]
+│ │╎╎╎│╎    0xffffffff800189a5      31c0           xor eax, eax
+│ │╎╎╎│╎    0xffffffff800189a7      4531d2         xor r10d, r10d
+│ │╎╎╎│╎    0xffffffff800189aa      31ed           xor ebp, ebp
+│ │╎╎╎│╎    0xffffffff800189ac      31c9           xor ecx, ecx
+│ │╎╎╎│╎    0xffffffff800189ae      4531c0         xor r8d, r8d
+│ │╎╎╎│╎    ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff8001899f(x), 0xffffffff80018e9f(x), 0xffffffff80018eaa(x), 0xffffffff80018eb5(x)
+│ ──────┌─> 0xffffffff800189b1      0fbe3b         movsx edi, byte [rbx] ; nanoprintf.h:380
+│ │╎╎╎│╎╎   0xffffffff800189b4      83c7db         add edi, 0xffffffdb
+│ │╎╎╎│╎╎   0xffffffff800189b7      83ff53         cmp edi, 0x53       ; 'S' ; 83
+│ │╎└─────< 0xffffffff800189ba      0f8738ffffff   ja case.0xffffffff800189d0.38
+│ │╎ ╎│╎╎   0xffffffff800189c0      be05000000     mov esi, 5          ; nanoprintf.h:0
+│ │╎ ╎│╎╎   0xffffffff800189c5      41b120         mov r9b, 0x20       ; 32
+│ │╎ ╎│╎╎   0xffffffff800189c8      c74424080000.  mov dword [var_8h], 0
+│ │╎ ╎│╎╎   ;-- switch
+│ │╎ ╎│╎╎   0xffffffff800189d0      ff24fd281308.  jmp qword [rdi*8 - 0x7ff7ecd8] ; switch table (84 cases) at 0xffffffff80081328
+│ │╎ ╎│╎╎   ;-- case 100:                                              ; from 0xffffffff800189d0
+│ │╎ ╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎ ╎│╎╎   0xffffffff800189d7      be03000000     mov esi, 3
+│ │╎┌─────< 0xffffffff800189dc      e9d9000000     jmp case.0xffffffff800189d0.111
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018963(x)
+│ └───────> 0xffffffff800189e1      4531c0         xor r8d, r8d
+│  ╎│╎│╎╎   0xffffffff800189e4      4080fe2e       cmp sil, 0x2e       ; nanoprintf.h:331 ; '.' ; 46
+│ ┌───────< 0xffffffff800189e8      7521           jne 0xffffffff80018a0b
+│ │╎│╎│╎╎   0xffffffff800189ea      0fb677ff       movzx esi, byte [rdi - 1] ; nanoprintf.h:333
+│ │╎│╎│╎╎   0xffffffff800189ee      83fe2a         cmp esi, 0x2a       ; '*' ; 42
+│ ────────< 0xffffffff800189f1      0f8431040000   je 0xffffffff80018e28
+│ │╎│╎│╎╎   0xffffffff800189f7      83fe2d         cmp esi, 0x2d       ; '-' ; 45
+│ ────────< 0xffffffff800189fa      0f8535040000   jne 0xffffffff80018e35
+│ │╎│╎│╎╎   0xffffffff80018a00      0fb637         movzx esi, byte [rdi] ; nanoprintf.h:343
+│ │╎│╎│╎╎   0xffffffff80018a03      4531d2         xor r10d, r10d
+│ ────────< 0xffffffff80018a06      e934040000     jmp 0xffffffff80018e3f
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189e8(x)
+│ └───────> 0xffffffff80018a0b      4883c7fe       add rdi, 0xfffffffffffffffe ; nanoprintf.h:0
+│  ╎│╎│╎╎   0xffffffff80018a0f      4531d2         xor r10d, r10d
+│  ╎│╎│╎╎   0xffffffff80018a12      31c0           xor eax, eax
+│ ┌───────< 0xffffffff80018a14      e954040000     jmp 0xffffffff80018e6d
+│ │╎│╎│╎╎   ;-- case 65:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a19      4531c9         xor r9d, r9d
+│ │╎│╎│╎╎   ;-- case 97:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a1c      4585d2         test r10d, r10d     ; nanoprintf.h:434
+│ │╎│╎│╎╎   0xffffffff80018a1f      be06000000     mov esi, 6
+│ │╎│╎│╎╎   0xffffffff80018a24      0f44c6         cmove eax, esi
+│ │╎│╎│╎╎   0xffffffff80018a27      c74424080c00.  mov dword [var_8h], 0xc ; [0xc:4]=-1 ; 12
+│ ────────< 0xffffffff80018a2f      e97c000000     jmp 0xffffffff80018ab0
+│ │╎│╎│╎╎   ;-- case 66:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a34      4531c9         xor r9d, r9d        ; nanoprintf.h:0
+│ │╎│╎│╎╎   ;-- case 98:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a37      c74424080400.  mov dword [var_8h], 4
+│ ────────< 0xffffffff80018a3f      eb6f           jmp 0xffffffff80018ab0
+│ │╎│╎│╎╎   ;-- case 69:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a41      4531c9         xor r9d, r9d
+│ │╎│╎│╎╎   ;-- case 101:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a44      4585d2         test r10d, r10d     ; nanoprintf.h:422
+│ │╎│╎│╎╎   0xffffffff80018a47      be06000000     mov esi, 6
+│ │╎│╎│╎╎   0xffffffff80018a4c      0f44c6         cmove eax, esi
+│ │╎│╎│╎╎   0xffffffff80018a4f      c74424080a00.  mov dword [var_8h], 0xa
+│ ────────< 0xffffffff80018a57      eb57           jmp 0xffffffff80018ab0
+│ │╎│╎│╎╎   ;-- case 70:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a59      4531c9         xor r9d, r9d        ; nanoprintf.h:0
+│ │╎│╎│╎╎   ;-- case 102:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a5c      4585d2         test r10d, r10d     ; nanoprintf.h:416
+│ │╎│╎│╎╎   0xffffffff80018a5f      be06000000     mov esi, 6
+│ │╎│╎│╎╎   0xffffffff80018a64      0f44c6         cmove eax, esi
+│ │╎│╎│╎╎   0xffffffff80018a67      c74424080900.  mov dword [var_8h], 9
+│ ────────< 0xffffffff80018a6f      eb3f           jmp 0xffffffff80018ab0
+│ │╎│╎│╎╎   ;-- case 71:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a71      4531c9         xor r9d, r9d        ; nanoprintf.h:0
+│ │╎│╎│╎╎   ;-- case 103:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a74      4585d2         test r10d, r10d     ; nanoprintf.h:428
+│ │╎│╎│╎╎   0xffffffff80018a77      be06000000     mov esi, 6
+│ │╎│╎│╎╎   0xffffffff80018a7c      0f44c6         cmove eax, esi
+│ │╎│╎│╎╎   0xffffffff80018a7f      c74424080b00.  mov dword [var_8h], 0xb ; [0xb:4]=-1 ; 11
+│ ────────< 0xffffffff80018a87      eb27           jmp 0xffffffff80018ab0
+│ │╎│╎│╎╎   ;-- case 88:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a89      4531c9         xor r9d, r9d        ; nanoprintf.h:0
+│ │╎│╎│╎╎   ;-- case 120:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a8c      be06000000     mov esi, 6
+│ ────────< 0xffffffff80018a91      eb27           jmp case.0xffffffff800189d0.111
+│ │╎│╎│╎╎   ;-- case 99:                                               ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a93      c74424080100.  mov dword [var_8h], 1
+│ ────────< 0xffffffff80018a9b      eb24           jmp case.0xffffffff800189d0.37
+│ │╎│╎│╎╎   ;-- case 112:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018a9d      c74424080800.  mov dword [var_8h], 8
+│ ────────< 0xffffffff80018aa5      eb1a           jmp case.0xffffffff800189d0.37
+│ │╎│╎│╎╎   ;-- case 115:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018aa7      c74424080200.  mov dword [var_8h], 2
+│ │╎│╎│╎╎   0xffffffff80018aaf      90             nop
+│ │╎│╎│╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018a2f(x), 0xffffffff80018a3f(x), 0xffffffff80018a57(x), 0xffffffff80018a6f(x), 0xffffffff80018a87(x)
+│ ────────> 0xffffffff80018ab0      4589d7         mov r15d, r10d
+│ ────────< 0xffffffff80018ab3      eb0c           jmp case.0xffffffff800189d0.37
+│ │╎│╎│╎╎   ;-- case 117:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189d0(x)
+│ │╎│╎│╎╎   0xffffffff80018ab5      be07000000     mov esi, 7
+│ │╎│╎│╎╎   ;-- case 111:                                              ; from 0xffffffff800189d0
+│ │╎│╎│╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800189d0(x), 0xffffffff800189dc(x), 0xffffffff80018a91(x)
+│ ──└─────> 0xffffffff80018aba      4589d7         mov r15d, r10d
+│ │╎ ╎│╎╎   0xffffffff80018abd      89742408       mov dword [var_8h], esi
+│ │╎ ╎│╎╎   ;-- case 37:                                               ; from 0xffffffff800189d0
+│ │╎ ╎│╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800189d0(x), 0xffffffff80018a9b(x), 0xffffffff80018aa5(x), 0xffffffff80018ab3(x)
+│ ────────> 0xffffffff80018ac1      4883c301       add rbx, 1
+│ │╎ ╎│╎╎   0xffffffff80018ac5      4c29eb         sub rbx, r13        ; nanoprintf.h:466
+│ │╎ ╎│╎╎   0xffffffff80018ac8      85db           test ebx, ebx       ; nanoprintf.h:684
+│ │╎ └────< 0xffffffff80018aca      0f8428feffff   je case.0xffffffff800189d0.38
+│ │╎  │╎╎   0xffffffff80018ad0      4889442418     mov qword [var_18h], rax ; nanoprintf.h:0
+│ │╎  │╎╎   0xffffffff80018ad5      896c240c       mov dword [var_ch], ebp
+│ │╎  │╎╎   0xffffffff80018ad9      48895c2410     mov qword [fs_len], rbx
+│ │╎  │╎╎   0xffffffff80018ade      4183ff02       cmp r15d, 2         ; nanoprintf.h:699 ; 2
+│ │╎  │╎╎   0xffffffff80018ae2      48bbffffffff.  movabs rbx, 0xfffffffffffffff ; 1152921504606846975
+│ │╎  │╎╎   0xffffffff80018aec      49bacdcccccc.  movabs r10, 0xcccccccccccccccd
+│ │╎  │╎╎   0xffffffff80018af6      8b6c2408       mov ebp, dword [var_8h]
+│ │╎  │╎╎   0xffffffff80018afa      488bbc248800.  mov rdi, qword [args]
+│ │╎ ┌────< 0xffffffff80018b02      7536           jne 0xffffffff80018b3a
+│ │╎ ││╎╎   0xffffffff80018b04      8b17           mov edx, dword [rdi] ; nanoprintf.h:701
+│ │╎ ││╎╎   0xffffffff80018b06      4883fa28       cmp rdx, 0x28       ; '(' ; 40
+│ │╎┌─────< 0xffffffff80018b0a      770e           ja 0xffffffff80018b1a
+│ │╎│││╎╎   0xffffffff80018b0c      4889d0         mov rax, rdx
+│ │╎│││╎╎   0xffffffff80018b0f      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018b13      83c208         add edx, 8
+│ │╎│││╎╎   0xffffffff80018b16      8917           mov dword [rdi], edx
+│ ────────< 0xffffffff80018b18      eb0f           jmp 0xffffffff80018b29
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b0a(x)
+│ │╎└─────> 0xffffffff80018b1a      488b742428     mov rsi, qword [var_28h] ; nanoprintf.h:0
+│ │╎ ││╎╎   0xffffffff80018b1f      488b06         mov rax, qword [rsi] ; nanoprintf.h:701
+│ │╎ ││╎╎   0xffffffff80018b22      488d5008       lea rdx, [rax + 8]
+│ │╎ ││╎╎   0xffffffff80018b26      488916         mov qword [rsi], rdx
+│ │╎ ││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b18(x)
+│ ────────> 0xffffffff80018b29      8b00           mov eax, dword [rax]
+│ │╎ ││╎╎   0xffffffff80018b2b      4889442418     mov qword [var_18h], rax ; nanoprintf.h:0
+│ │╎ ││╎╎   0xffffffff80018b30      4189c7         mov r15d, eax       ; nanoprintf.h:702
+│ │╎ ││╎╎   0xffffffff80018b33      41f7d7         not r15d
+│ │╎ ││╎╎   0xffffffff80018b36      41c1ef1f       shr r15d, 0x1f
+│ │╎ ││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b02(x)
+│ │╎ └────> 0xffffffff80018b3a      83fd0c         cmp ebp, 0xc        ; nanoprintf.h:724 ; 12
+│ │╎  │╎╎   0xffffffff80018b3d      4c89ac249000.  mov qword [var_90h], r13
+│ │╎ ┌────< 0xffffffff80018b45      0f8788000000   ja case.default.0xffffffff80018b4d
+│ │╎ ││╎╎   0xffffffff80018b4b      89e8           mov eax, ebp        ; nanoprintf.h:0
+│ │╎ ││╎╎   ;-- switch
+│ │╎ ││╎╎   0xffffffff80018b4d      ff24c5c81508.  jmp qword [rax*8 - 0x7ff7ea38] ; switch table (13 cases) at 0xffffffff800815c8
+│ │╎ ││╎╎   ;-- case 4...7:                                            ; from 0xffffffff80018b4d
+│ │╎ ││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎ ││╎╎   0xffffffff80018b54      4183f804       cmp r8d, 4          ; nanoprintf.h:785 ; 4
+│ │╎┌─────< 0xffffffff80018b58      0f8726020000   ja case.default.0xffffffff80018b61
+│ │╎│││╎╎   0xffffffff80018b5e      4489c0         mov eax, r8d        ; nanoprintf.h:0
+│ │╎│││╎╎   ;-- switch
+│ │╎│││╎╎   0xffffffff80018b61      ff24c5301608.  jmp qword [rax*8 - 0x7ff7e9d0] ; switch table (5 cases) at 0xffffffff80081630
+│ │╎│││╎╎   ;-- case 0:                                                ; from 0xffffffff80018b61
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b61(x)
+│ │╎│││╎╎   0xffffffff80018b68      8b0f           mov ecx, dword [rdi]
+│ │╎│││╎╎   0xffffffff80018b6a      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018b6e      0f8786020000   ja 0xffffffff80018dfa
+│ │╎│││╎╎   0xffffffff80018b74      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018b77      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018b7b      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018b7e      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018b80      e984020000     jmp 0xffffffff80018e09
+│ │╎│││╎╎   ;-- case 9...12:                                           ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018b85      4183f802       cmp r8d, 2          ; nanoprintf.h:865 ; 2
+│ ────────< 0xffffffff80018b89      7526           jne 0xffffffff80018bb1
+│ │╎│││╎╎   0xffffffff80018b8b      488b742428     mov rsi, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018b90      488b06         mov rax, qword [rsi] ; nanoprintf.h:866
+│ │╎│││╎╎   0xffffffff80018b93      4883c00f       add rax, 0xf        ; 15
+│ │╎│││╎╎   0xffffffff80018b97      4883e0f0       and rax, 0xfffffffffffffff0
+│ │╎│││╎╎   0xffffffff80018b9b      488d5010       lea rdx, [rax + 0x10]
+│ │╎│││╎╎   0xffffffff80018b9f      488916         mov qword [rsi], rdx
+│ │╎│││╎╎   0xffffffff80018ba2      db28           fld xword [rax]
+│ │╎│││╎╎   0xffffffff80018ba4      d95c2478       fstp dword [rsp + 0x78]
+│ │╎│││╎╎   0xffffffff80018ba8      d9442478       fld dword [rsp + 0x78]
+│ ────────< 0xffffffff80018bac      e9f8000000     jmp 0xffffffff80018ca9 ; nanoprintf.h:0
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b89(x)
+│ ────────> 0xffffffff80018bb1      8b5704         mov edx, dword [rdi + 4] ; nanoprintf.h:868
+│ │╎│││╎╎   0xffffffff80018bb4      4881faa00000.  cmp rdx, 0xa0       ; 160
+│ ────────< 0xffffffff80018bbb      0f87cf000000   ja 0xffffffff80018c90
+│ │╎│││╎╎   0xffffffff80018bc1      4889d0         mov rax, rdx
+│ │╎│││╎╎   0xffffffff80018bc4      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018bc8      83c210         add edx, 0x10       ; 16
+│ │╎│││╎╎   0xffffffff80018bcb      895704         mov dword [rdi + 4], edx
+│ ────────< 0xffffffff80018bce      e9cc000000     jmp 0xffffffff80018c9f
+│ │╎│││╎╎   ;-- default:                                               ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018b45(x), 0xffffffff80018b4d(x)
+│ │╎│└────> 0xffffffff80018bd3      31c9           xor ecx, ecx        ; nanoprintf.h:0
+│ │╎│ │╎╎   0xffffffff80018bd5      4531c0         xor r8d, r8d
+│ │╎│ │╎╎   0xffffffff80018bd8      4531f6         xor r14d, r14d
+│ │╎│ │╎╎   0xffffffff80018bdb      4531e4         xor r12d, r12d
+│ │╎│ │╎╎   0xffffffff80018bde      4c8d6c2440     lea r13, [cbuf]
+│ │╎│ │╎╎   0xffffffff80018be3      4c8b542410     mov r10, qword [fs_len]
+│ │╎│ │╎╎   0xffffffff80018be8      83fd02         cmp ebp, 2          ; nanoprintf.h:909 ; 2
+│ │╎│┌────< 0xffffffff80018beb      0f84e5090000   je 0xffffffff800195d6
+│ ────────< 0xffffffff80018bf1      e9030a0000     jmp 0xffffffff800195f9
+│ │╎│││╎╎   ;-- case 0:                                                ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018bf6      c644244025     mov byte [cbuf], 0x25 ; nanoprintf.h:726 ; '%'
+│ │╎│││╎╎                                                              ; [0x25:1]=255 ; 37
+│ ────────< 0xffffffff80018bfb      e9d0020000     jmp 0xffffffff80018ed0
+│ │╎│││╎╎   ;-- case 1:                                                ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018c00      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:731
+│ │╎│││╎╎   0xffffffff80018c02      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018c06      0f87ae020000   ja 0xffffffff80018eba
+│ │╎│││╎╎   0xffffffff80018c0c      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018c0f      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018c13      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018c16      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018c18      e9ac020000     jmp 0xffffffff80018ec9
+│ │╎│││╎╎   ;-- case 2:                                                ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018c1d      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:736
+│ │╎│││╎╎   0xffffffff80018c1f      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018c23      0f87c4020000   ja 0xffffffff80018eed
+│ │╎│││╎╎   0xffffffff80018c29      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018c2c      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018c30      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018c33      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018c35      e9c2020000     jmp 0xffffffff80018efc
+│ │╎│││╎╎   ;-- case 3:                                                ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018c3a      4183f804       cmp r8d, 4          ; nanoprintf.h:748 ; 4
+│ ────────< 0xffffffff80018c3e      0f877b050000   ja case.default.0xffffffff80018c47
+│ │╎│││╎╎   0xffffffff80018c44      4489c0         mov eax, r8d        ; nanoprintf.h:0
+│ │╎│││╎╎   ;-- switch
+│ │╎│││╎╎   0xffffffff80018c47      ff24c5581608.  jmp qword [rax*8 - 0x7ff7e9a8] ; switch table (5 cases) at 0xffffffff80081658
+│ │╎│││╎╎   ;-- case 0:                                                ; from 0xffffffff80018c47
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c47(x)
+│ │╎│││╎╎   0xffffffff80018c4e      8b07           mov eax, dword [rdi]
+│ │╎│││╎╎   0xffffffff80018c50      4883f828       cmp rax, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018c54      0f87da050000   ja 0xffffffff80019234
+│ │╎│││╎╎   0xffffffff80018c5a      4889c2         mov rdx, rax
+│ │╎│││╎╎   0xffffffff80018c5d      48035710       add rdx, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018c61      83c008         add eax, 8
+│ │╎│││╎╎   0xffffffff80018c64      8907           mov dword [rdi], eax
+│ │╎│││╎╎   0xffffffff80018c66      486332         movsxd rsi, dword [rdx]
+│ │╎│││╎╎   0xffffffff80018c69      4c8b542410     mov r10, qword [fs_len]
+│ ────────< 0xffffffff80018c6e      e9c4080000     jmp 0xffffffff80019537
+│ │╎│││╎╎   ;-- case 8:                                                ; from 0xffffffff80018b4d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b4d(x)
+│ │╎│││╎╎   0xffffffff80018c73      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:837
+│ │╎│││╎╎   0xffffffff80018c75      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018c79      0f87cc020000   ja 0xffffffff80018f4b
+│ │╎│││╎╎   0xffffffff80018c7f      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018c82      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018c86      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018c89      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018c8b      e9ca020000     jmp 0xffffffff80018f5a
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018bbb(x)
+│ ────────> 0xffffffff80018c90      488b742428     mov rsi, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018c95      488b06         mov rax, qword [rsi] ; nanoprintf.h:868
+│ │╎│││╎╎   0xffffffff80018c98      488d5008       lea rdx, [rax + 8]
+│ │╎│││╎╎   0xffffffff80018c9c      488916         mov qword [rsi], rdx
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018bce(x)
+│ ────────> 0xffffffff80018c9f      dd00           fld qword [rax]
+│ │╎│││╎╎   0xffffffff80018ca1      d95c247c       fstp dword [rsp + 0x7c]
+│ │╎│││╎╎   0xffffffff80018ca5      d944247c       fld dword [rsp + 0x7c]
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018bac(x)
+│ ────────> 0xffffffff80018ca9      d944246c       fld dword [rsp + 0x6c] ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018cad      dfe9           fucomip st(1)       ; nanoprintf.h:871
+│ │╎│││╎╎   0xffffffff80018caf      440fb6c1       movzx r8d, cl
+│ │╎│││╎╎   0xffffffff80018cb3      b82d000000     mov eax, 0x2d       ; '-' ; 45
+│ │╎│││╎╎   0xffffffff80018cb8      440f47c0       cmova r8d, eax
+│ │╎│││╎╎   0xffffffff80018cbc      d95c2474       fstp dword [rsp + 0x74] ; nanoprintf.h:570
+│ │╎│││╎╎   0xffffffff80018cc0      8b742474       mov esi, dword [arg_74h]
+│ │╎│││╎╎   0xffffffff80018cc4      89f0           mov eax, esi        ; nanoprintf.h:573
+│ │╎│││╎╎   0xffffffff80018cc6      f7d0           not eax
+│ │╎│││╎╎   0xffffffff80018cc8      a90000807f     test eax, 0x7f800000
+│ ────────< 0xffffffff80018ccd      7520           jne 0xffffffff80018cef
+│ │╎│││╎╎   0xffffffff80018ccf      f7c6ffff7f00   test esi, 0x7fffff  ; nanoprintf.h:574
+│ │╎│││╎╎   0xffffffff80018cd5      488b4c2418     mov rcx, qword [var_18h]
+│ ────────< 0xffffffff80018cda      746b           je 0xffffffff80018d47
+│ │╎│││╎╎   0xffffffff80018cdc      418d414e       lea eax, [r9 + 0x4e] ; nanoprintf.h:575 ; arg6
+│ │╎│││╎╎   0xffffffff80018ce0      88442440       mov byte [cbuf], al
+│ │╎│││╎╎   0xffffffff80018ce4      4180c141       add r9b, 0x41       ; 65
+│ │╎│││╎╎   0xffffffff80018ce8      44884c2441     mov byte [var_41h], r9b
+│ ────────< 0xffffffff80018ced      eb6f           jmp 0xffffffff80018d5e ; nanoprintf.h:0
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018ccd(x)
+│ ────────> 0xffffffff80018cef      89f0           mov eax, esi        ; nanoprintf.h:510
+│ │╎│││╎╎   0xffffffff80018cf1      c1e817         shr eax, 0x17
+│ │╎│││╎╎   0xffffffff80018cf4      0fb6c8         movzx ecx, al
+│ │╎│││╎╎   0xffffffff80018cf7      81f9be000000   cmp ecx, 0xbe       ; nanoprintf.h:513 ; 190
+│ ────────< 0xffffffff80018cfd      761b           jbe 0xffffffff80018d1a
+│ │╎│││╎╎   0xffffffff80018cff      418d4152       lea eax, [r9 + 0x52] ; nanoprintf.h:585 ; arg6
+│ │╎│││╎╎   0xffffffff80018d03      88442440       mov byte [cbuf], al
+│ │╎│││╎╎   0xffffffff80018d07      4180c14f       add r9b, 0x4f       ; 79
+│ │╎│││╎╎   0xffffffff80018d0b      44884c2441     mov byte [var_41h], r9b
+│ │╎│││╎╎   0xffffffff80018d10      4489c8         mov eax, r9d        ; nanoprintf.h:0 ; arg6
+│ │╎│││╎╎   0xffffffff80018d13      488b4c2418     mov rcx, qword [var_18h]
+│ ────────< 0xffffffff80018d18      eb44           jmp 0xffffffff80018d5e
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018cfd(x)
+│ ────────> 0xffffffff80018d1a      8d916affffff   lea edx, [rcx - 0x96]
+│ │╎│││╎╎   0xffffffff80018d20      81e6ffff7f00   and esi, 0x7fffff   ; nanoprintf.h:516
+│ │╎│││╎╎   0xffffffff80018d26      81ce00008000   or esi, 0x800000    ; nanoprintf.h:517
+│ │╎│││╎╎   0xffffffff80018d2c      89f7           mov edi, esi        ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018d2e      81f997000000   cmp ecx, 0x97       ; nanoprintf.h:519 ; 151
+│ ────────< 0xffffffff80018d34      0f826d020000   jb 0xffffffff80018fa7
+│ │╎│││╎╎   0xffffffff80018d3a      4889fe         mov rsi, rdi        ; nanoprintf.h:520
+│ │╎│││╎╎   0xffffffff80018d3d      89d1           mov ecx, edx
+│ │╎│││╎╎   0xffffffff80018d3f      48d3e6         shl rsi, cl
+│ ────────< 0xffffffff80018d42      e90f050000     jmp 0xffffffff80019256
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018cda(x)
+│ ────────> 0xffffffff80018d47      418d4146       lea eax, [r9 + 0x46] ; nanoprintf.h:577 ; arg6
+│ │╎│││╎╎   0xffffffff80018d4b      88442440       mov byte [cbuf], al
+│ │╎│││╎╎   0xffffffff80018d4f      418d414e       lea eax, [r9 + 0x4e] ; arg6
+│ │╎│││╎╎   0xffffffff80018d53      88442441       mov byte [var_41h], al
+│ │╎│││╎╎   0xffffffff80018d57      4180c149       add r9b, 0x49       ; 73
+│ │╎│││╎╎   0xffffffff80018d5b      4489c8         mov eax, r9d        ; nanoprintf.h:0 ; arg6
+│ │╎│││╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018ced(x), 0xffffffff80018d18(x)
+│ ────────> 0xffffffff80018d5e      88442442       mov byte [var_42h], al
+│ │╎│││╎╎   0xffffffff80018d62      4531ff         xor r15d, r15d
+│ │╎│││╎╎   0xffffffff80018d65      41be03000000   mov r14d, 3
+│ │╎│││╎╎   0xffffffff80018d6b      b001           mov al, 1
+│ │╎│││╎╎   0xffffffff80018d6d      89442434       mov dword [var_34h], eax
+│ │╎│││╎╎   0xffffffff80018d71      4c8d6c2440     lea r13, [cbuf]
+│ │╎│││╎╎   0xffffffff80018d76      4584c0         test r8b, r8b       ; nanoprintf.h:956
+│ ────────< 0xffffffff80018d79      0f854b090000   jne 0xffffffff800196ca
+│ ────────< 0xffffffff80018d7f      e965090000     jmp 0xffffffff800196e9
+│ │╎│││╎╎   ;-- default:                                               ; from 0xffffffff80018b61
+│ │╎│││╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018b58(x), 0xffffffff80018b61(x)
+│ │╎└─────> 0xffffffff80018d84      4531c0         xor r8d, r8d        ; nanoprintf.h:0
+│ │╎ ││╎╎   0xffffffff80018d87      be30000000     mov esi, 0x30       ; '0' ; 48
+│ │╎ ││╎╎   0xffffffff80018d8c      8b54240c       mov edx, dword [var_ch]
+│ │╎ ││╎╎   0xffffffff80018d90      488b4c2418     mov rcx, qword [var_18h]
+│ │╎ ││╎╎   0xffffffff80018d95      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ │╎┌─────< 0xffffffff80018d98      0f8492020000   je 0xffffffff80019030
+│ ────────< 0xffffffff80018d9e      e9b9020000     jmp 0xffffffff8001905c
+│ │╎│││╎╎   ;-- case 1:                                                ; from 0xffffffff80018b61
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b61(x)
+│ │╎│││╎╎   0xffffffff80018da3      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:787
+│ │╎│││╎╎   0xffffffff80018da5      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018da9      0f870c020000   ja 0xffffffff80018fbb
+│ │╎│││╎╎   0xffffffff80018daf      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018db2      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018db6      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018db9      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018dbb      e90a020000     jmp 0xffffffff80018fca
+│ │╎│││╎╎   ;-- case 3:                                                ; from 0xffffffff80018b61
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b61(x)
+│ │╎│││╎╎   0xffffffff80018dc0      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:789
+│ │╎│││╎╎   0xffffffff80018dc2      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018dc6      0f8717020000   ja 0xffffffff80018fe3
+│ │╎│││╎╎   0xffffffff80018dcc      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018dcf      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018dd3      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018dd6      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018dd8      e915020000     jmp 0xffffffff80018ff2
+│ │╎│││╎╎   ;-- case 4:                                                ; from 0xffffffff80018b61
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b61(x)
+│ │╎│││╎╎   0xffffffff80018ddd      8b0f           mov ecx, dword [rdi] ; nanoprintf.h:790
+│ │╎│││╎╎   0xffffffff80018ddf      4883f928       cmp rcx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff80018de3      0f8722020000   ja 0xffffffff8001900b
+│ │╎│││╎╎   0xffffffff80018de9      4889c8         mov rax, rcx
+│ │╎│││╎╎   0xffffffff80018dec      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││╎╎   0xffffffff80018df0      83c108         add ecx, 8
+│ │╎│││╎╎   0xffffffff80018df3      890f           mov dword [rdi], ecx
+│ ────────< 0xffffffff80018df5      e920020000     jmp 0xffffffff8001901a
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b6e(x)
+│ ────────> 0xffffffff80018dfa      488b542428     mov rdx, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018dff      488b02         mov rax, qword [rdx]
+│ │╎│││╎╎   0xffffffff80018e02      488d4808       lea rcx, [rax + 8]
+│ │╎│││╎╎   0xffffffff80018e06      48890a         mov qword [rdx], rcx
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018b80(x)
+│ ────────> 0xffffffff80018e09      be30000000     mov esi, 0x30       ; '0' ; 48
+│ │╎│││╎╎   0xffffffff80018e0e      8b54240c       mov edx, dword [var_ch]
+│ │╎│││╎╎   0xffffffff80018e12      488b4c2418     mov rcx, qword [var_18h]
+│ │╎│││╎╎   0xffffffff80018e17      448b00         mov r8d, dword [rax]
+│ │╎│││╎╎   0xffffffff80018e1a      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ ────────< 0xffffffff80018e1d      0f840d020000   je 0xffffffff80019030
+│ ────────< 0xffffffff80018e23      e934020000     jmp 0xffffffff8001905c
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189f1(x)
+│ ────────> 0xffffffff80018e28      0fb637         movzx esi, byte [rdi] ; nanoprintf.h:352
+│ │╎│││╎╎   0xffffffff80018e2b      41ba02000000   mov r10d, 2
+│ │╎│││╎╎   0xffffffff80018e31      31c0           xor eax, eax
+│ ────────< 0xffffffff80018e33      eb38           jmp 0xffffffff80018e6d
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800189fa(x)
+│ ────────> 0xffffffff80018e35      4883c7ff       add rdi, 0xffffffffffffffff ; nanoprintf.h:0
+│ │╎│││╎╎   0xffffffff80018e39      41ba01000000   mov r10d, 1
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018a06(x)
+│ ────────> 0xffffffff80018e3f      8d5ed0         lea ebx, [rsi - 0x30] ; nanoprintf.h:343
+│ │╎│││╎╎   0xffffffff80018e42      31c0           xor eax, eax
+│ │╎│││╎╎   0xffffffff80018e44      80fb09         cmp bl, 9           ; 9
+│ ────────< 0xffffffff80018e47      7724           ja 0xffffffff80018e6d
+│ │╎│││╎╎   0xffffffff80018e49      0f1f80000000.  nop dword [rax]
+│ │╎│││╎╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018e6b(x)
+│ ────────> 0xffffffff80018e50      400fb6f6       movzx esi, sil
+│ │╎│││╎╎   0xffffffff80018e54      8d1c80         lea ebx, [rax + rax*4] ; nanoprintf.h:344
+│ │╎│││╎╎   0xffffffff80018e57      8d045e         lea eax, [rsi + rbx*2]
+│ │╎│││╎╎   0xffffffff80018e5a      83c0d0         add eax, 0xffffffd0
+│ │╎│││╎╎   0xffffffff80018e5d      0fb67701       movzx esi, byte [rdi + 1] ; nanoprintf.h:343
+│ │╎│││╎╎   0xffffffff80018e61      4883c701       add rdi, 1          ; nanoprintf.h:344
+│ │╎│││╎╎   0xffffffff80018e65      8d5ed0         lea ebx, [rsi - 0x30] ; nanoprintf.h:343
+│ │╎│││╎╎   0xffffffff80018e68      80fb0a         cmp bl, 0xa         ; 10
+│ ────────< 0xffffffff80018e6b      72e3           jb 0xffffffff80018e50
+│ │╎│││╎╎   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018a14(x), 0xffffffff80018e33(x), 0xffffffff80018e47(x)
+│ └───────> 0xffffffff80018e6d      488d5f01       lea rbx, [rdi + 1]  ; nanoprintf.h:352
+│  ╎│││╎╎   0xffffffff80018e71      400fbef6       movsx esi, sil
+│  ╎│││╎╎   0xffffffff80018e75      83fe4c         cmp esi, 0x4c       ; 'L' ; 76
+│ ┌───────< 0xffffffff80018e78      742a           je 0xffffffff80018ea4
+│ │╎│││╎╎   0xffffffff80018e7a      83fe6c         cmp esi, 0x6c       ; 'l' ; 108
+│ ────────< 0xffffffff80018e7d      7430           je 0xffffffff80018eaf
+│ │╎│││╎╎   0xffffffff80018e7f      83fe68         cmp esi, 0x68       ; 'h' ; 104
+│ │╎│││└──< 0xffffffff80018e82      0f8514fbffff   jne 0xffffffff8001899c
+│ │╎│││ ╎   0xffffffff80018e88      4c8d4f02       lea r9, [rdi + 2]   ; nanoprintf.h:0
+│ │╎│││ ╎   0xffffffff80018e8c      31f6           xor esi, esi        ; nanoprintf.h:355
+│ │╎│││ ╎   0xffffffff80018e8e      807f0168       cmp byte [rdi + 1], 0x68 ; 'h'
+│ │╎│││ ╎   0xffffffff80018e92      400f94c6       sete sil
+│ │╎│││ ╎   0xffffffff80018e96      448d443601     lea r8d, [rsi + rsi + 1]
+│ │╎│││ ╎   0xffffffff80018e9b      490f44d9       cmove rbx, r9
+│ ────────< 0xffffffff80018e9f      e90dfbffff     jmp 0xffffffff800189b1 ; nanoprintf.h:0
+│ │╎│││ ╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018e78(x)
+│ └───────> 0xffffffff80018ea4      41b802000000   mov r8d, 2
+│ ────────< 0xffffffff80018eaa      e902fbffff     jmp 0xffffffff800189b1
+│  ╎│││ ╎   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018e7d(x)
+│ ────────> 0xffffffff80018eaf      41b804000000   mov r8d, 4
+│  ╎│││ └─< 0xffffffff80018eb5      e9f7faffff     jmp 0xffffffff800189b1
+│  ╎│││     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c06(x)
+│ ────────> 0xffffffff80018eba      488b542428     mov rdx, qword [var_28h]
+│  ╎│││     0xffffffff80018ebf      488b02         mov rax, qword [rdx] ; nanoprintf.h:731
+│  ╎│││     0xffffffff80018ec2      488d4808       lea rcx, [rax + 8]
+│  ╎│││     0xffffffff80018ec6      48890a         mov qword [rdx], rcx
+│  ╎│││     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c18(x)
+│ ────────> 0xffffffff80018ec9      0fb600         movzx eax, byte [rax]
+│  ╎│││     0xffffffff80018ecc      88442440       mov byte [cbuf], al
+│  ╎│││     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018bfb(x)
+│ ────────> 0xffffffff80018ed0      41be01000000   mov r14d, 1         ; nanoprintf.h:0
+│  ╎│││     0xffffffff80018ed6      4531e4         xor r12d, r12d
+│  ╎│││     0xffffffff80018ed9      4c8d6c2440     lea r13, [cbuf]
+│  ╎│││     0xffffffff80018ede      4531c0         xor r8d, r8d
+│  ╎│││     0xffffffff80018ee1      31c9           xor ecx, ecx
+│  ╎│││     0xffffffff80018ee3      4c8b542410     mov r10, qword [fs_len]
+│  ╎│││ ┌─< 0xffffffff80018ee8      e90c070000     jmp 0xffffffff800195f9
+│  ╎│││ │   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c23(x)
+│ ────────> 0xffffffff80018eed      488b542428     mov rdx, qword [var_28h]
+│  ╎│││ │   0xffffffff80018ef2      488b02         mov rax, qword [rdx] ; nanoprintf.h:736
+│  ╎│││ │   0xffffffff80018ef5      488d4808       lea rcx, [rax + 8]
+│  ╎│││ │   0xffffffff80018ef9      48890a         mov qword [rdx], rcx
+│  ╎│││ │   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c35(x)
+│ ────────> 0xffffffff80018efc      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│  ╎│││ │   0xffffffff80018f01      4c8b28         mov r13, qword [rax] ; nanoprintf.h:736
+│  ╎│││ │   0xffffffff80018f04      41807d0000     cmp byte [r13], 0   ; nanoprintf.h:739
+│  ╎│││┌──< 0xffffffff80018f09      0f842e090000   je 0xffffffff8001983d
+│  ╎│││││   0xffffffff80018f0f      31c0           xor eax, eax        ; nanoprintf.h:0
+│ ┌───────< 0xffffffff80018f11      eb20           jmp 0xffffffff80018f33
+..
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018f36(x), 0xffffffff80018f3c(x)
+│ ────────> 0xffffffff80018f20      4c8d7001       lea r14, [rax + 1]  ; nanoprintf.h:739
+│ │╎│││││   0xffffffff80018f24      41807c050100   cmp byte [r13 + rax + 1], 0
+│ │╎│││││   0xffffffff80018f2a      4c89f0         mov rax, r14
+│ ────────< 0xffffffff80018f2d      0f841d020000   je 0xffffffff80019150
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018f11(x)
+│ └───────> 0xffffffff80018f33      4585ff         test r15d, r15d     ; nanoprintf.h:0
+│ ────────< 0xffffffff80018f36      74e8           je 0xffffffff80018f20 ; nanoprintf.h:738
+│  ╎│││││   0xffffffff80018f38      3b442418       cmp eax, dword [var_18h]
+│ ────────< 0xffffffff80018f3c      7ce2           jl 0xffffffff80018f20
+│  ╎│││││   0xffffffff80018f3e      31c9           xor ecx, ecx        ; nanoprintf.h:0
+│  ╎│││││   0xffffffff80018f40      4531c0         xor r8d, r8d
+│  ╎│││││   0xffffffff80018f43      4189c6         mov r14d, eax
+│ ┌───────< 0xffffffff80018f46      e90a020000     jmp 0xffffffff80019155
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c79(x)
+│ ────────> 0xffffffff80018f4b      488b542428     mov rdx, qword [var_28h]
+│ │╎│││││   0xffffffff80018f50      488b02         mov rax, qword [rdx] ; nanoprintf.h:837
+│ │╎│││││   0xffffffff80018f53      488d4808       lea rcx, [rax + 8]
+│ │╎│││││   0xffffffff80018f57      48890a         mov qword [rdx], rcx
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c8b(x)
+│ ────────> 0xffffffff80018f5a      488b00         mov rax, qword [rax]
+│ │╎│││││   0xffffffff80018f5d      4531f6         xor r14d, r14d      ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80018f60      4889c1         mov rcx, rax        ; nanoprintf.h:481
+│ │╎│││││   0xffffffff80018f63      4c8b542410     mov r10, qword [fs_len]
+│ │╎│││││   0xffffffff80018f68      0f1f84000000.  nop dword [rax + rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018f95(x)
+│ ────────> 0xffffffff80018f70      89c2           mov edx, eax        ; nanoprintf.h:479
+│ │╎│││││   0xffffffff80018f72      83e20f         and edx, 0xf        ; 15
+│ │╎│││││   0xffffffff80018f75      8d7257         lea esi, [rdx + 0x57] ; nanoprintf.h:480
+│ │╎│││││   0xffffffff80018f78      8d7a30         lea edi, [rdx + 0x30]
+│ │╎│││││   0xffffffff80018f7b      83fa0a         cmp edx, 0xa        ; 10
+│ │╎│││││   0xffffffff80018f7e      0f43fe         cmovae edi, esi
+│ │╎│││││   0xffffffff80018f81      42887c3440     mov byte [rsp + r14 + 0x40], dil
+│ │╎│││││   0xffffffff80018f86      48c1e904       shr rcx, 4          ; nanoprintf.h:481
+│ │╎│││││   0xffffffff80018f8a      4983c601       add r14, 1          ; nanoprintf.h:483
+│ │╎│││││   0xffffffff80018f8e      4883f810       cmp rax, 0x10       ; 16
+│ │╎│││││   0xffffffff80018f92      4889c8         mov rax, rcx
+│ ────────< 0xffffffff80018f95      73d9           jae 0xffffffff80018f70
+│ │╎│││││   0xffffffff80018f97      41bc78000000   mov r12d, 0x78      ; nanoprintf.h:0 ; 'x' ; 120
+│ │╎│││││   0xffffffff80018f9d      31c9           xor ecx, ecx
+│ │╎│││││   0xffffffff80018f9f      4531c0         xor r8d, r8d
+│ ────────< 0xffffffff80018fa2      e996010000     jmp 0xffffffff8001913d
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018d34(x)
+│ ────────> 0xffffffff80018fa7      81f996000000   cmp ecx, 0x96       ; nanoprintf.h:521 ; 150
+│ ────────< 0xffffffff80018fad      0f85b3010000   jne 0xffffffff80019166
+│ │╎│││││   0xffffffff80018fb3      4889fe         mov rsi, rdi        ; nanoprintf.h:0
+│ ────────< 0xffffffff80018fb6      e99b020000     jmp 0xffffffff80019256
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018da9(x)
+│ ────────> 0xffffffff80018fbb      488b542428     mov rdx, qword [var_28h]
+│ │╎│││││   0xffffffff80018fc0      488b02         mov rax, qword [rdx] ; nanoprintf.h:787
+│ │╎│││││   0xffffffff80018fc3      488d4808       lea rcx, [rax + 8]
+│ │╎│││││   0xffffffff80018fc7      48890a         mov qword [rdx], rcx
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018dbb(x)
+│ ────────> 0xffffffff80018fca      be30000000     mov esi, 0x30       ; nanoprintf.h:0 ; '0' ; 48
+│ │╎│││││   0xffffffff80018fcf      8b54240c       mov edx, dword [var_ch]
+│ │╎│││││   0xffffffff80018fd3      488b4c2418     mov rcx, qword [var_18h]
+│ │╎│││││   0xffffffff80018fd8      440fb700       movzx r8d, word [rax] ; nanoprintf.h:787
+│ │╎│││││   0xffffffff80018fdc      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ ────────< 0xffffffff80018fdf      744f           je 0xffffffff80019030
+│ ────────< 0xffffffff80018fe1      eb79           jmp 0xffffffff8001905c
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018dc6(x)
+│ ────────> 0xffffffff80018fe3      488b542428     mov rdx, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80018fe8      488b02         mov rax, qword [rdx] ; nanoprintf.h:789
+│ │╎│││││   0xffffffff80018feb      488d4808       lea rcx, [rax + 8]
+│ │╎│││││   0xffffffff80018fef      48890a         mov qword [rdx], rcx
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018dd8(x)
+│ ────────> 0xffffffff80018ff2      be30000000     mov esi, 0x30       ; nanoprintf.h:0 ; '0' ; 48
+│ │╎│││││   0xffffffff80018ff7      8b54240c       mov edx, dword [var_ch]
+│ │╎│││││   0xffffffff80018ffb      488b4c2418     mov rcx, qword [var_18h]
+│ │╎│││││   0xffffffff80019000      440fb600       movzx r8d, byte [rax] ; nanoprintf.h:789
+│ │╎│││││   0xffffffff80019004      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ ────────< 0xffffffff80019007      7427           je 0xffffffff80019030
+│ ────────< 0xffffffff80019009      eb51           jmp 0xffffffff8001905c
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018de3(x)
+│ ────────> 0xffffffff8001900b      488b542428     mov rdx, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019010      488b02         mov rax, qword [rdx] ; nanoprintf.h:790
+│ │╎│││││   0xffffffff80019013      488d4808       lea rcx, [rax + 8]
+│ │╎│││││   0xffffffff80019017      48890a         mov qword [rdx], rcx
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018df5(x)
+│ ────────> 0xffffffff8001901a      be30000000     mov esi, 0x30       ; nanoprintf.h:0 ; '0' ; 48
+│ │╎│││││   0xffffffff8001901f      8b54240c       mov edx, dword [var_ch]
+│ │╎│││││   0xffffffff80019023      488b4c2418     mov rcx, qword [var_18h]
+│ │╎│││││   0xffffffff80019028      4c8b00         mov r8, qword [rax] ; nanoprintf.h:790
+│ │╎│││││   0xffffffff8001902b      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ ────────< 0xffffffff8001902e      752c           jne 0xffffffff8001905c
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018d98(x), 0xffffffff80018e1d(x), 0xffffffff80018fdf(x), 0xffffffff80019007(x)
+│ ──└─────> 0xffffffff80019030      4183ff01       cmp r15d, 1         ; 1
+│ │╎┌─────< 0xffffffff80019034      7526           jne 0xffffffff8001905c
+│ │╎│││││   0xffffffff80019036      85c9           test ecx, ecx
+│ ────────< 0xffffffff80019038      7522           jne 0xffffffff8001905c
+│ │╎│││││   0xffffffff8001903a      83fd05         cmp ebp, 5          ; nanoprintf.h:806 ; 5
+│ │╎│││││   0xffffffff8001903d      0f94c0         sete al
+│ │╎│││││   0xffffffff80019040      84d2           test dl, dl
+│ │╎│││││   0xffffffff80019042      0f95c1         setne cl
+│ │╎│││││   0xffffffff80019045      20c1           and cl, al
+│ │╎│││││   0xffffffff80019047      0fb6c1         movzx eax, cl
+│ │╎│││││   0xffffffff8001904a      4889442418     mov qword [var_18h], rax
+│ │╎│││││   0xffffffff8001904f      4531f6         xor r14d, r14d      ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019052      4c8b542410     mov r10, qword [fs_len]
+│ ────────< 0xffffffff80019057      e990000000     jmp 0xffffffff800190ec
+│ │╎│││││   ; XREFS: CODE 0xffffffff80018d9e  CODE 0xffffffff80018e23  CODE 0xffffffff80018fe1  CODE 0xffffffff80019009  
+│ │╎│││││   ; XREFS: CODE 0xffffffff8001902e  CODE 0xffffffff80019034  CODE 0xffffffff80019038  
+│ ──└─────> 0xffffffff8001905c      83fd05         cmp ebp, 5          ; nanoprintf.h:812 ; 5
+│ │╎ ││││   0xffffffff8001905f      4c8b542410     mov r10, qword [fs_len]
+│ │╎┌─────< 0xffffffff80019064      741f           je 0xffffffff80019085
+│ │╎│││││   0xffffffff80019066      83fd04         cmp ebp, 4          ; 4
+│ ────────< 0xffffffff80019069      7521           jne 0xffffffff8001908c
+│ │╎│││││   0xffffffff8001906b      4d85c0         test r8, r8         ; nanoprintf.h:611
+│ ────────< 0xffffffff8001906e      0f8402010000   je 0xffffffff80019176
+│ │╎│││││   0xffffffff80019074      4d0fbdf0       bsr r14, r8         ; nanoprintf.h:633
+│ │╎│││││   0xffffffff80019078      4183f6c0       xor r14d, 0xffffffc0 ; 4294967232
+│ │╎│││││   0xffffffff8001907c      4183c641       add r14d, 0x41      ; 65
+│ ────────< 0xffffffff80019080      e9f7000000     jmp 0xffffffff8001917c
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019064(x)
+│ │╎└─────> 0xffffffff80019085      bd08000000     mov ebp, 8          ; nanoprintf.h:0
+│ │╎┌─────< 0xffffffff8001908a      eb11           jmp 0xffffffff8001909d
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019069(x)
+│ ────────> 0xffffffff8001908c      83fd06         cmp ebp, 6          ; nanoprintf.h:818 ; 6
+│ │╎│││││   0xffffffff8001908f      bd0a000000     mov ebp, 0xa
+│ │╎│││││   0xffffffff80019094      b810000000     mov eax, 0x10       ; 16
+│ │╎│││││   0xffffffff80019099      480f44e8       cmove rbp, rax
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001908a(x)
+│ │╎└─────> 0xffffffff8001909d      410fb6d9       movzx ebx, r9b      ; nanoprintf.h:819
+│ │╎ ││││   0xffffffff800190a1      83c337         add ebx, 0x37       ; 55
+│ │╎ ││││   0xffffffff800190a4      4531f6         xor r14d, r14d
+│ │╎ ││││   0xffffffff800190a7      4c89c1         mov rcx, r8         ; nanoprintf.h:0
+│ │╎┌─────< 0xffffffff800190aa      eb27           jmp 0xffffffff800190d3
+..
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800190da(x)
+│ ────────> 0xffffffff800190b0      4889c8         mov rax, rcx        ; nanoprintf.h:479
+│ │╎│││││   0xffffffff800190b3      31d2           xor edx, edx
+│ │╎│││││   0xffffffff800190b5      48f7f5         div rbp
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800190e2(x)
+│ ────────> 0xffffffff800190b8      83fa0a         cmp edx, 0xa        ; nanoprintf.h:480 ; 10
+│ │╎│││││   0xffffffff800190bb      89df           mov edi, ebx
+│ │╎│││││   0xffffffff800190bd      0f42fe         cmovb edi, esi
+│ │╎│││││   0xffffffff800190c0      01d7           add edi, edx
+│ │╎│││││   0xffffffff800190c2      42887c3440     mov byte [rsp + r14 + 0x40], dil
+│ │╎│││││   0xffffffff800190c7      4983c601       add r14, 1          ; nanoprintf.h:483
+│ │╎│││││   0xffffffff800190cb      4839e9         cmp rcx, rbp
+│ │╎│││││   0xffffffff800190ce      4889c1         mov rcx, rax
+│ ────────< 0xffffffff800190d1      7211           jb 0xffffffff800190e4
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800190aa(x)
+│ │╎└─────> 0xffffffff800190d3      4889c8         mov rax, rcx        ; nanoprintf.h:479
+│ │╎ ││││   0xffffffff800190d6      48c1e820       shr rax, 0x20
+│ ────────< 0xffffffff800190da      75d4           jne 0xffffffff800190b0
+│ │╎ ││││   0xffffffff800190dc      89c8           mov eax, ecx
+│ │╎ ││││   0xffffffff800190de      31d2           xor edx, edx
+│ │╎ ││││   0xffffffff800190e0      f7f5           div ebp
+│ ────────< 0xffffffff800190e2      ebd4           jmp 0xffffffff800190b8
+│ │╎ ││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800190d1(x)
+│ ────────> 0xffffffff800190e4      8b54240c       mov edx, dword [var_ch] ; nanoprintf.h:0
+│ │╎ ││││   0xffffffff800190e8      8b6c2408       mov ebp, dword [var_8h]
+│ │╎ ││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019057(x)
+│ ────────> 0xffffffff800190ec      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ │╎ ││││   0xffffffff800190ef      0f95c1         setne cl
+│ │╎ ││││   0xffffffff800190f2      84d2           test dl, dl
+│ │╎ ││││   0xffffffff800190f4      0f95c0         setne al
+│ │╎ ││││   0xffffffff800190f7      20c8           and al, cl          ; nanoprintf.h:822
+│ │╎ ││││   0xffffffff800190f9      83fd05         cmp ebp, 5          ; 5
+│ │╎┌─────< 0xffffffff800190fc      7522           jne 0xffffffff80019120
+│ │╎│││││   0xffffffff800190fe      84c0           test al, al
+│ ────────< 0xffffffff80019100      741e           je 0xffffffff80019120
+│ │╎│││││   0xffffffff80019102      4963c6         movsxd rax, r14d    ; nanoprintf.h:823
+│ │╎│││││   0xffffffff80019105      4183c601       add r14d, 1
+│ │╎│││││   0xffffffff80019109      c644044030     mov byte [rsp + rax + 0x40], 0x30 ; '0'
+│ │╎│││││                                                              ; [0x30:1]=255 ; 48
+│ │╎│││││   0xffffffff8001910e      4531e4         xor r12d, r12d
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019187(x)
+│ ────────> 0xffffffff80019111      4c8d6c2440     lea r13, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019116      4531c0         xor r8d, r8d
+│ │╎│││││   0xffffffff80019119      31c9           xor ecx, ecx
+│ ────────< 0xffffffff8001911b      e9d9040000     jmp 0xffffffff800195f9
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800190fc(x), 0xffffffff80019100(x)
+│ ──└─────> 0xffffffff80019120      31c9           xor ecx, ecx
+│ │╎ ││││   0xffffffff80019122      84c0           test al, al         ; nanoprintf.h:826
+│ │╎┌─────< 0xffffffff80019124      7411           je 0xffffffff80019137
+│ │╎│││││   0xffffffff80019126      83fd04         cmp ebp, 4          ; nanoprintf.h:827 ; 4
+│ ────────< 0xffffffff80019129      7479           je 0xffffffff800191a4
+│ │╎│││││   0xffffffff8001912b      b858000000     mov eax, 0x58       ; nanoprintf.h:0 ; 'X' ; 88
+│ │╎│││││   0xffffffff80019130      83fd06         cmp ebp, 6          ; nanoprintf.h:827 ; 6
+│ ────────< 0xffffffff80019133      7474           je 0xffffffff800191a9
+│ │╎│││││   0xffffffff80019135      31c9           xor ecx, ecx        ; nanoprintf.h:0
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019124(x)
+│ │╎└─────> 0xffffffff80019137      4531c0         xor r8d, r8d
+│ │╎ ││││   0xffffffff8001913a      4531e4         xor r12d, r12d
+│ │╎ ││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018fa2(x)
+│ ────────> 0xffffffff8001913d      4c8d6c2440     lea r13, [cbuf]
+│ │╎ ││││   0xffffffff80019142      83fd02         cmp ebp, 2          ; nanoprintf.h:909 ; 2
+│ │╎┌─────< 0xffffffff80019145      0f848b040000   je 0xffffffff800195d6
+│ ────────< 0xffffffff8001914b      e9a9040000     jmp 0xffffffff800195f9
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018f2d(x)
+│ ────────> 0xffffffff80019150      31c9           xor ecx, ecx        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019152      4531c0         xor r8d, r8d
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018f46(x)
+│ └───────> 0xffffffff80019155      4531e4         xor r12d, r12d
+│  ╎│││││   0xffffffff80019158      83fd02         cmp ebp, 2          ; nanoprintf.h:909 ; 2
+│ ┌───────< 0xffffffff8001915b      0f8475040000   je 0xffffffff800195d6
+│ ────────< 0xffffffff80019161      e993040000     jmp 0xffffffff800195f9
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018fad(x)
+│ ────────> 0xffffffff80019166      83f97f         cmp ecx, 0x7f       ; nanoprintf.h:522 ; '\x7f' ; 127
+│ ────────< 0xffffffff80019169      0f83e1000000   jae 0xffffffff80019250
+│ │╎│││││   0xffffffff8001916f      31f6           xor esi, esi        ; nanoprintf.h:0
+│ ────────< 0xffffffff80019171      e9e0000000     jmp 0xffffffff80019256
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001906e(x)
+│ ────────> 0xffffffff80019176      41be01000000   mov r14d, 1
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019080(x)
+│ ────────> 0xffffffff8001917c      4531e4         xor r12d, r12d
+│ │╎│││││   0xffffffff8001917f      4c89442440     mov qword [cbuf], r8 ; nanoprintf.h:813
+│ │╎│││││   0xffffffff80019184      4d85c0         test r8, r8         ; nanoprintf.h:804
+│ ────────< 0xffffffff80019187      7488           je 0xffffffff80019111 ; nanoprintf.h:826
+│ │╎│││││   0xffffffff80019189      4c8d6c2440     lea r13, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff8001918e      41b800000000   mov r8d, 0
+│ │╎│││││   0xffffffff80019194      b900000000     mov ecx, 0
+│ │╎│││││   0xffffffff80019199      807c240c00     cmp byte [var_ch], 0 ; nanoprintf.h:826
+│ ────────< 0xffffffff8001919e      0f8455040000   je 0xffffffff800195f9
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019129(x)
+│ ────────> 0xffffffff800191a4      b842000000     mov eax, 0x42       ; nanoprintf.h:0 ; 'B' ; 66
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019133(x)
+│ ────────> 0xffffffff800191a9      450fb6e1       movzx r12d, r9b
+│ │╎│││││   0xffffffff800191ad      4101c4         add r12d, eax       ; nanoprintf.h:831
+│ │╎│││││   0xffffffff800191b0      4531c0         xor r8d, r8d        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800191b3      4c8d6c2440     lea r13, [cbuf]
+│ │╎│││││   0xffffffff800191b8      31c9           xor ecx, ecx
+│ ────────< 0xffffffff800191ba      e93a040000     jmp 0xffffffff800195f9
+│ │╎│││││   ;-- default:                                               ; from 0xffffffff80018c47
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018c3e(x), 0xffffffff80018c47(x)
+│ ────────> 0xffffffff800191bf      31f6           xor esi, esi
+│ │╎│││││   0xffffffff800191c1      4c8b542410     mov r10, qword [fs_len]
+│ ────────< 0xffffffff800191c6      e96c030000     jmp 0xffffffff80019537
+│ │╎│││││   ;-- case 1:                                                ; from 0xffffffff80018c47
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c47(x)
+│ │╎│││││   0xffffffff800191cb      8b07           mov eax, dword [rdi] ; nanoprintf.h:750
+│ │╎│││││   0xffffffff800191cd      4883f828       cmp rax, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff800191d1      0f8715030000   ja 0xffffffff800194ec
+│ │╎│││││   0xffffffff800191d7      4889c2         mov rdx, rax
+│ │╎│││││   0xffffffff800191da      48035710       add rdx, qword [rdi + 0x10]
+│ │╎│││││   0xffffffff800191de      83c008         add eax, 8
+│ │╎│││││   0xffffffff800191e1      8907           mov dword [rdi], eax
+│ │╎│││││   0xffffffff800191e3      480fbf32       movsx rsi, word [rdx]
+│ │╎│││││   0xffffffff800191e7      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│ ────────< 0xffffffff800191ec      e946030000     jmp 0xffffffff80019537
+│ │╎│││││   ;-- case 3:                                                ; from 0xffffffff80018c47
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c47(x)
+│ │╎│││││   0xffffffff800191f1      8b07           mov eax, dword [rdi] ; nanoprintf.h:752
+│ │╎│││││   0xffffffff800191f3      4883f828       cmp rax, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff800191f7      0f8709030000   ja 0xffffffff80019506
+│ │╎│││││   0xffffffff800191fd      4889c2         mov rdx, rax
+│ │╎│││││   0xffffffff80019200      48035710       add rdx, qword [rdi + 0x10]
+│ │╎│││││   0xffffffff80019204      83c008         add eax, 8
+│ │╎│││││   0xffffffff80019207      8907           mov dword [rdi], eax
+│ │╎│││││   0xffffffff80019209      480fbe32       movsx rsi, byte [rdx]
+│ │╎│││││   0xffffffff8001920d      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│ ────────< 0xffffffff80019212      e920030000     jmp 0xffffffff80019537
+│ │╎│││││   ;-- case 4:                                                ; from 0xffffffff80018c47
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c47(x)
+│ │╎│││││   0xffffffff80019217      8b17           mov edx, dword [rdi] ; nanoprintf.h:753
+│ │╎│││││   0xffffffff80019219      4883fa28       cmp rdx, 0x28       ; '(' ; 40
+│ ────────< 0xffffffff8001921d      0f87fd020000   ja 0xffffffff80019520
+│ │╎│││││   0xffffffff80019223      4889d0         mov rax, rdx
+│ │╎│││││   0xffffffff80019226      48034710       add rax, qword [rdi + 0x10]
+│ │╎│││││   0xffffffff8001922a      83c208         add edx, 8
+│ │╎│││││   0xffffffff8001922d      8917           mov dword [rdi], edx
+│ ────────< 0xffffffff8001922f      e9fb020000     jmp 0xffffffff8001952f
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80018c54(x)
+│ ────────> 0xffffffff80019234      488b742428     mov rsi, qword [var_28h] ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019239      488b06         mov rax, qword [rsi]
+│ │╎│││││   0xffffffff8001923c      488d5008       lea rdx, [rax + 8]
+│ │╎│││││   0xffffffff80019240      488916         mov qword [rsi], rdx
+│ │╎│││││   0xffffffff80019243      486330         movsxd rsi, dword [rax]
+│ │╎│││││   0xffffffff80019246      4c8b542410     mov r10, qword [fs_len]
+│ ────────< 0xffffffff8001924b      e9e7020000     jmp 0xffffffff80019537
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019169(x)
+│ ────────> 0xffffffff80019250      b196           mov cl, 0x96        ; nanoprintf.h:525 ; 150
+│ │╎│││││   0xffffffff80019252      28c1           sub cl, al
+│ │╎│││││   0xffffffff80019254      d3ee           shr esi, cl
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018d42(x), 0xffffffff80018fb6(x), 0xffffffff80019171(x)
+│ ────────> 0xffffffff80019256      04a6           add al, 0xa6        ; nanoprintf.h:533 ; 166
+│ │╎│││││   0xffffffff80019258      89c1           mov ecx, eax
+│ │╎│││││   0xffffffff8001925a      48d3e7         shl rdi, cl
+│ │╎│││││   0xffffffff8001925d      4821df         and rdi, rbx
+│ │╎│││││   0xffffffff80019260      4801ff         add rdi, rdi
+│ │╎│││││   0xffffffff80019263      83fac4         cmp edx, 0xffffffc4
+│ │╎│││││   0xffffffff80019266      488d14bf       lea rdx, [rdi + rdi*4]
+│ │╎│││││   0xffffffff8001926a      b900000000     mov ecx, 0
+│ │╎│││││   0xffffffff8001926f      480f43ca       cmovae rcx, rdx
+│ │╎│││││   0xffffffff80019273      488d41ff       lea rax, [rcx - 1]  ; nanoprintf.h:545
+│ │╎│││││   0xffffffff80019277      31ff           xor edi, edi
+│ │╎│││││   0xffffffff80019279      4839d8         cmp rax, rbx
+│ ────────< 0xffffffff8001927c      732e           jae 0xffffffff800192ac
+│ │╎│││││   0xffffffff8001927e      4889d0         mov rax, rdx        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019281      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎│││││   0xffffffff8001928b      0f1f440000     nop dword [rax + rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800192a8(x)
+│ ────────> 0xffffffff80019290      83c701         add edi, 1          ; nanoprintf.h:546
+│ │╎│││││   0xffffffff80019293      4801c0         add rax, rax        ; nanoprintf.h:548
+│ │╎│││││   0xffffffff80019296      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff8001929a      488d0c80       lea rcx, [rax + rax*4] ; nanoprintf.h:545
+│ │╎│││││   0xffffffff8001929e      4883c1ff       add rcx, 0xffffffffffffffff
+│ │╎│││││   0xffffffff800192a2      4889d0         mov rax, rdx
+│ │╎│││││   0xffffffff800192a5      4839d9         cmp rcx, rbx
+│ ────────< 0xffffffff800192a8      72e6           jb 0xffffffff80019290
+│ ────────< 0xffffffff800192aa      eb0e           jmp 0xffffffff800192ba
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001927c(x)
+│ ────────> 0xffffffff800192ac      488d442440     lea rax, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800192b1      4885c9         test rcx, rcx       ; nanoprintf.h:555
+│ ────────< 0xffffffff800192b4      0f847b010000   je 0xffffffff80019435
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800192aa(x)
+│ ────────> 0xffffffff800192ba      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff800192bd      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff800192c1      488d43ff       lea rax, [rbx - 1]  ; nanoprintf.h:558
+│ │╎│││││   0xffffffff800192c5      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff800192c8      0f84d5000000   je 0xffffffff800193a3
+│ │╎│││││   0xffffffff800192ce      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff800192d1      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff800192d5      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff800192d9      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff800192dc      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff800192e0      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff800192e4      488d43fd       lea rax, [rbx - 3]  ; nanoprintf.h:558
+│ │╎│││││   0xffffffff800192e8      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff800192eb      0f84b2000000   je 0xffffffff800193a3
+│ │╎│││││   0xffffffff800192f1      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff800192f4      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff800192f8      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff800192fc      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff800192ff      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff80019303      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff80019307      488d43f9       lea rax, [rbx - 7]  ; nanoprintf.h:558
+│ │╎│││││   0xffffffff8001930b      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff8001930e      0f848f000000   je 0xffffffff800193a3
+│ │╎│││││   0xffffffff80019314      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff80019317      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff8001931b      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff8001931f      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff80019322      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff80019326      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff8001932a      488d43f1       lea rax, [rbx - 0xf] ; nanoprintf.h:558
+│ │╎│││││   0xffffffff8001932e      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff80019331      7470           je 0xffffffff800193a3
+│ │╎│││││   0xffffffff80019333      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff80019336      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff8001933a      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff8001933e      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff80019341      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff80019345      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff80019349      488d43e1       lea rax, [rbx - 0x1f] ; nanoprintf.h:558
+│ │╎│││││   0xffffffff8001934d      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff80019350      7451           je 0xffffffff800193a3
+│ │╎│││││   0xffffffff80019352      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff80019355      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff80019359      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff8001935d      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff80019360      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff80019364      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff80019368      488d43c1       lea rax, [rbx - 0x3f] ; nanoprintf.h:558
+│ │╎│││││   0xffffffff8001936c      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff8001936f      7432           je 0xffffffff800193a3
+│ │╎│││││   0xffffffff80019371      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff80019374      488d1480       lea rdx, [rax + rax*4]
+│ │╎│││││   0xffffffff80019378      488d0489       lea rax, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff8001937c      4889d1         mov rcx, rdx        ; nanoprintf.h:557
+│ │╎│││││   0xffffffff8001937f      48c1e93c       shr rcx, 0x3c
+│ │╎│││││   0xffffffff80019383      488d0c41       lea rcx, [rcx + rax*2]
+│ │╎│││││   0xffffffff80019387      488d4381       lea rax, [rbx - 0x7f] ; nanoprintf.h:558
+│ │╎│││││   0xffffffff8001938b      4821d0         and rax, rdx        ; nanoprintf.h:555
+│ ────────< 0xffffffff8001938e      7413           je 0xffffffff800193a3
+│ │╎│││││   0xffffffff80019390      4801c0         add rax, rax        ; nanoprintf.h:559
+│ │╎│││││   0xffffffff80019393      488d0480       lea rax, [rax + rax*4]
+│ │╎│││││   0xffffffff80019397      488d0c89       lea rcx, [rcx + rcx*4] ; nanoprintf.h:556
+│ │╎│││││   0xffffffff8001939b      48c1e83c       shr rax, 0x3c       ; nanoprintf.h:557
+│ │╎│││││   0xffffffff8001939f      488d0c48       lea rcx, [rax + rcx*2]
+│ │╎│││││   ; XREFS: CODE 0xffffffff800192c8  CODE 0xffffffff800192eb  CODE 0xffffffff8001930e  CODE 0xffffffff80019331  
+│ │╎│││││   ; XREFS: CODE 0xffffffff80019350  CODE 0xffffffff8001936f  CODE 0xffffffff8001938e  
+│ ────────> 0xffffffff800193a3      488d6c2440     lea rbp, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800193a8      4885c9         test rcx, rcx       ; nanoprintf.h:591
+│ ────────< 0xffffffff800193ab      743a           je 0xffffffff800193e7
+│ │╎│││││   0xffffffff800193ad      488d6c2440     lea rbp, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800193b2      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎│││││   0xffffffff800193bc      0f1f4000       nop dword [rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800193e5(x)
+│ ────────> 0xffffffff800193c0      4889c8         mov rax, rcx        ; nanoprintf.h:593
+│ │╎│││││   0xffffffff800193c3      49f7e2         mul r10
+│ │╎│││││   0xffffffff800193c6      48c1ea03       shr rdx, 3
+│ │╎│││││   0xffffffff800193ca      8d0412         lea eax, [rdx + rdx]
+│ │╎│││││   0xffffffff800193cd      8d0480         lea eax, [rax + rax*4]
+│ │╎│││││   0xffffffff800193d0      89cb           mov ebx, ecx
+│ │╎│││││   0xffffffff800193d2      29c3           sub ebx, eax
+│ │╎│││││   0xffffffff800193d4      80cb30         or bl, 0x30         ; nanoprintf.h:592 ; 48
+│ │╎│││││   0xffffffff800193d7      885d00         mov byte [rbp], bl
+│ │╎│││││   0xffffffff800193da      4883c501       add rbp, 1
+│ │╎│││││   0xffffffff800193de      4883f90a       cmp rcx, 0xa        ; nanoprintf.h:591 ; 10
+│ │╎│││││   0xffffffff800193e2      4889d1         mov rcx, rdx
+│ ────────< 0xffffffff800193e5      73d9           jae 0xffffffff800193c0
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800193ab(x)
+│ ────────> 0xffffffff800193e7      85ff           test edi, edi       ; nanoprintf.h:597
+│ ────────< 0xffffffff800193e9      7e47           jle 0xffffffff80019432
+│ │╎│││││   0xffffffff800193eb      89f9           mov ecx, edi
+│ │╎│││││   0xffffffff800193ed      83c7ff         add edi, 0xffffffff
+│ │╎│││││   0xffffffff800193f0      4889e8         mov rax, rbp        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800193f3      4883e107       and rcx, 7          ; nanoprintf.h:597
+│ ────────< 0xffffffff800193f7      7414           je 0xffffffff8001940d
+│ │╎│││││   0xffffffff800193f9      4889e8         mov rax, rbp        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800193fc      0f1f4000       nop dword [rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001940b(x)
+│ ────────> 0xffffffff80019400      c60030         mov byte [rax], 0x30 ; nanoprintf.h:597 ; '0'
+│ │╎│││││                                                              ; [0x30:1]=255 ; 48
+│ │╎│││││   0xffffffff80019403      4883c001       add rax, 1
+│ │╎│││││   0xffffffff80019407      4883c1ff       add rcx, 0xffffffffffffffff
+│ ────────< 0xffffffff8001940b      75f3           jne 0xffffffff80019400
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800193f7(x)
+│ ────────> 0xffffffff8001940d      83ff07         cmp edi, 7          ; 7
+│ ────────< 0xffffffff80019410      7223           jb 0xffffffff80019435
+│ │╎│││││   0xffffffff80019412      4801fd         add rbp, rdi        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019415      48ba30303030.  movabs rdx, 0x3030303030303030 ; '00000000'
+│ │╎│││││   0xffffffff8001941f      90             nop
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001942e(x)
+│ ────────> 0xffffffff80019420      488910         mov qword [rax], rdx ; nanoprintf.h:597
+│ │╎│││││   0xffffffff80019423      488d4807       lea rcx, [rax + 7]
+│ │╎│││││   0xffffffff80019427      4883c008       add rax, 8
+│ │╎│││││   0xffffffff8001942b      4839e9         cmp rcx, rbp
+│ ────────< 0xffffffff8001942e      75f0           jne 0xffffffff80019420
+│ ────────< 0xffffffff80019430      eb03           jmp 0xffffffff80019435
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800193e9(x)
+│ ────────> 0xffffffff80019432      4889e8         mov rax, rbp        ; nanoprintf.h:0
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800192b4(x), 0xffffffff80019410(x), 0xffffffff80019430(x)
+│ ────────> 0xffffffff80019435      4889c1         mov rcx, rax        ; nanoprintf.h:598
+│ │╎│││││   0xffffffff80019438      488d542440     lea rdx, [cbuf]
+│ │╎│││││   0xffffffff8001943d      4829d1         sub rcx, rdx
+│ │╎│││││   0xffffffff80019440      488d7801       lea rdi, [rax + 1]  ; nanoprintf.h:599
+│ │╎│││││   0xffffffff80019444      c6002e         mov byte [rax], 0x2e ; '.'
+│ │╎│││││                                                              ; [0x2e:1]=255 ; 46
+│ │╎│││││   0xffffffff80019447      8b542468       mov edx, dword [var_68h]
+│ │╎│││││   0xffffffff8001944b      4189d6         mov r14d, edx       ; nanoprintf.h:602
+│ │╎│││││   0xffffffff8001944e      4129c6         sub r14d, eax
+│ │╎│││││   0xffffffff80019451      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎│││││   0xffffffff8001945b      0f1f440000     nop dword [rax + rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001948a(x)
+│ ────────> 0xffffffff80019460      4889f0         mov rax, rsi
+│ │╎│││││   0xffffffff80019463      49f7e2         mul r10
+│ │╎│││││   0xffffffff80019466      48c1ea03       shr rdx, 3
+│ │╎│││││   0xffffffff8001946a      8d0412         lea eax, [rdx + rdx]
+│ │╎│││││   0xffffffff8001946d      8d0480         lea eax, [rax + rax*4]
+│ │╎│││││   0xffffffff80019470      89f5           mov ebp, esi
+│ │╎│││││   0xffffffff80019472      29c5           sub ebp, eax
+│ │╎│││││   0xffffffff80019474      4080cd30       or bpl, 0x30        ; 48
+│ │╎│││││   0xffffffff80019478      40882f         mov byte [rdi], bpl
+│ │╎│││││   0xffffffff8001947b      4883c701       add rdi, 1
+│ │╎│││││   0xffffffff8001947f      4183c6ff       add r14d, 0xffffffff
+│ │╎│││││   0xffffffff80019483      4883fe09       cmp rsi, 9          ; 9
+│ │╎│││││   0xffffffff80019487      4889d6         mov rsi, rdx
+│ ────────< 0xffffffff8001948a      77d4           ja 0xffffffff80019460
+│ │╎│││││   0xffffffff8001948c      4489f0         mov eax, r14d       ; nanoprintf.h:877
+│ │╎│││││   0xffffffff8001948f      f7d8           neg eax
+│ ────────< 0xffffffff80019491      7829           js 0xffffffff800194bc
+│ │╎│││││   0xffffffff80019493      89c8           mov eax, ecx        ; nanoprintf.h:881
+│ │╎│││││   0xffffffff80019495      2b442418       sub eax, dword [var_18h]
+│ │╎│││││   0xffffffff80019499      4531e4         xor r12d, r12d      ; nanoprintf.h:0
+│ │╎│││││   0xffffffff8001949c      85c0           test eax, eax       ; nanoprintf.h:287
+│ │╎│││││   0xffffffff8001949e      410f4ec4       cmovle eax, r12d
+│ │╎│││││   0xffffffff800194a2      4c8d2c04       lea r13, [rsp + rax] ; nanoprintf.h:882
+│ │╎│││││   0xffffffff800194a6      4983c540       add r13, 0x40       ; elf_phdr
+│ │╎│││││   0xffffffff800194aa      4401f0         add eax, r14d       ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800194ad      f7d8           neg eax
+│ │╎│││││   0xffffffff800194af      4189c6         mov r14d, eax
+│ │╎│││││   0xffffffff800194b2      4c8b542410     mov r10, qword [fs_len]
+│ ────────< 0xffffffff800194b7      e911010000     jmp 0xffffffff800195cd
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019491(x)
+│ ────────> 0xffffffff800194bc      8b6c2408       mov ebp, dword [var_8h]
+│ │╎│││││   0xffffffff800194c0      83fd02         cmp ebp, 2          ; nanoprintf.h:909 ; 2
+│ │╎│││││   0xffffffff800194c3      488b4c2418     mov rcx, qword [var_18h]
+│ ────────< 0xffffffff800194c8      750f           jne 0xffffffff800194d9 ; nanoprintf.h:953
+│ │╎│││││   0xffffffff800194ca      4c8d6c2440     lea r13, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800194cf      4c8b642460     mov r12, qword [pc]
+│ ────────< 0xffffffff800194d4      e991010000     jmp 0xffffffff8001966a
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800194c8(x)
+│ ────────> 0xffffffff800194d9      4531ff         xor r15d, r15d
+│ │╎│││││   0xffffffff800194dc      b001           mov al, 1
+│ │╎│││││   0xffffffff800194de      89442434       mov dword [var_34h], eax
+│ │╎│││││   0xffffffff800194e2      4c8d6c2440     lea r13, [cbuf]
+│ ────────< 0xffffffff800194e7      e97a030000     jmp 0xffffffff80019866
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800191d1(x)
+│ ────────> 0xffffffff800194ec      488b742428     mov rsi, qword [var_28h]
+│ │╎│││││   0xffffffff800194f1      488b06         mov rax, qword [rsi] ; nanoprintf.h:750
+│ │╎│││││   0xffffffff800194f4      488d5008       lea rdx, [rax + 8]
+│ │╎│││││   0xffffffff800194f8      488916         mov qword [rsi], rdx
+│ │╎│││││   0xffffffff800194fb      480fbf30       movsx rsi, word [rax]
+│ │╎│││││   0xffffffff800194ff      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│ ────────< 0xffffffff80019504      eb31           jmp 0xffffffff80019537
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800191f7(x)
+│ ────────> 0xffffffff80019506      488b742428     mov rsi, qword [var_28h]
+│ │╎│││││   0xffffffff8001950b      488b06         mov rax, qword [rsi] ; nanoprintf.h:752
+│ │╎│││││   0xffffffff8001950e      488d5008       lea rdx, [rax + 8]
+│ │╎│││││   0xffffffff80019512      488916         mov qword [rsi], rdx
+│ │╎│││││   0xffffffff80019515      480fbe30       movsx rsi, byte [rax]
+│ │╎│││││   0xffffffff80019519      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│ ────────< 0xffffffff8001951e      eb17           jmp 0xffffffff80019537
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001921d(x)
+│ ────────> 0xffffffff80019520      488b742428     mov rsi, qword [var_28h]
+│ │╎│││││   0xffffffff80019525      488b06         mov rax, qword [rsi] ; nanoprintf.h:753
+│ │╎│││││   0xffffffff80019528      488d5008       lea rdx, [rax + 8]
+│ │╎│││││   0xffffffff8001952c      488916         mov qword [rsi], rdx
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001922f(x)
+│ ────────> 0xffffffff8001952f      4c8b542410     mov r10, qword [fs_len] ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019534      488b30         mov rsi, qword [rax] ; nanoprintf.h:753
+│ │╎│││││   ; XREFS: CODE 0xffffffff80018c6e  CODE 0xffffffff800191c6  CODE 0xffffffff800191ec  CODE 0xffffffff80019212  
+│ │╎│││││   ; XREFS: CODE 0xffffffff8001924b  CODE 0xffffffff80019504  CODE 0xffffffff8001951e  
+│ ────────> 0xffffffff80019537      440fb6c1       movzx r8d, cl       ; nanoprintf.h:763
+│ │╎│││││   0xffffffff8001953b      4885f6         test rsi, rsi
+│ │╎│││││   0xffffffff8001953e      b82d000000     mov eax, 0x2d       ; '-' ; 45
+│ │╎│││││   0xffffffff80019543      440f48c0       cmovs r8d, eax
+│ ────────< 0xffffffff80019547      7526           jne 0xffffffff8001956f ; nanoprintf.h:770
+│ │╎│││││   0xffffffff80019549      4183ff01       cmp r15d, 1         ; 1
+│ ────────< 0xffffffff8001954d      7520           jne 0xffffffff8001956f
+│ │╎│││││   0xffffffff8001954f      4531e4         xor r12d, r12d      ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019552      837c241800     cmp dword [var_18h], 0 ; nanoprintf.h:770
+│ ────────< 0xffffffff80019557      7516           jne 0xffffffff8001956f
+│ │╎│││││   0xffffffff80019559      4c8d6c2440     lea r13, [cbuf]     ; nanoprintf.h:0
+│ │╎│││││   0xffffffff8001955e      4531f6         xor r14d, r14d
+│ │╎│││││   0xffffffff80019561      31c9           xor ecx, ecx
+│ │╎│││││   0xffffffff80019563      31c0           xor eax, eax
+│ │╎│││││   0xffffffff80019565      4889442418     mov qword [var_18h], rax
+│ ────────< 0xffffffff8001956a      e98a000000     jmp 0xffffffff800195f9
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80019547(x), 0xffffffff8001954d(x), 0xffffffff80019557(x)
+│ ────────> 0xffffffff8001956f      4531f6         xor r14d, r14d
+│ │╎│││││   0xffffffff80019572      4889f1         mov rcx, rsi
+│ │╎│││││   0xffffffff80019575      48bd67666666.  movabs rbp, 0x6666666666666667 ; 'gfffffff'
+│ │╎│││││   0xffffffff8001957f      90             nop
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800195c1(x)
+│ ────────> 0xffffffff80019580      4889c8         mov rax, rcx        ; nanoprintf.h:472
+│ │╎│││││   0xffffffff80019583      48f7ed         imul rbp
+│ │╎│││││   0xffffffff80019586      4889d0         mov rax, rdx
+│ │╎│││││   0xffffffff80019589      48c1e83f       shr rax, 0x3f
+│ │╎│││││   0xffffffff8001958d      48c1fa02       sar rdx, 2
+│ │╎│││││   0xffffffff80019591      4801c2         add rdx, rax
+│ │╎│││││   0xffffffff80019594      8d0412         lea eax, [rdx + rdx]
+│ │╎│││││   0xffffffff80019597      8d0480         lea eax, [rax + rax*4]
+│ │╎│││││   0xffffffff8001959a      89cf           mov edi, ecx
+│ │╎│││││   0xffffffff8001959c      29c7           sub edi, eax
+│ │╎│││││   0xffffffff8001959e      89f8           mov eax, edi
+│ │╎│││││   0xffffffff800195a0      f6d8           neg al
+│ │╎│││││   0xffffffff800195a2      4885f6         test rsi, rsi       ; nanoprintf.h:763
+│ │╎│││││   0xffffffff800195a5      0fb6c0         movzx eax, al       ; nanoprintf.h:472
+│ │╎│││││   0xffffffff800195a8      0f49c7         cmovns eax, edi
+│ │╎│││││   0xffffffff800195ab      0430           add al, 0x30        ; 48
+│ │╎│││││   0xffffffff800195ad      4288443440     mov byte [rsp + r14 + 0x40], al
+│ │╎│││││   0xffffffff800195b2      4883c109       add rcx, 9
+│ │╎│││││   0xffffffff800195b6      4983c601       add r14, 1
+│ │╎│││││   0xffffffff800195ba      4883f913       cmp rcx, 0x13       ; 19
+│ │╎│││││   0xffffffff800195be      4889d1         mov rcx, rdx
+│ ────────< 0xffffffff800195c1      73bd           jae 0xffffffff80019580
+│ │╎│││││   0xffffffff800195c3      31c9           xor ecx, ecx        ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800195c5      4531e4         xor r12d, r12d
+│ │╎│││││   0xffffffff800195c8      4c8d6c2440     lea r13, [cbuf]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800194b7(x)
+│ ────────> 0xffffffff800195cd      8b6c2408       mov ebp, dword [var_8h]
+│ │╎│││││   0xffffffff800195d1      83fd02         cmp ebp, 2          ; nanoprintf.h:909 ; 2
+│ ────────< 0xffffffff800195d4      7523           jne 0xffffffff800195f9
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018beb(x), 0xffffffff80019145(x), 0xffffffff8001915b(x)
+│ └─└└────> 0xffffffff800195d6      4531ff         xor r15d, r15d      ; nanoprintf.h:0
+│  ╎  │││   0xffffffff800195d9      40b501         mov bpl, 1
+│  ╎  │││   0xffffffff800195dc      4585e4         test r12d, r12d     ; nanoprintf.h:950
+│  ╎ ┌────< 0xffffffff800195df      7535           jne 0xffffffff80019616
+│  ╎ ││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019614(x)
+│  ╎┌─────> 0xffffffff800195e1      4084ed         test bpl, bpl       ; nanoprintf.h:953
+│ ┌───────< 0xffffffff800195e4      0f846b020000   je 0xffffffff80019855
+│ │╎╎││││   0xffffffff800195ea      4c8b642460     mov r12, qword [pc] ; nanoprintf.h:0
+│ │╎╎││││   0xffffffff800195ef      4585f6         test r14d, r14d     ; nanoprintf.h:954
+│ ────────< 0xffffffff800195f2      7f76           jg 0xffffffff8001966a
+│ ────────< 0xffffffff800195f4      e944020000     jmp 0xffffffff8001983d
+│ │╎╎││││   ; XREFS: CODE 0xffffffff80018bf1  CODE 0xffffffff80018ee8  CODE 0xffffffff8001911b  CODE 0xffffffff8001914b  
+│ │╎╎││││   ; XREFS: CODE 0xffffffff80019161  CODE 0xffffffff8001919e  CODE 0xffffffff800191ba  CODE 0xffffffff8001956a  
+│ │╎╎││││   ; XREFS: CODE 0xffffffff800195d4  
+│ ──────└─> 0xffffffff800195f9      83fd09         cmp ebp, 9          ; nanoprintf.h:913 ; 9
+│ │╎╎│││    0xffffffff800195fc      410f45ce       cmovne ecx, r14d
+│ │╎╎│││    0xffffffff80019600      4c8b7c2418     mov r15, qword [var_18h] ; nanoprintf.h:0
+│ │╎╎│││    0xffffffff80019605      4129cf         sub r15d, ecx       ; nanoprintf.h:914
+│ │╎╎│││    0xffffffff80019608      31ed           xor ebp, ebp        ; nanoprintf.h:0
+│ │╎╎│││    0xffffffff8001960a      4585ff         test r15d, r15d     ; nanoprintf.h:287
+│ │╎╎│││    0xffffffff8001960d      440f4efd       cmovle r15d, ebp
+│ │╎╎│││    0xffffffff80019611      4585e4         test r12d, r12d     ; nanoprintf.h:950
+│ │╎└─────< 0xffffffff80019614      74cb           je 0xffffffff800195e1
+│ │╎ │││    ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800195df(x)
+│ │╎ └────> 0xffffffff80019616      4c89bc248000.  mov qword [var_80h], r15 ; nanoprintf.h:0
+│ │╎  ││    0xffffffff8001961e      4489442470     mov dword [var_70h], r8d
+│ │╎  ││    0xffffffff80019623      4589e7         mov r15d, r12d
+│ │╎  ││    0xffffffff80019626      bf30000000     mov edi, 0x30       ; nanoprintf.h:663 ; '0' ; 48
+│ │╎  ││    0xffffffff8001962b      488b5c2438     mov rbx, qword [var_38h]
+│ │╎  ││    0xffffffff80019630      4889de         mov rsi, rbx
+│ │╎  ││    0xffffffff80019633      4c8b642460     mov r12, qword [pc]
+│ │╎  ││    0xffffffff80019638      41ffd4         call r12
+│ │╎  ││    0xffffffff8001963b      488b442420     mov rax, qword [pc_cnt] ; nanoprintf.h:0
+│ │╎  ││    0xffffffff80019640      83c002         add eax, 2          ; nanoprintf.h:662
+│ │╎  ││    0xffffffff80019643      4889442420     mov qword [pc_cnt], rax ; nanoprintf.h:0
+│ │╎  ││    0xffffffff80019648      4489ff         mov edi, r15d       ; nanoprintf.h:663
+│ │╎  ││    0xffffffff8001964b      4889de         mov rsi, rbx
+│ │╎  ││    0xffffffff8001964e      41ffd4         call r12
+│ │╎  ││    0xffffffff80019651      4084ed         test bpl, bpl       ; nanoprintf.h:953
+│ │╎  ││┌─< 0xffffffff80019654      7451           je 0xffffffff800196a7
+│ │╎  │││   0xffffffff80019656      41bb20000000   mov r11d, 0x20      ; nanoprintf.h:0 ; 32
+│ │╎  │││   0xffffffff8001965c      4c8b542410     mov r10, qword [fs_len]
+│ │╎  │││   0xffffffff80019661      4585f6         test r14d, r14d     ; nanoprintf.h:954
+│ │╎ ┌────< 0xffffffff80019664      0f8ed3010000   jle 0xffffffff8001983d
+│ │╎ ││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800194d4(x), 0xffffffff800195f2(x)
+│ ────────> 0xffffffff8001966a      4589f6         mov r14d, r14d
+│ │╎ ││││   0xffffffff8001966d      31db           xor ebx, ebx
+│ │╎ ││││   0xffffffff8001966f      488b6c2438     mov rbp, qword [var_38h]
+│ │╎ ││││   0xffffffff80019674      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎ ││││   0xffffffff8001967e      6690           nop
+│ │╎ ││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019693(x)
+│ │╎┌─────> 0xffffffff80019680      410fbe7c1d00   movsx edi, byte [r13 + rbx]
+│ │╎╎││││   0xffffffff80019686      4889ee         mov rsi, rbp        ; nanoprintf.h:663
+│ │╎╎││││   0xffffffff80019689      41ffd4         call r12
+│ │╎╎││││   0xffffffff8001968c      4883c301       add rbx, 1          ; nanoprintf.h:954
+│ │╎╎││││   0xffffffff80019690      4939de         cmp r14, rbx
+│ │╎└─────< 0xffffffff80019693      75eb           jne 0xffffffff80019680
+│ │╎ ││││   0xffffffff80019695      488b442420     mov rax, qword [pc_cnt] ; nanoprintf.h:0
+│ │╎ ││││   0xffffffff8001969a      4401f0         add eax, r14d       ; nanoprintf.h:954
+│ │╎ ││││   0xffffffff8001969d      4889442420     mov qword [pc_cnt], rax
+│ │╎┌─────< 0xffffffff800196a2      e984010000     jmp 0xffffffff8001982b
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019654(x)
+│ │╎││││└─> 0xffffffff800196a7      c74424340000.  mov dword [var_34h], 0 ; nanoprintf.h:0
+│ │╎││││    0xffffffff800196af      488b4c2418     mov rcx, qword [var_18h]
+│ │╎││││    0xffffffff800196b4      8b6c2408       mov ebp, dword [var_8h]
+│ │╎││││    0xffffffff800196b8      448b442470     mov r8d, dword [var_70h]
+│ │╎││││    0xffffffff800196bd      4c8bbc248000.  mov r15, qword [var_80h]
+│ │╎││││    0xffffffff800196c5      4584c0         test r8b, r8b       ; nanoprintf.h:956
+│ │╎││││┌─< 0xffffffff800196c8      741f           je 0xffffffff800196e9
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018d79(x), 0xffffffff8001986e(x)
+│ ────────> 0xffffffff800196ca      410fb6f8       movzx edi, r8b      ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800196ce      488b442420     mov rax, qword [pc_cnt]
+│ │╎│││││   0xffffffff800196d3      83c001         add eax, 1          ; nanoprintf.h:662
+│ │╎│││││   0xffffffff800196d6      4889442420     mov qword [pc_cnt], rax ; nanoprintf.h:0
+│ │╎│││││   0xffffffff800196db      488b742438     mov rsi, qword [var_38h]
+│ │╎│││││   0xffffffff800196e0      4889cb         mov rbx, rcx
+│ │╎│││││   0xffffffff800196e3      41ffd4         call r12            ; nanoprintf.h:663
+│ │╎│││││   0xffffffff800196e6      4889d9         mov rcx, rbx        ; nanoprintf.h:0
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018d7f(x), 0xffffffff800196c8(x), 0xffffffff80019874(x)
+│ ──────└─> 0xffffffff800196e9      8b44240c       mov eax, dword [var_ch]
+│ │╎││││    0xffffffff800196ed      83fd09         cmp ebp, 9          ; nanoprintf.h:958 ; 9
+│ │╎││││┌─< 0xffffffff800196f0      751d           jne 0xffffffff8001970f
+│ │╎│││││   0xffffffff800196f2      85c9           test ecx, ecx       ; nanoprintf.h:969
+│ ────────< 0xffffffff800196f4      0f85a3000000   jne 0xffffffff8001979d
+│ │╎│││││   0xffffffff800196fa      84c0           test al, al
+│ ────────< 0xffffffff800196fc      0f859b000000   jne 0xffffffff8001979d
+│ │╎│││││   0xffffffff80019702      4983c501       add r13, 1
+│ │╎│││││   0xffffffff80019706      4183c6ff       add r14d, 0xffffffff
+│ ────────< 0xffffffff8001970a      e98e000000     jmp 0xffffffff8001979d ; nanoprintf.h:0
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800196f0(x)
+│ │╎││││└─> 0xffffffff8001970f      4585ff         test r15d, r15d     ; nanoprintf.h:962
+│ │╎││││┌─< 0xffffffff80019712      742d           je 0xffffffff80019741
+│ │╎│││││   0xffffffff80019714      4489fb         mov ebx, r15d       ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019717      488b6c2438     mov rbp, qword [var_38h]
+│ │╎│││││   0xffffffff8001971c      0f1f4000       nop dword [rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001972e(x)
+│ ────────> 0xffffffff80019720      bf30000000     mov edi, 0x30       ; nanoprintf.h:663 ; '0' ; 48
+│ │╎│││││   0xffffffff80019725      4889ee         mov rsi, rbp
+│ │╎│││││   0xffffffff80019728      41ffd4         call r12
+│ │╎│││││   0xffffffff8001972b      83c3ff         add ebx, 0xffffffff ; nanoprintf.h:962
+│ ────────< 0xffffffff8001972e      75f0           jne 0xffffffff80019720
+│ │╎│││││   0xffffffff80019730      488b442420     mov rax, qword [pc_cnt] ; nanoprintf.h:0
+│ │╎│││││   0xffffffff80019735      4401f8         add eax, r15d       ; nanoprintf.h:962
+│ │╎│││││   0xffffffff80019738      4889442420     mov qword [pc_cnt], rax
+│ │╎│││││   0xffffffff8001973d      8b6c2408       mov ebp, dword [var_8h]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019712(x)
+│ │╎││││└─> 0xffffffff80019741      41bfffffffff   mov r15d, 0xffffffff ; nanoprintf.h:0 ; -1
+│ │╎││││    0xffffffff80019747      83fd04         cmp ebp, 4          ; nanoprintf.h:974 ; 4
+│ │╎││││┌─< 0xffffffff8001974a      7551           jne 0xffffffff8001979d
+│ │╎│││││   0xffffffff8001974c      4585f6         test r14d, r14d     ; nanoprintf.h:975
+│ ────────< 0xffffffff8001974f      0f84d6000000   je 0xffffffff8001982b
+│ │╎│││││   0xffffffff80019755      4489f5         mov ebp, r14d
+│ │╎│││││   0xffffffff80019758      4883c5ff       add rbp, 0xffffffffffffffff
+│ │╎│││││   0xffffffff8001975c      488b5c2438     mov rbx, qword [var_38h]
+│ │╎│││││   0xffffffff80019761      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎│││││   0xffffffff8001976b      0f1f440000     nop dword [rax + rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff8001978c(x)
+│ ────────> 0xffffffff80019770      488b442440     mov rax, qword [cbuf]
+│ │╎│││││   0xffffffff80019775      31ff           xor edi, edi
+│ │╎│││││   0xffffffff80019777      480fa3e8       bt rax, rbp
+│ │╎│││││   0xffffffff8001977b      400f92c7       setb dil
+│ │╎│││││   0xffffffff8001977f      83cf30         or edi, 0x30        ; 48
+│ │╎│││││   0xffffffff80019782      4889de         mov rsi, rbx        ; nanoprintf.h:663
+│ │╎│││││   0xffffffff80019785      41ffd4         call r12
+│ │╎│││││   0xffffffff80019788      4883c5ff       add rbp, 0xffffffffffffffff ; nanoprintf.h:975
+│ ────────< 0xffffffff8001978c      72e2           jb 0xffffffff80019770
+│ │╎│││││   0xffffffff8001978e      4403742420     add r14d, dword [pc_cnt]
+│ │╎│││││   0xffffffff80019793      4c89742420     mov qword [pc_cnt], r14
+│ ────────< 0xffffffff80019798      e98e000000     jmp 0xffffffff8001982b
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800196f4(x), 0xffffffff800196fc(x), 0xffffffff8001970a(x), 0xffffffff8001974a(x)
+│ ──────└─> 0xffffffff8001979d      4585f6         test r14d, r14d     ; nanoprintf.h:978
+│ │╎││││┌─< 0xffffffff800197a0      7e31           jle 0xffffffff800197d3
+│ │╎│││││   0xffffffff800197a2      4489f5         mov ebp, r14d
+│ │╎│││││   0xffffffff800197a5      4883c501       add rbp, 1
+│ │╎│││││   0xffffffff800197a9      488b5c2438     mov rbx, qword [var_38h]
+│ │╎│││││   0xffffffff800197ae      6690           nop
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800197c7(x)
+│ ────────> 0xffffffff800197b0      8d45fe         lea eax, [var_2h]
+│ │╎│││││   0xffffffff800197b3      410fbe7c0500   movsx edi, byte [r13 + rax]
+│ │╎│││││   0xffffffff800197b9      4889de         mov rsi, rbx        ; nanoprintf.h:663
+│ │╎│││││   0xffffffff800197bc      41ffd4         call r12
+│ │╎│││││   0xffffffff800197bf      4883c5ff       add rbp, 0xffffffffffffffff ; nanoprintf.h:978
+│ │╎│││││   0xffffffff800197c3      4883fd01       cmp rbp, 1          ; 1
+│ ────────< 0xffffffff800197c7      77e7           ja 0xffffffff800197b0
+│ │╎│││││   0xffffffff800197c9      4403742420     add r14d, dword [pc_cnt]
+│ │╎│││││   0xffffffff800197ce      4889dd         mov rbp, rbx
+│ ────────< 0xffffffff800197d1      eb0a           jmp 0xffffffff800197dd ; nanoprintf.h:0
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800197a0(x)
+│ │╎││││└─> 0xffffffff800197d3      488b6c2438     mov rbp, qword [var_38h]
+│ │╎││││    0xffffffff800197d8      4c8b742420     mov r14, qword [pc_cnt]
+│ │╎││││    ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800197d1(x)
+│ ────────> 0xffffffff800197dd      41bb20000000   mov r11d, 0x20      ; 32
+│ │╎││││    0xffffffff800197e3      4c8b542410     mov r10, qword [fs_len]
+│ │╎││││    0xffffffff800197e8      8b4c2434       mov ecx, dword [var_34h]
+│ │╎││││    0xffffffff800197ec      837c240809     cmp dword [var_8h], 9 ; nanoprintf.h:982
+│ │╎││││    0xffffffff800197f1      0f95c0         setne al
+│ │╎││││    0xffffffff800197f4      08c8           or al, cl
+│ │╎││││    0xffffffff800197f6      3c01           cmp al, 1           ; 1
+│ │╎││││┌─< 0xffffffff800197f8      743e           je 0xffffffff80019838
+│ │╎│││││   0xffffffff800197fa      4585ff         test r15d, r15d
+│ ────────< 0xffffffff800197fd      7e39           jle 0xffffffff80019838
+│ │╎│││││   0xffffffff800197ff      418d5f01       lea ebx, [r15 + 1]  ; nanoprintf.h:983
+│ │╎│││││   0xffffffff80019803      662e0f1f8400.  nop word cs:[rax + rax]
+│ │╎│││││   0xffffffff8001980d      0f1f00         nop dword [rax]
+│ │╎│││││   ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff80019821(x)
+│ ────────> 0xffffffff80019810      bf30000000     mov edi, 0x30       ; nanoprintf.h:663 ; '0' ; 48
+│ │╎│││││   0xffffffff80019815      4889ee         mov rsi, rbp
+│ │╎│││││   0xffffffff80019818      41ffd4         call r12
+│ │╎│││││   0xffffffff8001981b      83c3ff         add ebx, 0xffffffff ; nanoprintf.h:983
+│ │╎│││││   0xffffffff8001981e      83fb01         cmp ebx, 1          ; 1
+│ ────────< 0xffffffff80019821      77ed           ja 0xffffffff80019810
+│ │╎│││││   0xffffffff80019823      4501f7         add r15d, r14d
+│ │╎│││││   0xffffffff80019826      4c897c2420     mov qword [pc_cnt], r15
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800196a2(x), 0xffffffff8001974f(x), 0xffffffff80019798(x)
+│ ──└─────> 0xffffffff8001982b      41bb20000000   mov r11d, 0x20      ; nanoprintf.h:0 ; 32
+│ │╎ ││││   0xffffffff80019831      4c8b542410     mov r10, qword [fs_len]
+│ │╎┌─────< 0xffffffff80019836      eb05           jmp 0xffffffff8001983d
+│ │╎│││││   ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff800197f8(x), 0xffffffff800197fd(x)
+│ ──────└─> 0xffffffff80019838      4c89742420     mov qword [pc_cnt], r14
+│ │╎││││    ; CODE XREFS from dbg.npf_vpprintf @ 0xffffffff80018f09(x), 0xffffffff800195f4(x), 0xffffffff80019664(x), 0xffffffff80019836(x)
+│ ──└└─└──> 0xffffffff8001983d      4963c2         movsxd rax, r10d
+│ │╎  │     0xffffffff80019840      4c8bac249000.  mov r13, qword [var_90h]
+│ │╎  │     0xffffffff80019848      4901c5         add r13, rax
+│ │╎  │     0xffffffff8001984b      4c8b742438     mov r14, qword [var_38h]
+│ │└──────< 0xffffffff80019850      e9c3f0ffff     jmp 0xffffffff80018918
+│ │   │     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800195e4(x)
+│ └───────> 0xffffffff80019855      c74424340000.  mov dword [var_34h], 0
+│     │     0xffffffff8001985d      488b4c2418     mov rcx, qword [var_18h]
+│     │     0xffffffff80019862      8b6c2408       mov ebp, dword [var_8h]
+│     │     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800194e7(x)
+│ ────────> 0xffffffff80019866      4c8b642460     mov r12, qword [pc]
+│     │     0xffffffff8001986b      4584c0         test r8b, r8b       ; nanoprintf.h:956
+│ ────────< 0xffffffff8001986e      0f8556feffff   jne 0xffffffff800196ca
+│ ────────< 0xffffffff80019874      e970feffff     jmp 0xffffffff800196e9
+│     │     ; CODE XREF from dbg.npf_vpprintf @ 0xffffffff800188f2(x)
+│     └───> 0xffffffff80019879      488b442420     mov rax, qword [pc_cnt] ; nanoprintf.h:0
+│           0xffffffff8001987e      4881c4980000.  add rsp, 0x98       ; nanoprintf.h:995
+│           0xffffffff80019885      5b             pop rbx
+│           0xffffffff80019886      415c           pop r12
+│           0xffffffff80019888      415d           pop r13
+│           0xffffffff8001988a      415e           pop r14
+│           0xffffffff8001988c      415f           pop r15
+│           0xffffffff8001988e      5d             pop rbp
+└           0xffffffff8001988f      c3             ret

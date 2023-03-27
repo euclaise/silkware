@@ -20,7 +20,8 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-red-zone        \
          -mcmodel=kernel      \
 		 -Iinclude            \
-		 -Iarch/$(ARCH)/include
+		 -Iarch/$(ARCH)/include \
+		 -Iexternal/lai/lai/include
 
 LDFLAGS := -nostdlib               \
           -static                  \
@@ -35,10 +36,14 @@ OBJS_C := $(filter %o,$(SRCS:.c=.o))
 OBJS_ASM := $(filter %.o,$(SRCS:.asm=.o))
 OPT := mem.o
 
-kernel.elf: $(OBJS_C) $(OBJS_ASM)
+OPT : CFLAGS+=-O3
+
+kernel.elf: $(OBJS_C) $(OBJS_ASM) external/lai/lai.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
-OPT : CFLAGS+=-O3
+external/lai/lai.a:
+	cd external/lai && $(MAKE)
+
 
 %.o: %.asm
 	$(ASM) -o $@ $<
@@ -46,7 +51,9 @@ OPT : CFLAGS+=-O3
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+.PHONY: clean
+
 clean:
 	rm -f $(OBJS_C) $(OBJS_ASM) kernel.elf
+	cd external/lai && $(MAKE) clean
 
-.PHONY: clean
