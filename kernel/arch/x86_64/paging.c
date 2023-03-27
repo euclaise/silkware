@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <screen.h>
 #include <panic.h>
+#include <flex.h>
+#include <stddef.h>
 #include "addr.h"
 
 struct limine_kernel_address_request kern_addr_req = {
@@ -92,6 +94,13 @@ void map_pages(uintptr_t dst, uintptr_t src, uintptr_t length, int flags)
     }
 }
 
+
+static inline uintptr_t round_up_page(uintptr_t x)
+{
+    return (x + 0x1000 - 1) & ~(0x1000 - 1);
+}
+
+uintptr_t end_pos;
 void map_kern_pages(void)
 {
     if (kern_addr_req.response == NULL)
@@ -103,13 +112,39 @@ void map_kern_pages(void)
         kern_end - kern_load,
         PAGE_PRESENT | PAGE_WRITABLE
     );
+    end_pos = round_up_page((uintptr_t) kern_end);
 }
+
 
 void map_screen(void)
 {
-    map_pages(0xfffffffff0000000,
+    size_t len =  screen.pitch * (screen.bpp/8) * screen.height;
+    map_pages((uintptr_t) end_pos,
             (uintptr_t) screen.paddr,
-            screen.pitch * (screen.bpp/8) * screen.height,
+            len,
             PAGE_PRESENT | PAGE_WRITABLE);
-    screen.vaddr = (void *) 0xfffffffff0000000;
+    screen.vaddr = (void *) end_pos;
+    end_pos = round_up_page((uintptr_t) end_pos + len);
+}
+
+void *kmap_phys(void *phys, size_t len)
+{
+    void *res = (void *) end_pos;
+    map_pages((uintptr_t) end_pos,
+            (uintptr_t) phys,
+            len,
+            PAGE_PRESENT | PAGE_WRITABLE);
+    end_pos = round_up_page((uintptr_t) end_pos + len);
+
+    for (void *p = res; p < (void *) end_pos; p += 0x1000)
+        __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
+
+    return res;
+}
+
+void kunmap(void *virt, size_t len)
+{
+    map_pages((uintptr_t) virt, 0, len, 0);
+    for (void *p = virt; p < (void *) virt + len; p += 0x1000)
+        __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 }
