@@ -22,7 +22,8 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-sse2            \
          -mno-red-zone        \
          -mcmodel=kernel      \
-		 -Ilai/include
+		 -Ilai/include \
+		 -O2
 
 lai.a: $(OBJS)
 	$(ARCH)-elf-ar cr lai.a $(OBJS)

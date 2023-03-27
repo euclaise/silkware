@@ -3,6 +3,7 @@
 #include <phys_malloc.h>
 #include <paging.h>
 #include <io.h>
+#include <panic.h>
 #include "acpi.h"
 
 void *laihost_malloc(size_t size)
@@ -36,6 +37,12 @@ void laihost_log(int level, const char *msg)
 {
     (void)level;
     printf("%s\n", msg);
+}
+
+void laihost_panic(const char *msg)
+{
+    panic("%s", msg);
+    while (1);
 }
 
 static rsdt_t *rsdt;

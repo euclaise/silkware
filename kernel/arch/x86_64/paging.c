@@ -15,6 +15,9 @@ struct limine_kernel_address_request kern_addr_req = {
     .id = LIMINE_KERNEL_ADDRESS_REQUEST
 };
 
+static struct limine_kernel_address_response kern_resp;
+
+
 #define PAGE_PRESENT  1
 #define PAGE_WRITABLE (1 << 1)
 #define PAGE_USER     (1 << 2)
@@ -35,20 +38,20 @@ pml4e_t pml4[512]  __attribute__((aligned(0x1000)));
 
 extern char kern_load[], kern_end[];
 
-#define K2PHYS(x) (void *)( \
-        (uintptr_t)(x) - kern_addr_req.response->virtual_base \
-        + kern_addr_req.response->physical_base)
+#define K2PHYSK(x) (void *)( \
+        (uintptr_t)(x) - kern_resp.virtual_base \
+        + kern_resp.physical_base)
 
-#define PHYS2K(x) (void *)( \
-        (uintptr_t)(x) - kern_addr_req.response->physical_base \
-        + kern_addr_req.response->virtual_base)
+#define PHYSK2VK(x) (void *)( \
+        (uintptr_t)(x) - kern_resp.physical_base \
+        + kern_resp.virtual_base)
 
 void refresh_pages(void)
 {
     __asm__ (
         "mov %0, %%cr3\n"
         :
-        : "r" (K2PHYS(pml4))
+        : "r" (K2PHYSK(pml4))
         : "memory"
     );
 }
@@ -73,20 +76,20 @@ void map_pages(uintptr_t dst, uintptr_t src, uintptr_t length, int flags)
         int pt_idx   = (dst >> 12) & 0x1FF;
 
         if (!(pml4[pml4_idx] & PAGE_PRESENT))
-            pml4[pml4_idx] = (uintptr_t) K2PHYS(phys_valloc(0x1000))
+            pml4[pml4_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000))
                 | PAGE_PRESENT | PAGE_WRITABLE;
 
-        pdpt_t pdpt = PHYS2K(pml4[pml4_idx] & ~0xFFF);
+        pdpt_t pdpt = PHYSK2VK(pml4[pml4_idx] & ~0xFFF);
         if (!(pdpt[pdpt_idx] & PAGE_PRESENT))
-            pdpt[pdpt_idx] = (uintptr_t) K2PHYS(phys_valloc(0x1000)) |
+            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
-        pd_t pd = PHYS2K(pdpt[pdpt_idx] & ~0xFFF);
+        pd_t pd = PHYSK2VK(pdpt[pdpt_idx] & ~0xFFF);
         if (!(pd[pd_idx] & PAGE_PRESENT))
-            pd[pd_idx] = (uintptr_t) K2PHYS(phys_valloc(0x1000)) |
+            pd[pd_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
-        pt_t pt = (pt_t) PHYS2K(pd[pd_idx] & ~0xFFF);
+        pt_t pt = (pt_t) PHYSK2VK(pd[pd_idx] & ~0xFFF);
         pt[pt_idx] = (src & ~0xFFF) | flags;
 
         dst += 0x1000;
@@ -97,7 +100,7 @@ void map_pages(uintptr_t dst, uintptr_t src, uintptr_t length, int flags)
 
 static inline uintptr_t round_up_page(uintptr_t x)
 {
-    return (x + 0x1000 - 1) & ~(0x1000 - 1);
+    return (x + 0xFFF) & ~0xFFF;
 }
 
 uintptr_t end_pos;
@@ -106,9 +109,11 @@ void map_kern_pages(void)
     if (kern_addr_req.response == NULL)
         panic("Could not get kernel physical addr");
 
+    kern_resp = *kern_addr_req.response;
+
     map_pages(
         (uintptr_t) kern_load,
-        (uintptr_t) K2PHYS(kern_load),
+        (uintptr_t) K2PHYSK(kern_load),
         kern_end - kern_load,
         PAGE_PRESENT | PAGE_WRITABLE
     );
