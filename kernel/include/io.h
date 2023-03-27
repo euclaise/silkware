@@ -7,6 +7,5 @@ void serial_init(void);
 
 void putc(char c); /* Defined in arch code */
 void printf(char *f, ...);
-void panic(char *f, ...);
 
 #endif

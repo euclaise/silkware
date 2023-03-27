@@ -3,6 +3,7 @@
 #include <memmap.h>
 #include <paging.h>
 #include <screen.h>
+#include <panic.h>
 
 extern void *high_addr;
 void main(void)

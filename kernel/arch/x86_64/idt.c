@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <io.h>
 #include <kern.h>
+#include <panic.h>
 
 typedef struct
 __attribute__((packed))

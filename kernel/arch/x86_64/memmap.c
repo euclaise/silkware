@@ -2,6 +2,7 @@
 #include <phys_malloc.h>
 #include <io.h>
 #include <memmap.h>
+#include <panic.h>
 
 struct limine_memmap_request map_req = {
     .id = LIMINE_MEMMAP_REQUEST

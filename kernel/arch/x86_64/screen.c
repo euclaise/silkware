@@ -1,6 +1,7 @@
 #include <limine.h>
 #include <io.h>
 #include <screen.h>
+#include <panic.h>
 #include "addr.h"
 
 struct limine_framebuffer_request fb_req = {

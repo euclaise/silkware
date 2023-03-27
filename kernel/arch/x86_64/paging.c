@@ -6,6 +6,7 @@
 #include <limine.h>
 #include <assert.h>
 #include <screen.h>
+#include <panic.h>
 #include "addr.h"
 
 struct limine_kernel_address_request kern_addr_req = {
