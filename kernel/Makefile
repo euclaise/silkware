@@ -19,7 +19,8 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -mno-sse2            \
          -mno-red-zone        \
          -mcmodel=kernel      \
-		 -Iinclude
+		 -Iinclude            \
+		 -Iarch/$(ARCH)/include
 
 LDFLAGS := -nostdlib               \
           -static                  \

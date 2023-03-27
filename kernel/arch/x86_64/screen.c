@@ -1,6 +1,7 @@
 #include <limine.h>
 #include <io.h>
 #include <screen.h>
+#include "addr.h"
 
 struct limine_framebuffer_request fb_req = {
     .id = LIMINE_FRAMEBUFFER_REQUEST
@@ -19,5 +20,14 @@ void init_fb(void)
                     && fb_req.response->framebuffers[i]->height > fb->width)
             )
             fb = fb_req.response->framebuffers[i];
-    screen = *fb;
+
+    screen.vaddr = fb->address;
+    screen.paddr = H2PHYS(fb->address);
+    screen.width = fb->width;
+    screen.height = fb->height;
+    screen.pitch = fb->pitch;
+    screen.bpp = fb->bpp;
+    screen.red_mask_shift = fb->red_mask_shift;
+    screen.green_mask_shift = fb->green_mask_shift;
+    screen.blue_mask_shift = fb->blue_mask_shift;
 }

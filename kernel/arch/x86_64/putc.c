@@ -8,7 +8,7 @@ void putc(char c)
     static int x = 0;
     static int y = 10;
     if (serial_ok) serial_write(c);
-    if (screen.address)
+    if (screen.vaddr)
     {
         x += 10;
         if (c == '\n' || x + 10 > (int) screen.width)

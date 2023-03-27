@@ -12,7 +12,7 @@ void main(void)
     init_fb();
 
     printf("Silkware\n\n");
-    printf("Framebuffer: %p\n", screen.address);
+    printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
     printf("High: %p\n", high_addr);
     memmap_init();
     map_screen();
@@ -20,10 +20,8 @@ void main(void)
     refresh_pages();
 
     printf("Remapped kernel\n");
-    printf("Framebuffer: %p\n", screen.address);
+    printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
     arch_init();
-    printf("Arch initialization complete\n");
-    __asm__ ("int $0");
-    freeze();
+    panic("Done");
 }
