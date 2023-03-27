@@ -2,38 +2,30 @@
 
 typedef struct rsdp_desc
 {
-    char Signature[8];
-    uint8_t Checksum;
-    char OEMID[6];
-    uint8_t Revision;
-    uint32_t RsdtAddress;
+    char signature[8];
+    uint8_t checksum;
+    char oem_id[6];
+    uint8_t revision;
+    uint32_t addr;
 } __attribute__ ((packed)) rsdp_desc;
 
-struct ACPISDTHeader
+extern rsdp_desc rsdp;
+
+typedef struct sdt_header
 {
-    char Signature[4];
-    uint32_t Length;
-    uint8_t Revision;
-    uint8_t Checksum;
-    char OEMID[6];
-    char OEMTableID[8];
-    uint32_t OEMRevision;
-    uint32_t CreatorID;
-    uint32_t CreatorRevision;
-};
+    char signature[4];
+    uint32_t length;
+    uint8_t revision;
+    uint8_t checksum;
+    char oem_id[6];
+    char oem_table_id[8];
+    uint32_t oem_revision;
+    uint32_t creator_id;
+    uint32_t creator_revision;
+} sdt_header;
 
 typedef struct rsdt_t
 {
-    struct ACPISDTHeader h;
-    uint64_t PointerToOtherSDT[];
+    struct sdt_header h;
+    uint32_t p[];
 } rsdt_t;
-
-extern uint64_t sdt_base, sdt_top;
-
-typedef struct
-{
-    struct ACPISDTHeader **tables;
-    uint64_t len;
-} acpi_list;
-
-extern acpi_list acpi_info;
