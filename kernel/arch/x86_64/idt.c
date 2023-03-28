@@ -71,7 +71,7 @@ void err_stub(int num, irq_frame *frame)
     printf("   SS: %p\n", frame->ss);
     printf("  CR2: %p\n", cr2);
 
-    dump_stack();
+    backtrace();
     freeze();
     if (num == 8) freeze();
 }
