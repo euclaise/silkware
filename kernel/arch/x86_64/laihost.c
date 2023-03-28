@@ -5,6 +5,7 @@
 #include <io.h>
 #include <panic.h>
 #include <mem.h>
+#include <assert.h>
 #include "acpi.h"
 
 void *laihost_malloc(size_t size)
@@ -46,26 +47,38 @@ void laihost_panic(const char *msg)
     __builtin_unreachable();
 }
 
-static rsdt_t *rsdt;
+struct
+{
+    acpi_header_t h;
+    uint8_t p[];
+} __attribute__((packed)) *xsdt;
+
 void *laihost_scan(const char *sig, size_t index)
 {
     size_t count = -1;
 
-    if (!rsdt) 
-        rsdt = kmap_phys((void *) (uint64_t) rsdp.rsdt, sizeof(acpi_header_t));
-
-    size_t entries = (rsdt->h.length - sizeof(rsdt->h)) / 4;
-    for (size_t i = 0; i < entries; ++i)
+    if (!xsdt) 
     {
-        acpi_header_t *t = kmap_phys(
-            (void *) (uint64_t) rsdt->p[i],
+        xsdt = kmap_phys(
+            (void *) (acpi64 ? xsdp.xsdt : (uint64_t) xsdp.rsdt),
             sizeof(acpi_header_t)
         );
+        assert(memcmp(xsdt->h.signature + 1, "SDT", 3) == 0);
+    }
+
+    size_t entries = (xsdt->h.length - sizeof(xsdt->h)) / (acpi64 ? 8 : 4);
+    for (size_t i = 0; i < entries; ++i)
+    {
+        uintptr_t phys;
+        if (acpi64) phys = ((uint64_t *) xsdt->p)[i];
+        else phys = (uintptr_t) ((uint32_t *) xsdt->p)[i];
+
+        acpi_header_t *t = kmap_phys((void *) phys, sizeof(acpi_header_t));
         
         if (memcmp(sig, t->signature, 4) == 0) count++;
         if (count == index) return t;
 
-        if (t != (acpi_header_t *)rsdt) kunmap(t, sizeof(acpi_header_t));
+        if (t != (acpi_header_t *)xsdt) kunmap(t, sizeof(acpi_header_t));
     }
     return NULL;
 }
