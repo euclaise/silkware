@@ -57,6 +57,16 @@ void *laihost_scan(const char *sig, size_t index)
 {
     size_t count = -1;
 
+    if (memcmp(sig, "DSDT", 4) == 0)
+    {
+        acpi_fadt_t *facp = laihost_scan("FACP", 0);
+        
+        return kmap_phys(
+            (void *) (acpi64 ? facp->x_dsdt : (uint64_t) facp->dsdt),
+            sizeof(acpi_xsdt_t)
+        );
+    }
+
     if (!xsdt) 
     {
         xsdt = kmap_phys(
