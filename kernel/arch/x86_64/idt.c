@@ -63,7 +63,7 @@ void err_stub(int num, irq_frame *frame)
     uint64_t cr2;
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
-    else printf("%s\n", irq_msg[num]);
+    else printf("%s", irq_msg[num]);
     printf("   IP: %p\n", frame->ip);
     printf("   CS: %p\n", frame->cs);
     printf("FLAGS: %p\n", frame->flags);
