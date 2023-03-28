@@ -6,6 +6,7 @@
 #include <panic.h>
 #include <mem.h>
 #include <assert.h>
+#include "ports.h"
 #include "acpi.h"
 
 void *laihost_malloc(size_t size)
@@ -103,4 +104,34 @@ void *laihost_scan(const char *sig, size_t index)
         if (t != (acpi_header_t *)xsdt) kunmap(t, length);
     }
     return NULL;
+}
+
+uint8_t laihost_inb(uint16_t port)
+{
+    return port_inb(port);
+}
+
+uint16_t laihost_inw(uint16_t port)
+{
+    return port_inw(port);
+}
+
+uint32_t laihost_ind(uint16_t port)
+{
+    return port_ind(port);
+}
+
+void laihost_outb(uint16_t port, uint8_t x)
+{
+    port_outb(port, x);
+}
+
+void laihost_outw(uint16_t port, uint16_t x)
+{
+    port_outb(port, x);
+}
+
+void laihost_outd(uint16_t port, uint32_t x)
+{
+    port_outd(port, x);
 }
