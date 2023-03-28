@@ -1,6 +1,7 @@
 #include <limine.h>
 #include <screen.h>
 #include <io.h>
+#include <mem.h>
 #include "serial.h"
 
 extern int serial_ok;
@@ -27,14 +28,22 @@ void putc(char c)
     if (serial_ok) serial_write(c);
     if (screen.vaddr)
     {
-        x += 10;
         if (c == '\n' || x + 10 > (int) screen.width)
         {
             x = 0;
             y += 17;
-            if (y > (int) screen.height) y = 17;
+            if (y > (int) screen.height)
+            {
+                memset(
+                    screen.vaddr,
+                    0,
+                    screen.height * screen.width * (screen.bpp / 8)
+                );
+                y = 17;
+            }
         }
 
+        x += 10;
         if (c != '\n')
             switch (color)
             {

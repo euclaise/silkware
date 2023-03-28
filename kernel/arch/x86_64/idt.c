@@ -48,7 +48,7 @@ char *irq_msg[] =
     "EXCEPTION: Coprocessor segment overrun - #9\n",
     "EXCEPTION: Bad TSS - #10\n",
     "EXCEPTION: Segment not present - #11\n",
-    "EXCEPTOIN: Stack Fault  - #12\n",
+    "EXCEPTION: Stack Fault  - #12\n",
     "EXCEPTION: General protection fault - #13\n",
     "EXCEPTION: Page fault - #14\n",
     "EXCEPTION: Unknown interrupt - #15\n",
@@ -60,6 +60,8 @@ char *irq_msg[] =
 __attribute__((no_caller_saved_registers))
 void err_stub(int num, irq_frame *frame)
 {
+    uint64_t cr2;
+    __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s\n", irq_msg[num]);
     printf("   IP: %p\n", frame->ip);
@@ -67,6 +69,7 @@ void err_stub(int num, irq_frame *frame)
     printf("FLAGS: %p\n", frame->flags);
     printf("   SP: %p\n", frame->sp);
     printf("   SS: %p\n", frame->ss);
+    printf("  CR2: %p\n", cr2);
 
     freeze();
     if (num == 8) freeze();
