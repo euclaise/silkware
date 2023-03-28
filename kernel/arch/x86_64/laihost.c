@@ -96,11 +96,7 @@ void *laihost_scan(const char *sig, size_t index)
         t = kmap_phys((void *) phys, length);
         
         if (memcmp(sig, t->signature, 4) == 0) count++;
-        if (count == index)
-        {
-            printf("SCAN: %p\n", t);
-            return t;
-        }
+        if (count == index) return t;
 
         if (t != (acpi_header_t *)xsdt) kunmap(t, length);
     }

@@ -11,7 +11,7 @@
                 __func__, __FILE__, __LINE__, __ADDR__); \
         printf(__VA_ARGS__); \
         putc('\n'); \
-        dump_stack(); \
+        backtrace(); \
         freeze(); \
     } while (0)
 
