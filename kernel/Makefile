@@ -9,6 +9,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
          -ffreestanding       \
 		 -fno-strict-aliasing \
          -fno-stack-protector \
+		 -fno-omit-frame-pointer \
          -fno-stack-check     \
          -fno-lto             \
          -fno-pie             \
