@@ -12,7 +12,6 @@ extern void *high_addr;
 
 void main(void)
 {
-    LAI_CLEANUP_STATE lai_state_t state;
     serial_init();
     sbrk_init();
     init_fb();
@@ -29,10 +28,6 @@ void main(void)
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
     arch_init();
+
     panic("Done");
-
-    lai_init_state(&state);
-    lai_create_namespace();
-    lai_enable_acpi(1);
-
 }

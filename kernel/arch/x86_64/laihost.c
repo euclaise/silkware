@@ -4,6 +4,7 @@
 #include <paging.h>
 #include <io.h>
 #include <panic.h>
+#include <mem.h>
 #include "acpi.h"
 
 void *laihost_malloc(size_t size)
@@ -42,7 +43,7 @@ void laihost_log(int level, const char *msg)
 void laihost_panic(const char *msg)
 {
     panic("%s", msg);
-    while (1);
+    __builtin_unreachable();
 }
 
 static rsdt_t *rsdt;
@@ -51,19 +52,20 @@ void *laihost_scan(const char *sig, size_t index)
     size_t count = -1;
 
     if (!rsdt) 
-        rsdt = kmap_phys((void *) (uint64_t) rsdp.addr, sizeof(sdt_header));
+        rsdt = kmap_phys((void *) (uint64_t) rsdp.rsdt, sizeof(acpi_header_t));
 
-    for (size_t i = 0; i < (rsdt->h.length - sizeof(rsdt->h)) / 4; ++i)
+    size_t entries = (rsdt->h.length - sizeof(rsdt->h)) / 4;
+    for (size_t i = 0; i < entries; ++i)
     {
-        sdt_header *t = kmap_phys(
+        acpi_header_t *t = kmap_phys(
             (void *) (uint64_t) rsdt->p[i],
-            sizeof(sdt_header)
+            sizeof(acpi_header_t)
         );
-
-        if (*(uint32_t *)sig == *(uint32_t *)t->signature) count++;
+        
+        if (memcmp(sig, t->signature, 4) == 0) count++;
         if (count == index) return t;
 
-        if ((void *)t != (void *)rsdt) kunmap(t, sizeof(sdt_header));
+        if (t != (acpi_header_t *)rsdt) kunmap(t, sizeof(acpi_header_t));
     }
     return NULL;
 }

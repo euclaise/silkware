@@ -7,6 +7,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
 		 -Wall                \
 		 -Wextra              \
          -ffreestanding       \
+		 -fno-strict-aliasing \
          -fno-stack-protector \
          -fno-stack-check     \
          -fno-lto             \
