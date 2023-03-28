@@ -26,7 +26,7 @@ void *memcpy(void *dst, const void *src, size_t n)
 void *memset(void *dst, int c, size_t n)
 {
     uint8_t *dst8 = dst;
-    while (--n) dst8[n] = c;
+    while (n--) dst8[n] = c;
     return dst;
 }
 

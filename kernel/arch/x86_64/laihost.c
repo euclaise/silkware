@@ -22,7 +22,9 @@ void laihost_free(void *ptr, size_t size)
 void *laihost_realloc(void *ptr, size_t newsize, size_t oldsize)
 {
     (void)oldsize;
-    return phys_realloc(ptr, newsize);
+    void *res = phys_realloc(ptr, newsize);
+    if (res < (void *) 0x1000) panic("Bad malloc\n");
+    return res;
 }
 
 void *laihost_map(size_t address, size_t count)

@@ -1,4 +1,4 @@
-QEMUFLAGS := -serial stdio -enable-kvm
+QEMUFLAGS := -serial stdio
 
 silkware.iso: root/kernel.elf
 	cp kernel/external/limine/* root/
