@@ -124,27 +124,33 @@ void map_kern_pages(void)
 void map_screen(void)
 {
     size_t len =  screen.pitch * (screen.bpp/8) * screen.height;
-    map_pages((uintptr_t) end_pos,
-            (uintptr_t) screen.paddr,
-            len,
-            PAGE_PRESENT | PAGE_WRITABLE);
+    map_pages(
+        (uintptr_t) end_pos,
+        (uintptr_t) screen.paddr,
+        len,
+        PAGE_PRESENT | PAGE_WRITABLE
+    );
     screen.vaddr = (void *) end_pos;
     end_pos = round_up_page((uintptr_t) end_pos + len);
 }
 
 void *kmap_phys(void *phys, size_t len)
 {
-    void *res = (void *) end_pos;
-    map_pages((uintptr_t) end_pos,
-            (uintptr_t) phys,
-            len,
-            PAGE_PRESENT | PAGE_WRITABLE);
-    end_pos = round_up_page((uintptr_t) end_pos + len);
+    uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
+    uintptr_t res = end_pos + ((uintptr_t) phys - aligned);
 
-    for (void *p = res; p < (void *) end_pos; p += 0x1000)
+    map_pages(
+        (uintptr_t) end_pos,
+        aligned,
+        len,
+        PAGE_PRESENT | PAGE_WRITABLE
+    );
+    end_pos = round_up_page(end_pos + len);
+
+    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += 0x1000)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 
-    return res;
+    return (void *) res;
 }
 
 void kunmap(void *virt, size_t len)
