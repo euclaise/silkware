@@ -60,19 +60,25 @@ void *laihost_scan(const char *sig, size_t index)
     if (memcmp(sig, "DSDT", 4) == 0)
     {
         acpi_fadt_t *facp = laihost_scan("FACP", 0);
+        void *phys = (void *) (acpi64 ? facp->x_dsdt : (uint64_t) facp->dsdt);
         
-        return kmap_phys(
-            (void *) (acpi64 ? facp->x_dsdt : (uint64_t) facp->dsdt),
-            sizeof(acpi_xsdt_t)
-        );
+        acpi_header_t *dsdt = kmap_phys(phys, sizeof(acpi_header_t));
+        uint32_t length = dsdt->length;
+
+        kunmap(dsdt, sizeof(acpi_header_t));
+        return kmap_phys(phys, length);
     }
 
     if (!xsdt) 
     {
-        xsdt = kmap_phys(
-            (void *) (acpi64 ? xsdp.xsdt : (uint64_t) xsdp.rsdt),
-            sizeof(acpi_header_t)
-        );
+        void *phys = (void *) (acpi64 ? xsdp.xsdt : (uint64_t) xsdp.rsdt);
+
+        xsdt = kmap_phys(phys, sizeof(acpi_header_t));
+        uint32_t length = xsdt->h.length;
+
+        kunmap(xsdt, sizeof(acpi_header_t));
+        xsdt = kmap_phys(phys, length);
+
         assert(memcmp(xsdt->h.signature + 1, "SDT", 3) == 0);
     }
 
@@ -84,11 +90,19 @@ void *laihost_scan(const char *sig, size_t index)
         else phys = (uintptr_t) ((uint32_t *) xsdt->p)[i];
 
         acpi_header_t *t = kmap_phys((void *) phys, sizeof(acpi_header_t));
+        uint32_t length = t->length;
+
+        kunmap(t, sizeof(acpi_header_t));
+        t = kmap_phys((void *) phys, length);
         
         if (memcmp(sig, t->signature, 4) == 0) count++;
-        if (count == index) return t;
+        if (count == index)
+        {
+            printf("SCAN: %p\n", t);
+            return t;
+        }
 
-        if (t != (acpi_header_t *)xsdt) kunmap(t, sizeof(acpi_header_t));
+        if (t != (acpi_header_t *)xsdt) kunmap(t, length);
     }
     return NULL;
 }
