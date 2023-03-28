@@ -271,14 +271,15 @@ static int npf_ftoa_rev(char *buf, float f, char case_adj, int *out_frac_chars);
 static int npf_bin_len(npf_uint_t i);
 #endif
 
-#if NANOPRINTF_USE_LARGE_FORMAT_SPECIFIERS == 1
+/*#if NANOPRINTF_USE_LARGE_FORMAT_SPECIFIERS == 1
   #ifdef _MSC_VER
     #include <BaseTsd.h>
     typedef SSIZE_T ssize_t;
   #else
     #include <sys/types.h>
   #endif
-#endif
+#endif*/
+typedef int64_t ssize_t;
 
 #ifdef _MSC_VER
   #include <intrin.h>

@@ -7,5 +7,6 @@ void main(void);
 void sbrk_init(void);
 void arch_init(void);
 void pause(void);
+void dump_stack(void);
 
 #endif

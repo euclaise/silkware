@@ -17,4 +17,4 @@ typedef struct framebuffer
 extern framebuffer screen;
 void init_fb(void);
 void putpixel(uint32_t x, uint32_t y, uint32_t color);
-void putchar(uint32_t x, uint32_t y, char c);
+void putchar(uint32_t x, uint32_t y, char c, uint32_t color);

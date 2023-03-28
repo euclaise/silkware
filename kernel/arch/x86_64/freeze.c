@@ -2,7 +2,7 @@
 
 void freeze(void)
 {
-    printf("=== Kernel is freezing ===");
+    printf("%c=== Kernel is freezing ===", COLOR_RED);
     while (1)
         __asm__ volatile (
                 "cli\n"

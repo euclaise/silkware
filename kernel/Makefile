@@ -31,7 +31,7 @@ LDFLAGS := -nostdlib               \
 SRC_DIRS := arch/$(ARCH) .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
 		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS))) \
-		fonts/font.c
+		external/fonts/font.c
 OBJS_C := $(filter %o,$(SRCS:.c=.o))
 OBJS_ASM := $(filter %.o,$(SRCS:.asm=.o))
 OPT := mem.o
