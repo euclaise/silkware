@@ -29,11 +29,10 @@ void main(void)
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
     arch_init();
+    panic("Done");
 
     lai_init_state(&state);
     lai_create_namespace();
     lai_enable_acpi(1);
 
-    __asm__ ("int $0");
-    panic("Done");
 }

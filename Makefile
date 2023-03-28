@@ -1,3 +1,5 @@
+QEMUFLAGS := -serial stdio -enable-kvm
+
 silkware.iso: root/kernel.elf
 	cp kernel/external/limine/* root/
 	xorriso -as mkisofs -b limine-cd.bin \
@@ -15,10 +17,10 @@ root:
 	mkdir -p root
 
 run: silkware.iso
-	qemu-system-x86_64 -serial stdio -cdrom silkware.iso 
+	qemu-system-x86_64 $(QEMUFLAGS) -cdrom silkware.iso 
 
 gdb: silkware.iso
-	qemu-system-x86_64 -s -S -serial stdio -no-shutdown -no-reboot \
+	qemu-system-x86_64 -s -S $(QEMUFLAGS) -no-shutdown -no-reboot \
 		-cdrom silkware.iso -d int,cpu_reset
 
 clean:

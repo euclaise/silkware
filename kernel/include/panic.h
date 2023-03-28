@@ -6,11 +6,12 @@
 
 #define panic(...) \
     do { \
-        printf("\n\n=== KERNEL PANIC ===\n"); \
+        printf("\n\n%c=== KERNEL PANIC ===\n%c", COLOR_RED, COLOR_WHITE); \
         printf("Panic in %s at %s:%d (%p)\n\n", \
                 __func__, __FILE__, __LINE__, __ADDR__); \
         printf(__VA_ARGS__); \
         putc('\n'); \
+        dump_stack(); \
         freeze(); \
     } while (0)
 
