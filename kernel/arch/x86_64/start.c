@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <limine.h>
 #include <mem.h>
 #include <kern.h>
@@ -21,14 +22,15 @@ struct limine_rsdp_request rsdp_req = {
 };
 
 void *high_addr;
-acpi_rsdp_t rsdp;
+acpi_xsdp_t xsdp;
+bool acpi64;
 
 void main(void);
 void start(void)
 {
     if (hhdm_req.response == NULL || rsdp_req.response == NULL) freeze();
     high_addr = (void *) hhdm_req.response->offset;
-    rsdp = *(acpi_rsdp_t *) rsdp_req.response->address;
+    xsdp = *(acpi_xsdp_t *) rsdp_req.response->address;
 
     main();
 }
@@ -38,8 +40,9 @@ void arch_init(void)
 {
     idt_init();
     gdt_init();
-    printf("ACPI Revision: %d\n", rsdp.revision);
-    lai_set_acpi_revision(rsdp.revision);
+    printf("ACPI Revision: %d\n", xsdp.revision);
+    acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
+    lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);
 }
