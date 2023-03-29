@@ -21,15 +21,15 @@ static struct hpet_tab
 
 #define HPET_MAX_TIMERS (32)
 
-static struct hpet
+static volatile struct hpet
 {
     uint64_t cap; /* Capabilities */
     uint64_t reserved0;
-    volatile uint64_t config;
+    uint64_t config;
     uint64_t reserved1;
     uint64_t isr;
     uint64_t reserved2[25];
-    volatile uint64_t main_ctr;
+    uint64_t main_ctr;
     struct hpet_timer
     {
         uint64_t config;

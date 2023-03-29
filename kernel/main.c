@@ -29,7 +29,7 @@ void main(void)
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
     arch_init();
-    printf("Arch initialization complete\n\n");
+    printf("Arch initialization complete\n");
 
     panic("Done");
 }
