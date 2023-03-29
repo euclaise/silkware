@@ -4,33 +4,34 @@ LD := ld
 ASM := nasm -felf64
 
 CFLAGS := -target $(ARCH)-freestanding  \
-		 -Wall                \
-		 -Wextra              \
-         -ffreestanding       \
-		 -fno-strict-aliasing \
-         -fno-stack-protector \
+		 -Wall                   \
+		 -Wextra                 \
+         -ffreestanding          \
+		 -fno-strict-aliasing    \
+         -fno-stack-protector    \
 		 -fno-omit-frame-pointer \
-         -fno-stack-check     \
-         -fno-lto             \
-         -fno-pie             \
-         -fno-pic             \
-         -mabi=sysv           \
-         -mno-80387           \
-         -mno-mmx             \
-         -mno-sse             \
-         -mno-sse2            \
-         -mno-red-zone        \
-         -mcmodel=kernel      \
-		 -Iinclude            \
-		 -Iarch/$(ARCH)/include \
+         -fno-stack-check        \
+         -fno-lto                \
+         -fno-pie                \
+         -fno-pic                \
+         -mabi=sysv              \
+         -mno-80387              \
+         -mno-mmx                \
+         -mno-sse                \
+         -mno-sse2               \
+         -mno-red-zone           \
+         -mcmodel=kernel         \
+		 -Iinclude               \
+		 -Iarch/$(ARCH)/include  \
+		 -Iacpi/include          \
 		 -Iexternal/lai/lai/include
 
-LDFLAGS := -nostdlib               \
-          -static                  \
-          -z max-page-size=0x1000  \
+LDFLAGS := -nostdlib              \
+          -static                 \
+          -z max-page-size=0x1000 \
           -Tarch/$(ARCH)/linker.ld
 
-SRC_DIRS := arch/$(ARCH) .
+SRC_DIRS := arch/$(ARCH) acpi .
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) \
 		$(wildcard $(addsuffix /*.asm, $(SRC_DIRS))) \
 		external/fonts/font.c
