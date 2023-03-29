@@ -1,6 +1,6 @@
-#include "ports.h"
+#include <ports.h>
 
-#define COM1 0x3f8
+#define COM1 0x3F8
 
 int serial_ok;
 

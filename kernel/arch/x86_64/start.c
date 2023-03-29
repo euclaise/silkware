@@ -7,11 +7,12 @@
 #include <io.h>
 #include <lai/core.h>
 #include <lai/helpers/sci.h>
+#include <paging.h>
 #include "idt.h"
 #include "serial.h"
 #include "addr.h"
 #include "acpi.h"
-#include "paging.h"
+#include "hpet.h"
 
 struct limine_hhdm_request hhdm_req = {
     .id = LIMINE_HHDM_REQUEST
@@ -42,6 +43,7 @@ void arch_init(void)
     gdt_init();
     printf("ACPI Revision: %d\n", xsdp.revision);
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
+    hpet_init();
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);

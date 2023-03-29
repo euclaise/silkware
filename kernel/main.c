@@ -7,6 +7,7 @@
 #include <lai/core.h>
 #include <lai/helpers/sci.h>
 #include <phys_malloc.h>
+#include <timer.h>
 
 extern void *high_addr;
 
@@ -28,6 +29,7 @@ void main(void)
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
     arch_init();
+    printf("Arch initialization complete\n\n");
 
     panic("Done");
 }
