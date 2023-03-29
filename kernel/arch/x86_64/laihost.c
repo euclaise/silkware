@@ -8,6 +8,7 @@
 #include <assert.h>
 #include "ports.h"
 #include "acpi.h"
+#include "pci.h"
 
 void *laihost_malloc(size_t size)
 {
@@ -134,4 +135,78 @@ void laihost_outw(uint16_t port, uint16_t x)
 void laihost_outd(uint16_t port, uint32_t x)
 {
     port_outd(port, x);
+}
+
+void laihost_pci_writeb(
+        uint16_t seg,
+        uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset,
+        uint8_t val
+    )
+{
+    (void)seg;
+    pci_write(bus, slot, fun, offset, val, 1);
+}
+
+void laihost_pci_writew(
+        uint16_t seg,
+        uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset,
+        uint16_t val
+    )
+{
+    (void)seg;
+    pci_write(bus, slot, fun, offset, val, 2);
+}
+
+void laihost_pci_writed(
+        uint16_t seg, uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset, 
+        uint32_t val
+    )
+{
+    (void)seg;
+    pci_write(bus, slot, fun, offset, val, 4);
+}
+
+uint8_t laihost_pci_readb(
+        uint16_t seg,
+        uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset
+    )
+{
+    (void)seg;
+    return pci_read(bus, slot, fun, offset, 1);
+}
+
+uint16_t laihost_pci_readw(
+        uint16_t seg,
+        uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset
+    )
+{
+    (void)seg;
+    return pci_read(bus, slot, fun, offset, 2);
+}
+
+uint32_t laihost_pci_readd(
+        uint16_t seg,
+        uint8_t bus,
+        uint8_t slot,
+        uint8_t fun,
+        uint16_t offset
+    )
+{
+    (void)seg;
+    return pci_read(bus, slot, fun, offset, 4);
 }
