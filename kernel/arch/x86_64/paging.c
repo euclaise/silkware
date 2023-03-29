@@ -34,7 +34,7 @@ typedef pdpte_t *pdpt_t;
 typedef pde_t   *pd_t;
 typedef pte_t   *pt_t;
 
-pml4e_t pml4[512]  __attribute__((aligned(0x1000)));
+pml4e_t kpml4[512]  __attribute__((aligned(0x1000)));
 
 extern char kern_load[], kern_end[];
 
@@ -46,12 +46,12 @@ extern char kern_load[], kern_end[];
         (uintptr_t)(x) - kern_resp.physical_base \
         + kern_resp.virtual_base)
 
-void refresh_pages(void)
+void refresh_pages(pml4_t pml4)
 {
     __asm__ (
         "mov %0, %%cr3\n"
         :
-        : "r" (K2PHYSK(pml4))
+        : "r" (K2PHYSK(pml4 ? pml4 : kpml4))
         : "memory"
     );
 }
@@ -64,7 +64,13 @@ void refresh_pages(void)
  * They will be rounded down to the nearest page.
  * Length will be rounded up.
  */
-void map_pages(uintptr_t dst, uintptr_t src, uintptr_t length, int flags)
+void map_pages(
+        pml4_t pml4,
+        uintptr_t dst,
+        uintptr_t src,
+        uintptr_t length,
+        int flags
+    )
 {
     uintptr_t dst_end = (dst + length + 0xFFF) & ~0xFFF;
     uintptr_t src_end = (src + length + 0xFFF) & ~0xFFF;
@@ -104,14 +110,15 @@ static inline uintptr_t round_up_page(uintptr_t x)
 }
 
 uintptr_t end_pos;
-void map_kern_pages(void)
+void map_kern_pages(pml4_t tab)
 {
     if (kern_addr_req.response == NULL)
         panic("Could not get kernel physical addr");
 
-    kern_resp = *kern_addr_req.response;
+    if (tab == NULL) kern_resp = *kern_addr_req.response;
 
     map_pages(
+        tab ? tab : kpml4,
         (uintptr_t) kern_load,
         (uintptr_t) K2PHYSK(kern_load),
         kern_end - kern_load,
@@ -125,6 +132,7 @@ void map_screen(void)
 {
     size_t len =  screen.pitch * (screen.bpp/8) * screen.height;
     map_pages(
+        kpml4,
         (uintptr_t) end_pos,
         (uintptr_t) screen.paddr,
         len,
@@ -140,6 +148,7 @@ void *kmap_phys(void *phys, size_t len)
     uintptr_t res = end_pos + ((uintptr_t) phys - aligned);
 
     map_pages(
+        kpml4,
         (uintptr_t) end_pos,
         aligned,
         len,
@@ -155,7 +164,15 @@ void *kmap_phys(void *phys, size_t len)
 
 void kunmap(void *virt, size_t len)
 {
-    map_pages((uintptr_t) virt, 0, len, 0);
+    map_pages(kpml4, (uintptr_t) virt, 0, len, 0);
     for (void *p = virt; p < (void *) virt + len; p += 0x1000)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
+}
+
+pml4_t newproc_pages(void)
+{
+    pml4_t new_pml4 = phys_valloc(0x1000);
+    memset(new_pml4, 0, 0x1000);
+    map_kern_pages(new_pml4);
+    return new_pml4;
 }

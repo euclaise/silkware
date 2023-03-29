@@ -21,9 +21,9 @@ void main(void)
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
     printf("High: %p\n", high_addr);
     memmap_init();
-    map_kern_pages();
+    map_kern_pages(NULL);
     map_screen();
-    refresh_pages();
+    refresh_pages(NULL);
 
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
@@ -31,5 +31,6 @@ void main(void)
     arch_init();
     printf("Arch initialization complete\n");
 
+    newproc_pages();
     panic("Done");
 }
