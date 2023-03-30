@@ -1,6 +1,7 @@
 #include <io.h>
+#include <kern.h>
 
-void freeze(void)
+NORETURN void freeze(void)
 {
     printf("%c=== Kernel is freezing ===", COLOR_RED);
     while (1) __asm__ volatile (

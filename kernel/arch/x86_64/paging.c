@@ -1,13 +1,13 @@
 #include <stdint.h>
-#include <phys_malloc.h>
+#include <paging.h>
 #include <mem.h>
 #include <io.h>
-#include <memmap.h>
 #include <limine.h>
 #include <assert.h>
 #include <screen.h>
 #include <panic.h>
 #include <stddef.h>
+#include <miniheap.h>
 #include "addr.h"
 
 struct limine_kernel_address_request kern_addr_req = {
@@ -15,6 +15,8 @@ struct limine_kernel_address_request kern_addr_req = {
 };
 
 static struct limine_kernel_address_response kern_resp;
+
+page_tab cur_page_tab;
 
 #define PAGE_PRESENT  1
 #define PAGE_WRITABLE (1 << 1)
@@ -52,6 +54,7 @@ void refresh_pages(pml4_t pml4)
         : "r" (K2PHYSK(pml4 ? pml4 : kpml4))
         : "memory"
     );
+    cur_page_tab = pml4;
 }
 
 /* 
@@ -80,17 +83,17 @@ void map_pages(
         int pt_idx   = (dst >> 12) & 0x1FF;
 
         if (!(pml4[pml4_idx] & PAGE_PRESENT))
-            pml4[pml4_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000))
+            pml4[pml4_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000))
                 | PAGE_PRESENT | PAGE_WRITABLE;
 
         pdpt_t pdpt = PHYSK2VK(pml4[pml4_idx] & ~0xFFF);
         if (!(pdpt[pdpt_idx] & PAGE_PRESENT))
-            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000)) |
+            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
         pd_t pd = PHYSK2VK(pdpt[pdpt_idx] & ~0xFFF);
         if (!(pd[pd_idx] & PAGE_PRESENT))
-            pd[pd_idx] = (uintptr_t) K2PHYSK(phys_valloc(0x1000)) |
+            pd[pd_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
         pt_t pt = (pt_t) PHYSK2VK(pd[pd_idx] & ~0xFFF);
@@ -101,13 +104,14 @@ void map_pages(
     }
 }
 
-
-static inline uintptr_t round_up_page(uintptr_t x)
+void map_page_default(uintptr_t dst, uintptr_t src, uintptr_t length)
 {
-    return (x + 0xFFF) & ~0xFFF;
+    map_pages(kpml4, dst, src, length, PAGE_PRESENT | PAGE_WRITABLE);
 }
 
+
 uintptr_t end_pos;
+
 void map_kern_pages(pml4_t tab)
 {
     if (kern_addr_req.response == NULL)
@@ -169,7 +173,7 @@ void kunmap(void *virt, size_t len)
 
 pml4_t newproc_pages(void)
 {
-    pml4_t new_pml4 = phys_valloc(0x1000);
+    pml4_t new_pml4 = miniheap_alloc(0x1000);
     memset(new_pml4, 0, 0x1000);
     map_kern_pages(new_pml4);
     return new_pml4;

@@ -1,3 +1,3 @@
 #include <memmap.h>
-int memmap_len;
+size_t memmap_len;
 memmap_entry *memmap;

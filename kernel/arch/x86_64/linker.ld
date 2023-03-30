@@ -3,9 +3,9 @@ ENTRY(_start)
 
 PHDRS
 {
-    text    PT_LOAD    FLAGS((1 << 0) | (1 << 2)) ; /* Execute + Read */
-    rodata  PT_LOAD    FLAGS((1 << 2)) ;            /* Read only */
-    data    PT_LOAD    FLAGS((1 << 1) | (1 << 2)) ; /* Write + Read */
+    text   PT_LOAD FLAGS((1 << 0) | (1 << 2)) ; /* Execute + Read */
+    rodata PT_LOAD FLAGS((1 << 2)) ;            /* Read only */
+    data   PT_LOAD FLAGS((1 << 1) | (1 << 2)) ; /* Write + Read */
 }
 
 SECTIONS
@@ -44,8 +44,10 @@ SECTIONS
         stack_bottom = .;
         . += 0x10000; /* Stack */
         stack_top = .;
-        _kbrk_start = .;
-        . += 0x1000000; /* 16MiB heap */
+
+        . = ALIGN(0x1000);
+        miniheap_start = .;
+        . += 0x100000; /* Bootstrap mini-heap */
         kern_end  =  .;
     } :data
 

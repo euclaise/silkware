@@ -6,15 +6,14 @@
 #include <panic.h>
 #include <lai/core.h>
 #include <lai/helpers/sci.h>
-#include <phys_malloc.h>
 #include <timer.h>
+#include <page_alloc.h>
 
 extern void *high_addr;
 
 void main(void)
 {
     serial_init();
-    sbrk_init();
     init_fb();
 
     printf("Silkware\n\n");
@@ -24,6 +23,7 @@ void main(void)
     map_kern_pages(NULL);
     map_screen();
     refresh_pages(NULL);
+    page_alloc_init();
 
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
