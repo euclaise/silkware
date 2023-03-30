@@ -1,10 +1,15 @@
 #ifndef KERN_H
 #define KERN_H
 
+#ifdef __GNUC__
+#define NORETURN __attribute__((noreturn))
+#else
+#define NORETURN
+#endif
+
 extern char kern_load[];
-void freeze(void);
+NORETURN void freeze(void);
 void main(void);
-void sbrk_init(void);
 void arch_init(void);
 void pause(void);
 void backtrace(void);

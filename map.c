@@ -1,5 +1,4 @@
 #include <map.h>
-#include <phys_malloc.h>
 #include <util.h>
 #include <stdbool.h>
 #include <mem.h>

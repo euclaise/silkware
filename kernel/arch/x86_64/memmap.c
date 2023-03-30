@@ -1,5 +1,5 @@
 #include <limine.h>
-#include <phys_malloc.h>
+#include <miniheap.h>
 #include <io.h>
 #include <memmap.h>
 #include <panic.h>
@@ -10,14 +10,14 @@ struct limine_memmap_request map_req = {
 
 void memmap_init(void)
 {
-    int i;
+    size_t i;
     struct limine_memmap_response *response = map_req.response;
 
     if (response == NULL || response->entry_count == 0)
         panic("Could not get memory map");
 
     memmap_len = response->entry_count;
-    memmap = phys_malloc(sizeof(memmap_entry) * memmap_len);
+    memmap = miniheap_alloc(sizeof(memmap_entry) * memmap_len);
 
     printf("Memory map (length %d):\n", memmap_len);
     for (i = 0; i < memmap_len; ++i)
