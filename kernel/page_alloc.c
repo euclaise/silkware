@@ -4,8 +4,7 @@
 #include <memmap.h>
 #include <mem.h>
 #include <panic.h>
-
-#define N_POOLS 128
+#include <miniheap.h>
 
 typedef struct block
 {
@@ -20,7 +19,8 @@ typedef struct pool
     block *end;
 } pool;
 
-static pool pools[N_POOLS];
+static pool *pools;
+size_t n_pools;
 
 uintptr_t prev_pow2(uintptr_t x)
 {
@@ -62,18 +62,21 @@ block *split(block *b, size_t sz, uintptr_t base)
 void page_alloc_init(void)
 {
     size_t i;
-    int64_t j = 0;
+    pools = miniheap_alloc(memmap_len*sizeof(pool));
     for (i = 0; i < memmap_len; ++i)
     {
         size_t sz = prev_pow2(memmap[i].len);
         if (sz < 0x1000) continue;
         
-        pools[j].base = (uintptr_t) kmap_phys((void *) memmap[i].base, sz);
-        pools[j].end = (block *) (pools[j].base + sz);
-        pools[j].start = (block *) pools[j].base;
-        pools[j].start->size = sz;
-        pools[j].start->next = pools[j].end;
-        ++j;
+        pools[n_pools].base = (uintptr_t) kmap_phys(
+            (void *) memmap[i].base,
+            sz
+        );
+        pools[n_pools].end = (block *) (pools[n_pools].base + sz);
+        pools[n_pools].start = (block *) pools[n_pools].base;
+        pools[n_pools].start->size = sz;
+        pools[n_pools].start->next = pools[n_pools].end;
+        ++n_pools;
     }
 }
 
@@ -82,7 +85,7 @@ void *page_alloc(size_t sz)
     sz = next_pow2(sz);
     if (sz < 0x1000) sz = 0x1000;
     size_t i;
-    for (i = 0; i < N_POOLS; ++i)
+    for (i = 0; i < n_pools; ++i)
     {
         block *b;
         block *prev = NULL;
@@ -109,7 +112,7 @@ void page_free(void *pagev, size_t sz)
     if (sz < 0x1000) sz = 0x1000;
     page->size = sz;
 
-    for (i = 0; i < N_POOLS; ++i)
+    for (i = 0; i < n_pools; ++i)
     {
         block *b;
         block *prev = NULL;
