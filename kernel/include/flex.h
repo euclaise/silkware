@@ -3,8 +3,8 @@
 
 #include <phys_malloc.h>
 
-#define FLEX(T) struct { size_t len; T data[]; } *
-#define FLEX_ALLOC(T, size) phys_malloc(sizeof(size_t) + sizeof(T)*size)
+#define FLEX(T) struct { size_t n; T item[1]; }
+#define FLEX_ALLOC(T, size) phys_malloc(sizeof(size_t) + sizeof(T)*((size) - 1))
 #define FLEX_REALLOC(x, size) \
-    phys_realloc((x), sizeof(size_t) + sizeof((x).data[0])*size)
+    phys_realloc((x), sizeof(size_t) + sizeof((x)->item[0])*((size) - 1))
 #endif
