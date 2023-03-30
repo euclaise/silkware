@@ -4,6 +4,7 @@
 -Iarch/x86_64/include
 -Iacpi/include
 -Iexternal/lai/lai/include
+-I../include
 -Ifonts
 -std=c99
 -Wall

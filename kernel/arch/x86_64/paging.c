@@ -7,7 +7,6 @@
 #include <assert.h>
 #include <screen.h>
 #include <panic.h>
-#include <flex.h>
 #include <stddef.h>
 #include "addr.h"
 
@@ -16,7 +15,6 @@ struct limine_kernel_address_request kern_addr_req = {
 };
 
 static struct limine_kernel_address_response kern_resp;
-
 
 #define PAGE_PRESENT  1
 #define PAGE_WRITABLE (1 << 1)

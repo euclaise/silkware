@@ -4,27 +4,29 @@ LD := ld
 ASM := nasm -felf64
 
 CFLAGS := -target $(ARCH)-freestanding  \
-		 -Wall                   \
-		 -Wextra                 \
-         -ffreestanding          \
-		 -fno-strict-aliasing    \
-         -fno-stack-protector    \
-		 -fno-omit-frame-pointer \
-         -fno-stack-check        \
-         -fno-lto                \
-         -fno-pie                \
-         -fno-pic                \
-         -mabi=sysv              \
-         -mno-80387              \
-         -mno-mmx                \
-         -mno-sse                \
-         -mno-sse2               \
-         -mno-red-zone           \
-         -mcmodel=kernel         \
-		 -Iinclude               \
-		 -Iarch/$(ARCH)/include  \
-		 -Iacpi/include          \
-		 -Iexternal/lai/lai/include
+		 -Wall                          \
+		 -Wextra                        \
+         -ffreestanding                 \
+		 -fno-strict-aliasing           \
+         -fno-stack-protector           \
+		 -fno-omit-frame-pointer        \
+         -fno-stack-check               \
+         -fno-lto                       \
+         -fno-pie                       \
+         -fno-pic                       \
+         -mabi=sysv                     \
+         -mno-80387                     \
+         -mno-mmx                       \
+         -mno-sse                       \
+         -mno-sse2                      \
+         -mno-red-zone                  \
+         -mcmodel=kernel                \
+		 -Iinclude                      \
+		 -Iarch/$(ARCH)/include         \
+		 -Iacpi/include                 \
+		 -Iexternal/lai/lai/include     \
+		 -I../include                   \
+		 -I../include/arch/$(ARCH)
 
 LDFLAGS := -nostdlib              \
           -static                 \
