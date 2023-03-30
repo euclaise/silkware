@@ -47,7 +47,7 @@ SECTIONS
 
         . = ALIGN(0x1000);
         miniheap_start = .;
-        . += 0x100000; /* Bootstrap mini-heap */
+        . += 0x64000; /* Bootstrap mini-heap */
         kern_end  =  .;
     } :data
 
