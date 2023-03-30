@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <acpi.h>
 #include <timer.h>
+#include <util.h>
 #include "ports.h"
 #include "pci.h"
 
@@ -49,7 +50,7 @@ void laihost_log(int level, const char *msg)
 void laihost_panic(const char *msg)
 {
     panic("%s", msg);
-    __builtin_unreachable();
+    UNREACHABLE;
 }
 
 void *laihost_scan(const char *sig, size_t index)

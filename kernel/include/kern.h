@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef KERN_H
+#define KERN_H
 
 extern char kern_load[];
 void freeze(void);

@@ -7,7 +7,7 @@
 typedef struct proc
 {
     pid_t pid;
-    FLEX(fd_t) fds;
+    FLEX(fd_t) fsfd; /* fd->fsfd map */
     uint32_t fsid;
     page_tab pt;
 } proc;
