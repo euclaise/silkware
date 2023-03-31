@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <lai/host.h>
-#include <page_alloc.h>
+#include <kalloc.h>
 #include <paging.h>
 #include <io.h>
 #include <panic.h>
@@ -14,17 +14,19 @@
 
 void *laihost_malloc(size_t size)
 {
-    return page_alloc(size);
+    return kalloc(size);
 }
 
 void laihost_free(void *ptr, size_t size)
 {
-    page_free(ptr, size);
+    (void)size;
+    kfree(ptr);
 }
 
 void *laihost_realloc(void *ptr, size_t newsize, size_t oldsize)
 {
-    return page_realloc(ptr, newsize, oldsize);
+    (void)oldsize;
+    return krealloc(ptr, newsize);
 }
 
 void *laihost_map(size_t address, size_t count)

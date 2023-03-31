@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <panic.h>
+#include <mem.h>
 
 #define NBINS (128)
 #define OVERALLOC_MAX (256)
@@ -90,12 +91,14 @@ void *kalloc(size_t size)
             /* Needs a header on the new free block, hence the + HDRSIZE */
         {
             new = (block *) (cur->data + size);
-            new->size = cur->size - size;
+            new->size = cur->size - size - HDRSIZE;
             new->next = cur->next;
             prev->next = new;
 
             cur->size = size;
             cur->canary = (uint64_t) cur ^ canary_seed;
+
+            assert((void *) cur == (void *) cur->data - HDRSIZE);
             return cur->data;
         }
     }
@@ -111,7 +114,9 @@ void *kalloc(size_t size)
     new->size = page_blk_size - size - HDRSIZE*2;
 
     insert_block(&state, new);
-    return res;
+
+    assert((void *) res == (void *) res->data - HDRSIZE);
+    return res->data;
 }
 
 void kfree(void *addr)
@@ -121,4 +126,16 @@ void kfree(void *addr)
     if (b->canary != ((uint64_t) b ^ canary_seed))
         panic("Heap overflow detected!");
     insert_block(&state, b);
+}
+
+void *krealloc(void *old, size_t newsize)
+{
+    block *oldb = old - HDRSIZE;
+    void *res = kalloc(newsize);
+    if (old)
+    {
+        memcpy(res, old, oldb->size);
+        kfree(old);
+    }
+    return res;
 }
