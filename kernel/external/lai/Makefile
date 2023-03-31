@@ -25,7 +25,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
 		 -Ilai/include
 
 lai.a: $(OBJS)
-	$(ARCH)-elf-ar cr lai.a $(OBJS)
+	ar cr lai.a $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
