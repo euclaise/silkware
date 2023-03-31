@@ -37,6 +37,8 @@ void start(void)
 }
 
 void gdt_init(void);
+void rand_init(void);
+
 void arch_init(void)
 {
     idt_init();
@@ -44,6 +46,7 @@ void arch_init(void)
     printf("ACPI Revision: %d\n", xsdp.revision);
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
     hpet_init();
+    rand_init();
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);

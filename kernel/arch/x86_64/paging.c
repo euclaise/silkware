@@ -1,3 +1,4 @@
+#include <u.h>
 #include <stdint.h>
 #include <paging.h>
 #include <mem.h>
@@ -34,7 +35,7 @@ typedef pdpte_t *pdpt_t;
 typedef pde_t   *pd_t;
 typedef pte_t   *pt_t;
 
-pml4e_t kpml4[512]  __attribute__((aligned(0x1000)));
+pml4e_t kpml4[512]  __attribute__((aligned(PAGE_SIZE)));
 
 extern char kern_load[], kern_end[];
 
@@ -83,24 +84,24 @@ void map_pages(
         int pt_idx   = (dst >> 12) & 0x1FF;
 
         if (!(pml4[pml4_idx] & PAGE_PRESENT))
-            pml4[pml4_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000))
+            pml4[pml4_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE))
                 | PAGE_PRESENT | PAGE_WRITABLE;
 
         pdpt_t pdpt = PHYSK2VK(pml4[pml4_idx] & ~0xFFF);
         if (!(pdpt[pdpt_idx] & PAGE_PRESENT))
-            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000)) |
+            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
         pd_t pd = PHYSK2VK(pdpt[pdpt_idx] & ~0xFFF);
         if (!(pd[pd_idx] & PAGE_PRESENT))
-            pd[pd_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(0x1000)) |
+            pd[pd_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
                 PAGE_PRESENT | PAGE_WRITABLE;
 
         pt_t pt = (pt_t) PHYSK2VK(pd[pd_idx] & ~0xFFF);
         pt[pt_idx] = (src & ~0xFFF) | flags;
 
-        dst += 0x1000;
-        src += 0x1000;
+        dst += PAGE_SIZE;
+        src += PAGE_SIZE;
     }
 }
 
@@ -158,7 +159,7 @@ void *kmap_phys(void *phys, size_t len)
     );
     end_pos = round_up_page(end_pos + len);
 
-    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += 0x1000)
+    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += PAGE_SIZE)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 
     return (void *) res;
@@ -167,14 +168,14 @@ void *kmap_phys(void *phys, size_t len)
 void kunmap(void *virt, size_t len)
 {
     map_pages(kpml4, (uintptr_t) virt, 0, len, 0);
-    for (void *p = virt; p < (void *) virt + len; p += 0x1000)
+    for (void *p = virt; p < (void *) virt + len; p += PAGE_SIZE)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 }
 
 pml4_t newproc_pages(void)
 {
-    pml4_t new_pml4 = miniheap_alloc(0x1000);
-    memset(new_pml4, 0, 0x1000);
+    pml4_t new_pml4 = miniheap_alloc(PAGE_SIZE);
+    memset(new_pml4, 0, PAGE_SIZE);
     map_kern_pages(new_pml4);
     return new_pml4;
 }

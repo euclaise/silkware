@@ -46,7 +46,7 @@ void laihost_log(int level, const char *msg)
 void laihost_panic(const char *msg)
 {
     panic("%s", msg);
-    UNREACHABLE;
+    unreachable;
 }
 
 void *laihost_scan(const char *sig, size_t index)
