@@ -1,4 +1,5 @@
 #include <u.h>
+#include <assert.h>
 #include <stdint.h>
 #include <paging.h>
 #include <io.h>
@@ -18,7 +19,7 @@ typedef struct pool
     block *start;
     uintptr_t base;
     block *end;
-} pool;
+} pool; /* Ordered by address */
 
 static pool *pools;
 size_t n_pools;
@@ -117,31 +118,32 @@ void page_free(void *pagev, size_t sz)
     {
         block *b;
         block *prev = NULL;
-        if (page < pools[i].start || page > pools[i].end) continue;
+        if (page < (block *) pools[i].base || page > pools[i].end) continue;
 
-        for (b = pools[i].start; b < pools[i].end; b = b->next)
+        for (b = pools[i].start; ; b = b->next)
         {
-            block *bb = (block *) get_buddy((uintptr_t) page, pools[i].base);
-            if (b == (block *) bb)
-            {
+            if (b == (block *) get_buddy((uintptr_t) page, pools[i].base))
+            { /* Found buddy in free-list */
                 block *h, *l; /* High, low */
-                if (b > bb)
+                if (b > page)
                 {
                     h = b;
-                    l = bb;
+                    l = page;
                 }
                 else
                 {
-                    h = bb;
+                    h = page;
                     l = b;
                 }
 
                 l->size += h->size;
                 l->next = b->next;
-                prev->next = l;
+                if (prev) prev->next = l;
+                else pools[i].start = l;
                 return;
             }
-            if (page < b && prev == NULL)
+
+            if (b > page)
             {
                 if (prev == NULL)
                 {
@@ -153,8 +155,18 @@ void page_free(void *pagev, size_t sz)
                 page->next = b;
                 return;
             }
+
+            if (b == pools[i].end)
+            {
+                prev->next = page;
+                page->next = pools[i].end;
+                return;
+            }
         }
     }
+
+    /* Page not found in any pools */
+    unreachable;
 }
 
 void *page_realloc(void *page, size_t oldsize, size_t newsize)
