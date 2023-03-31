@@ -58,7 +58,7 @@ void hpet_init(void)
     hpet_ready = true;
 }
 
-static inline uint64_t read_hpet(void)
+uint64_t read_hpet(void)
 {
     if (!hpet_ready) panic("Tried to read HPET before initialization");
     return hpet->main_ctr;

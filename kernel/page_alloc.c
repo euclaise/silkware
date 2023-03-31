@@ -1,3 +1,4 @@
+#include <u.h>
 #include <stdint.h>
 #include <paging.h>
 #include <io.h>
@@ -66,7 +67,7 @@ void page_alloc_init(void)
     for (i = 0; i < memmap_len; ++i)
     {
         size_t sz = prev_pow2(memmap[i].len);
-        if (sz < 0x1000) continue;
+        if (sz < PAGE_SIZE) continue;
         
         pools[n_pools].base = (uintptr_t) kmap_phys(
             (void *) memmap[i].base,
@@ -83,7 +84,7 @@ void page_alloc_init(void)
 void *page_alloc(size_t sz)
 {
     sz = next_pow2(sz);
-    if (sz < 0x1000) sz = 0x1000;
+    if (sz < PAGE_SIZE) sz = PAGE_SIZE;
     size_t i;
     for (i = 0; i < n_pools; ++i)
     {
@@ -109,7 +110,7 @@ void page_free(void *pagev, size_t sz)
     block *page = pagev;
 
     sz = next_pow2(sz);
-    if (sz < 0x1000) sz = 0x1000;
+    if (sz < PAGE_SIZE) sz = PAGE_SIZE;
     page->size = sz;
 
     for (i = 0; i < n_pools; ++i)
