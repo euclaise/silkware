@@ -43,4 +43,6 @@ void init_syscalls(void)
         | EFLAGS_ALIGNMENT
     );
     wrmsr(STAR, (user_cs << 48) | (kern_cs << 32));
+
+    /* wrmsr(LSTAR, syscall_entry); */
 }
