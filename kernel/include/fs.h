@@ -2,21 +2,14 @@
 #include <proc.h>
 #include <flex.h>
 
-typedef struct fs_stat
-{
-    FLEX(int8_t) name;
-    uint32_t ops;
-    uint64_t size;
-} fs_stat;
-
-typedef FLEX(int8_t *) fs_entry_list;
+typedef int32_t fsid_t;
 
 /* List of fs drivers indexed by fsid */
 extern FLEX(proc *) *fs_list;
 
-typedef struct fs_entry
+typedef struct fs_inode
 {
-    int32_t fsid;
+    fsid_t fsid;
     FLEX(int8_t) path;
-    FLEX(struct fs_entry *) child;
-} fs_entry;
+    FLEX(struct fs_inode *) child;
+} fs_inode;

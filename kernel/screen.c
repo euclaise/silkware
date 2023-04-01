@@ -3,7 +3,7 @@
 #include <paging.h>
 #include <font.h>
 
-framebuffer screen;
+struct framebuffer screen;
 
 void putpixel(uint32_t x, uint32_t y, uint32_t color)
 {

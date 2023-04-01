@@ -17,7 +17,7 @@ void memmap_init(void)
         panic("Could not get memory map");
 
     memmap_len = response->entry_count;
-    memmap = miniheap_alloc(sizeof(memmap_entry) * memmap_len);
+    memmap = miniheap_alloc(sizeof(struct memmap_entry) * memmap_len);
 
     printf("Memory map (length %d):\n", memmap_len);
     for (i = 0; i < memmap_len; ++i)

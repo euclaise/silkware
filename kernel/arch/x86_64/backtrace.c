@@ -1,11 +1,12 @@
 #include <stdint.h>
 #include <io.h>
+#include <util.h>
 
 struct frame
 {
     struct frame *rbp;
     uint64_t rip;
-} __attribute__((packed));
+} _packed;
 
 void backtrace(void)
 {

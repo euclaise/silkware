@@ -4,12 +4,12 @@
 #include <map.h>
 #include <paging.h>
 
-typedef struct proc
+struct proc
 {
     pid_t pid;
     FLEX(fd_t) fsfd; /* fd->fsfd map */
     uint32_t fsid;
     page_tab pt;
-} proc;
+};
 
 MAP(pid_t, proc) *proc_map;
