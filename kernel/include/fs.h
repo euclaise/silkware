@@ -5,7 +5,7 @@
 typedef int32_t fsid_t;
 
 /* List of fs drivers indexed by fsid */
-extern FLEX(proc *) *fs_list;
+extern FLEX(struct proc *) *fs_list;
 
 typedef struct fs_inode
 {

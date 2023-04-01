@@ -1,7 +1,7 @@
 General asynchronous syscall mechanism
 
 ```
-struct asyscall_seq
+struct asys_seq
 {
     uint8_t op;
     union sysargs_t args;
@@ -14,7 +14,7 @@ struct asyscall_seq
 ```
 e.g.
 ```
-asyscall_seq
+asys_seq
 {
     .op = SYS_READ,
     .args = read
@@ -29,11 +29,17 @@ asyscall_seq
 Example code:
 
 ```
-asyscall_req *request = mkasyscall(0); /* 0 is the size of the user data */
+uint64_t user_lens[] = {1}; /* Length of each request */
+asyscall_req *request = mkasysbuf(1 /* num requests */, user_lens /* lens */);
+
 request->op = SYS_READ;
 request->args.read.pos = -1;
 request->args.read.len = 128;
 request->n = 0;
 
 __atomic_store_n(request->status, ASYS_SEQ_SET, __ATOMIC_RELAXED);
+futex_wait(request->status, 0);
+
+/* Ready, read result */
+printf("%s", ((asys_resp *)request->response)->data);
 ```
