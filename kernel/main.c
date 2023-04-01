@@ -31,5 +31,6 @@ void main(void)
     arch_init();
     printf("Arch initialization complete\n");
 
+    init_syscalls();
     __asm__ ("int $0");
 }

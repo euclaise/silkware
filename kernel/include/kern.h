@@ -13,5 +13,6 @@ void main(void);
 void arch_init(void);
 void pause(void);
 void backtrace(void);
+void init_syscalls(void);
 
 #endif
