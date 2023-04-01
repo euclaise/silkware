@@ -58,6 +58,8 @@ static void insert_block(kalloc_state *state, block *new)
         cur = cur->next;
     }
 
+    if (new == cur) panic("Double free detected!");
+
     prev->next = new;
     new->next = cur;
 
