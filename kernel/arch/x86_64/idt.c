@@ -161,7 +161,7 @@ void idt_set(uint8_t i, void *isr, uint8_t flags)
 {
 	idt[i].isr_low    = (uintptr_t) isr & 0xFFFF;
 	idt[i].kernel_cs  = 1 << 3;
-    idt[i].ist        = 0;
+    idt[i].ist        = 1;
     idt[i].attributes = flags;
     idt[i].isr_mid    = ((uintptr_t) isr >> 16) & 0xFFFF;
     idt[i].isr_high   = ((uintptr_t) isr >> 32) & 0xFFFFFFFF;

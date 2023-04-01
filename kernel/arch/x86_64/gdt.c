@@ -119,6 +119,7 @@ void init_tss(void)
      * This disables I/O access */
     kernel_tss.iopb = 0xFFFF;
     kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
+    kernel_tss.ist1 = kernel_tss.rsp0;
 
     gdt.tss.limit_low = limit & 0xFFFF;
     gdt.tss.base_low = base & 0xFFFF;
