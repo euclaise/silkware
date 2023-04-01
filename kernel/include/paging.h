@@ -8,7 +8,7 @@ extern uintptr_t end_pos;
 
 void refresh_pages(page_tab tab);
 void map_pages_default(uintptr_t dst, uintptr_t src, uintptr_t length);
-void map_kern_pages(page_tab tab);
+void map_kern_pages(void);
 void map_screen(void);
 void *kmap_phys(void *phys, size_t len);
 void kunmap(void *virt, size_t len);

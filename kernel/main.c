@@ -20,7 +20,7 @@ void main(void)
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
     printf("High: %p\n", high_addr);
     memmap_init();
-    map_kern_pages(NULL);
+    map_kern_pages();
     map_screen();
     refresh_pages(NULL);
     page_alloc_init();

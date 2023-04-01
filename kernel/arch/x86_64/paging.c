@@ -66,6 +66,45 @@ void refresh_pages(pml4_t pml4)
  * They will be rounded down to the nearest page.
  * Length will be rounded up.
  */
+void premap_pages(
+        uintptr_t dst,
+        uintptr_t src,
+        uintptr_t length,
+        int flags
+    )
+{
+    uintptr_t dst_end = (dst + length + 0xFFF) & ~0xFFF;
+    uintptr_t src_end = (src + length + 0xFFF) & ~0xFFF;
+
+    while (dst < dst_end && src < src_end) {
+        int pml4_idx = (dst >> 39) & 0x1FF;
+        int pdpt_idx = (dst >> 30) & 0x1FF;
+        int pd_idx   = (dst >> 21) & 0x1FF;
+        int pt_idx   = (dst >> 12) & 0x1FF;
+
+        if (!(kpml4[pml4_idx] & PAGE_PRESENT))
+            kpml4[pml4_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE))
+                | PAGE_PRESENT | PAGE_WRITABLE;
+
+        pdpt_t pdpt = PHYSK2VK(kpml4[pml4_idx] & ~0xFFF);
+        if (!(pdpt[pdpt_idx] & PAGE_PRESENT))
+            pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
+                PAGE_PRESENT | PAGE_WRITABLE;
+
+        pd_t pd = PHYSK2VK(pdpt[pdpt_idx] & ~0xFFF);
+        if (!(pd[pd_idx] & PAGE_PRESENT))
+            pd[pd_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
+                PAGE_PRESENT | PAGE_WRITABLE;
+
+        pt_t pt = (pt_t) PHYSK2VK(pd[pd_idx] & ~0xFFF);
+        pt[pt_idx] = (src & ~0xFFF) | flags;
+
+        dst += PAGE_SIZE;
+        src += PAGE_SIZE;
+    }
+}
+
+
 void map_pages(
         pml4_t pml4,
         uintptr_t dst,
@@ -107,21 +146,20 @@ void map_pages(
 
 void map_page_default(uintptr_t dst, uintptr_t src, uintptr_t length)
 {
-    map_pages(kpml4, dst, src, length, PAGE_PRESENT | PAGE_WRITABLE);
+    premap_pages(dst, src, length, PAGE_PRESENT | PAGE_WRITABLE);
 }
 
 
 uintptr_t end_pos;
 
-void map_kern_pages(pml4_t tab)
+void map_kern_pages(void)
 {
     if (kern_addr_req.response == NULL)
         panic("Could not get kernel physical addr");
 
-    if (tab == NULL) kern_resp = *kern_addr_req.response;
+    kern_resp = *kern_addr_req.response;
 
-    map_pages(
-        tab ? tab : kpml4,
+    premap_pages(
         (uintptr_t) kern_load,
         (uintptr_t) K2PHYSK(kern_load),
         kern_end - kern_load,
@@ -134,8 +172,7 @@ void map_kern_pages(pml4_t tab)
 void map_screen(void)
 {
     size_t len =  screen.pitch * (screen.bpp/8) * screen.height;
-    map_pages(
-        kpml4,
+    premap_pages(
         (uintptr_t) end_pos,
         (uintptr_t) screen.paddr,
         len,
@@ -176,6 +213,13 @@ pml4_t newproc_pages(void)
 {
     pml4_t new_pml4 = miniheap_alloc(PAGE_SIZE);
     memset(new_pml4, 0, PAGE_SIZE);
-    map_kern_pages(new_pml4);
+
+    map_pages(
+        new_pml4,
+        (uintptr_t) kern_load,
+        (uintptr_t) K2PHYSK(kern_load),
+        kern_end - kern_load,
+        PAGE_PRESENT | PAGE_WRITABLE
+    );
     return new_pml4;
 }
