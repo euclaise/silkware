@@ -27,8 +27,7 @@ pop rax
 %endmacro
 
 extern isr_handle
-global isr_stub
-isr_stub:
+%macro isr_stub 0
     pushall
     cld
     mov rdi, rsp
@@ -36,6 +35,7 @@ isr_stub:
     popall
     add rsp, 24
     iretq
+%endmacro
 
 %macro isr 1
     align 4
@@ -43,7 +43,7 @@ isr_stub:
     isr%1:
         push 0
         push %1
-        jmp isr_stub
+        isr_stub
 %endmacro
 
 %macro isr_err 1
@@ -51,7 +51,7 @@ isr_stub:
     global isr%1
     isr%1:
         push %1
-        jmp isr_stub
+        isr_stub
 %endmacro
 
 %define iserr(i) (i == 8 || (i >= 10 && i <= 14) || i == 17 || i == 21 || i == 29 || i == 30)
