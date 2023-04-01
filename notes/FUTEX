@@ -1,0 +1,11 @@
+futex_wait(addr, val)
+
+```
+if (invalid(addr)) return -1;
+
+if (*(uint64_t) addr == val) return 0;
+
+push_vec(map_get(futex_map, virt2phys(addr)), pid);
+futex_sleep();
+return 0;
+```
