@@ -31,6 +31,5 @@ void main(void)
     arch_init();
     printf("Arch initialization complete\n");
 
-    newproc_pages();
-    panic("Done");
+    __asm__ ("int $0");
 }

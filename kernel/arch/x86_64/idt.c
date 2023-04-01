@@ -4,7 +4,7 @@
 #include <panic.h>
 #include <util.h>
 
-typedef struct
+struct idt_entry_t
 {
     uint16_t isr_low;
     uint16_t kernel_cs;
@@ -13,10 +13,9 @@ typedef struct
     uint16_t isr_mid;
     uint32_t isr_high;
     uint32_t reserved;
-} _packed idt_entry_t;
+} _packed;
 
-__attribute__((aligned(0x10)))
-static idt_entry_t idt[256];
+__attribute__((aligned(0x10))) static struct idt_entry_t idt[256];
 
 static struct
 {
@@ -24,14 +23,27 @@ static struct
     uint64_t base;
 } _packed idtr;
 
-typedef struct
+struct irq_frame
 {
+    uint64_t r11;
+    uint64_t r10;
+    uint64_t r9;
+    uint64_t r8;
+    uint64_t rbp;
+    uint64_t rsi;
+    uint64_t rdi;
+    uint64_t rdx;
+    uint64_t rcx;
+    uint64_t rax;
+
+    uint64_t isrNumber;
+    uint64_t errorCode;
     uint64_t ip;
     uint64_t cs;
     uint64_t flags;
     uint64_t sp;
     uint64_t ss;
-} irq_frame;
+};
 
 char *irq_msg[] =
 {
@@ -57,9 +69,10 @@ char *irq_msg[] =
 };
 
 __attribute__((no_caller_saved_registers))
-void err_stub(int num, irq_frame *frame)
+void isr_handle(struct irq_frame *frame)
 {
     uint64_t cr2;
+    uint64_t num = frame->isrNumber;
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s", irq_msg[num]);
@@ -140,13 +153,7 @@ void err_stub(int num, irq_frame *frame)
     X(248) X(249) X(250) X(251) \
     X(252) X(253) X(254) X(255)
 
-#define X(x)                           \
-    __attribute__((interrupt))            \
-    void irq_stub ## x (irq_frame *frame) \
-    {                                     \
-        err_stub(x, frame);               \
-    }
-
+#define X(x) extern void isr ## x();
 X_ISR
 #undef X
 
@@ -164,9 +171,9 @@ void idt_set(uint8_t i, void *isr, uint8_t flags)
 void idt_init(void)
 {
     idtr.base = (uint64_t) &idt[0];
-    idtr.limit = sizeof(idt_entry_t) * 256 - 1;
+    idtr.limit = sizeof(struct idt_entry_t) * 256 - 1;
 
-#define X(x) idt_set(x, irq_stub ## x, 0x8E);
+#define X(x) idt_set(x, isr ## x, 0x8E);
     X_ISR
 #undef X
 
