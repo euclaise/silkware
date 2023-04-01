@@ -11,6 +11,7 @@
 
 extern void *high_addr;
 
+void call_user(void);
 void main(void)
 {
     serial_init();
@@ -32,5 +33,9 @@ void main(void)
     printf("Arch initialization complete\n");
 
     init_syscalls();
+    printf("Syscall initialization complete\n");
+    screen.vaddr = 0;
+    refresh_pages(newproc_pages());
+    call_user();
     __asm__ ("int $0");
 }

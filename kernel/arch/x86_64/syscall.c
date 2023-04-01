@@ -1,8 +1,12 @@
 #include <stdint.h>
+#include <proc.h>
+#include <syscall.h>
+#include <arch_proc.h>
+#include <assert.h>
 
-#define STAR (0xC0000081)
+#define EFER  (0xC0000080)
+#define STAR  (0xC0000081)
 #define LSTAR (0xC0000082)
-#define EFER (0xc0000080)
 #define FMASK (0xC0000084)
 
 #define EFLAGS_CARRY (1 << 0)
@@ -17,22 +21,25 @@ uint64_t rdmsr(uint32_t msr)
     uint32_t low, high;
     __asm__ volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(msr));
 
-    return ((uint64_t) low << 32) | high;
+    return ((uint64_t) high << 32) | low;
 }
 
 void wrmsr(uint32_t msr, uint64_t addr)
 {
-    uint32_t low = addr >> 32;
-    uint32_t high = addr & 0xFFFFFFFF;
+    uint32_t low = addr & 0xFFFFFFFF;
+    uint32_t high = addr >> 32;
 
     __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(msr));
 }
 
+void syscall_entry();
 void init_syscalls(void)
 {
     uint64_t kern_cs = 0x08;
     uint64_t user_cs = 0x18;
     wrmsr(EFER, rdmsr(EFER) | 1); /* Enable syscall instruction */
+
+    assert(rdmsr(EFER) & 1);
 
     wrmsr(FMASK,
         EFLAGS_CARRY
@@ -44,5 +51,12 @@ void init_syscalls(void)
     );
     wrmsr(STAR, (user_cs << 48) | (kern_cs << 32));
 
-    /* wrmsr(LSTAR, syscall_entry); */
+    wrmsr(LSTAR, (uint64_t) syscall_entry);
+}
+
+void syscall_handler(struct regs *regs)
+{
+    struct syscall_state state;
+    state.num = regs->rax;
+    syscall_main(state);
 }
