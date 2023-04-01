@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <mem.h>
 #include <kern.h>
+#include <util.h>
 
 #define ACCESS_PRESENT  (1 << 7)
 
@@ -15,7 +16,7 @@
 #define SZ_32     (1 << 6)
 #define LONG_MODE (1 << 5)
 
-typedef struct gdt_desc
+struct gdt_desc
 {
     uint16_t limit_low;
     uint16_t base_low;
@@ -23,15 +24,15 @@ typedef struct gdt_desc
     uint8_t access;
     uint8_t granularity;
     uint8_t base_high;
-} __attribute__((packed)) gdt_desc;
+} _packed;
 
 struct gdtptr
 {
     uint16_t limit;
     uint64_t base;
-} __attribute__((packed)) gdtr;
+} _packed gdtr;
 
-typedef struct tss_t
+struct tss
 {
     uint32_t reserved1;
     uint64_t rsp0;
@@ -48,9 +49,9 @@ typedef struct tss_t
     uint64_t reserved3;
     uint16_t reserved4;
     uint16_t iopb;
-} __attribute__((packed)) tss_t;
+} _packed;
 
-typedef struct tss_desc
+struct tss_desc
 {
     uint16_t limit_low;
     uint16_t base_low;
@@ -60,16 +61,16 @@ typedef struct tss_desc
     uint8_t base_high;
     uint32_t base_upper;
     uint32_t reserved;
-} __attribute__((packed)) tss_desc;
+} _packed;
 
-tss_t kernel_tss;
+struct tss kernel_tss;
 
 
 struct gdt
 {
-    gdt_desc entries[5];
-    tss_desc tss;
-} __attribute__((packed)) gdt = {
+    struct gdt_desc entries[5];
+    struct tss_desc tss;
+} _packed gdt = {
     .entries = {
         {0},
         { /* Kernel Code */
@@ -111,7 +112,7 @@ char tss_stack[4096] __attribute__((aligned(16)));
 
 void init_tss(void)
 {
-    int limit = sizeof(tss_t) - 1;
+    int limit = sizeof(struct tss) - 1;
     uint64_t base = (uint64_t) &kernel_tss;
 
     /* iopb is disabled by having a value larger than limit
@@ -134,7 +135,7 @@ void gdt_init(void)
 {
     init_tss();
 
-    gdtr.limit = sizeof(gdt_desc)*5 + sizeof(tss_desc) - 1;
+    gdtr.limit = sizeof(struct gdt_desc)*5 + sizeof(struct tss_desc) - 1;
     gdtr.base = (uintptr_t) &gdt;
 
     flush_gdt();

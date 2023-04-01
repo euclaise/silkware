@@ -1,19 +1,19 @@
 #include <stdint.h>
 #include <flex.h>
 
-typedef struct
+struct map_item
 {
     uint64_t h;      /* Hash */
     FLEX(uint8_t) *k; /* Key */
     FLEX(uint8_t) *v; /* Value */
-} map_item;
+};
 
-typedef struct
+struct bucket
 {
     size_t n;
     size_t cap;
-    map_item item[];
-} bucket;
+    struct map_item item[];
+};
 
-typedef FLEX(bucket) map;
+typedef FLEX(struct bucket) map;
 #define MAP(x, y) map

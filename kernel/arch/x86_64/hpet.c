@@ -3,6 +3,7 @@
 #include <acpispec/tables.h>
 #include <paging.h>
 #include <timer.h>
+#include <util.h>
 
 static struct hpet_tab
 {
@@ -17,7 +18,7 @@ static struct hpet_tab
     uint8_t hpet_num;
     uint16_t min_tick;
     uint8_t page_prot;
-} __attribute__((packed)) *hpet_tab;
+} _packed *hpet_tab;
 
 #define HPET_MAX_TIMERS (32)
 

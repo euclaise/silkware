@@ -1,0 +1,28 @@
+Userspace filesystems work by recieving notes in a particular format:
+struct fs_note
+{
+    int8_t cmd;
+    request;
+} _packed
+
+Note that note metadata, such as the sending process ID, is listed in another
+metastructure.
+
+Request takes a format such as:
+
+struct read_request
+{
+    int32_t fsid;
+    int64_t pos;
+    int64_t len;
+} _packed
+
+Note that all integers are in little endian order.
+
+This request then elicits a response of:
+
+struct read_response
+{
+    int64_t len;
+    int8_t data[];
+} _packed

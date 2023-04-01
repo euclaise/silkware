@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <stddef.h>
-typedef struct
+struct memmap_entry
 {
     uintptr_t base;
     uintptr_t len;
-} memmap_entry;
+};
 
-extern memmap_entry *memmap;
+extern struct memmap_entry *memmap;
 extern size_t memmap_len;
 void memmap_init(void);

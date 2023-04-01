@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <limine.h>
 
-typedef struct framebuffer
+struct framebuffer
 {
     void *vaddr;
     void *paddr;
@@ -12,9 +12,9 @@ typedef struct framebuffer
     uint8_t red_mask_shift;
     uint8_t green_mask_shift;
     uint8_t blue_mask_shift;
-} framebuffer;
+};
 
-extern framebuffer screen;
+extern struct framebuffer screen;
 void init_fb(void);
 void putpixel(uint32_t x, uint32_t y, uint32_t color);
 void putchar(uint32_t x, uint32_t y, char c, uint32_t color);

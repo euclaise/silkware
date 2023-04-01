@@ -2,9 +2,9 @@
 #include <io.h>
 #include <kern.h>
 #include <panic.h>
+#include <util.h>
 
 typedef struct
-__attribute__((packed))
 {
     uint16_t isr_low;
     uint16_t kernel_cs;
@@ -13,17 +13,16 @@ __attribute__((packed))
     uint16_t isr_mid;
     uint32_t isr_high;
     uint32_t reserved;
-} idt_entry_t;
+} _packed idt_entry_t;
 
 __attribute__((aligned(0x10)))
 static idt_entry_t idt[256];
 
 static struct
-__attribute__((packed))
 {
     uint16_t limit;
     uint64_t base;
-} idtr;
+} _packed idtr;
 
 typedef struct
 {

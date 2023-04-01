@@ -1,0 +1,39 @@
+General asynchronous syscall mechanism
+
+```
+struct asyscall_seq
+{
+    uint8_t op;
+    union sysargs_t args;
+
+    int8_t status;
+    uint64_t response; /* sysfree-able pointer */
+    int64_t n;
+    int8_t user_data[n];
+}
+```
+e.g.
+```
+asyscall_seq
+{
+    .op = SYS_READ,
+    .args = read
+    {
+        .pos =-1,
+        .len = 128
+    },
+    .n = ASYS_SEQ_SET
+}
+```
+
+Example code:
+
+```
+asyscall_req *request = mkasyscall(0); /* 0 is the size of the user data */
+request->op = SYS_READ;
+request->args.read.pos = -1;
+request->args.read.len = 128;
+request->n = 0;
+
+__atomic_store_n(request->status, ASYS_SEQ_SET, __ATOMIC_RELAXED);
+```
