@@ -124,17 +124,17 @@ void map_pages(
 
         if (!(pml4[pml4_idx] & PAGE_PRESENT))
             pml4[pml4_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE))
-                | PAGE_PRESENT | PAGE_WRITABLE;
+                | flags;
 
         pdpt_t pdpt = PHYSK2VK(pml4[pml4_idx] & ~0xFFF);
         if (!(pdpt[pdpt_idx] & PAGE_PRESENT))
             pdpt[pdpt_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
-                PAGE_PRESENT | PAGE_WRITABLE;
+                flags;
 
         pd_t pd = PHYSK2VK(pdpt[pdpt_idx] & ~0xFFF);
         if (!(pd[pd_idx] & PAGE_PRESENT))
             pd[pd_idx] = (uintptr_t) K2PHYSK(miniheap_alloc(PAGE_SIZE)) |
-                PAGE_PRESENT | PAGE_WRITABLE;
+                flags;
 
         pt_t pt = (pt_t) PHYSK2VK(pd[pd_idx] & ~0xFFF);
         pt[pt_idx] = (src & ~0xFFF) | flags;
@@ -209,6 +209,7 @@ void kunmap(void *virt, size_t len)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 }
 
+void user_main();
 pml4_t newproc_pages(void)
 {
     pml4_t new_pml4 = miniheap_alloc(PAGE_SIZE);
@@ -221,5 +222,14 @@ pml4_t newproc_pages(void)
         kern_end - kern_load,
         PAGE_PRESENT | PAGE_WRITABLE
     );
+
+    map_pages(
+        new_pml4,
+        (uintptr_t) 0x100000,
+        (uintptr_t) K2PHYSK(user_main),
+        0x1000,
+        PAGE_PRESENT | PAGE_USER | PAGE_WRITABLE
+    );
+
     return new_pml4;
 }

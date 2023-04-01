@@ -3,6 +3,7 @@
 #include <kern.h>
 #include <panic.h>
 #include <util.h>
+#include <arch_proc.h>
 
 struct idt_entry_t
 {
@@ -25,25 +26,16 @@ static struct
 
 struct irq_frame
 {
-    uint64_t r11;
-    uint64_t r10;
-    uint64_t r9;
-    uint64_t r8;
-    uint64_t rbp;
-    uint64_t rsi;
-    uint64_t rdi;
-    uint64_t rdx;
-    uint64_t rcx;
-    uint64_t rax;
+    struct regs regs;
 
-    uint64_t isrNumber;
+    uint64_t num;
     uint64_t errorCode;
     uint64_t ip;
     uint64_t cs;
     uint64_t flags;
     uint64_t sp;
     uint64_t ss;
-};
+} _packed;
 
 char *irq_msg[] =
 {
@@ -72,7 +64,7 @@ __attribute__((no_caller_saved_registers))
 void isr_handle(struct irq_frame *frame)
 {
     uint64_t cr2;
-    uint64_t num = frame->isrNumber;
+    uint64_t num = frame->num;
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s", irq_msg[num]);

@@ -17,7 +17,7 @@ rdseed:
     rdseed rax
     jc .done
     loop .retry
-.done
+.done:
     ret
 
 global rdtsc
