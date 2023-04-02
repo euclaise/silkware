@@ -53,10 +53,3 @@ void init_syscalls(void)
 
     wrmsr(LSTAR, (uint64_t) syscall_entry);
 }
-
-void syscall_handler(struct regs *regs)
-{
-    struct syscall_state state;
-    state.num = regs->rax;
-    syscall_main(state);
-}
