@@ -4,13 +4,12 @@
 #include <io.h>
 #include <panic.h>
 
-void sys_test(void)
+void syscall_test(void)
 {
     printf("Hello from userspace!");
 }
 
-void syscall_main(struct syscall_state state)
+void syscall_inval(void)
 {
-    if (state.num != 0) panic("Unknown syscall!");
-    sys_test();
+    panic("Invalid syscall");
 }
