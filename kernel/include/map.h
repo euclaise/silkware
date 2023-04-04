@@ -1,3 +1,5 @@
+#ifndef MAP_H
+#define MAP_H
 #include <stdint.h>
 #include <flex.h>
 
@@ -17,5 +19,7 @@ typedef struct
 #define MAP(x, y) map
 map *map_new(size_t n);
 map *map_grow(map *m, size_t n);
-void map_set(map **m, int8_t *k, size_t kn, int8_t *v, size_t vn);
+void map_set(map **m, const void *k, size_t kn, const void *v, size_t vn);
 void map_free(map *m);
+void *map_get(const map *m, const void *k, size_t kn);
+#endif

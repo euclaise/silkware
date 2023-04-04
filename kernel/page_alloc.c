@@ -36,7 +36,7 @@ uintptr_t prev_pow2(uintptr_t x)
 uintptr_t next_pow2(uintptr_t x)
 {
     size_t s;
-    if (x == 0) return 0;
+    if (x == 0) return 0x1000;
 
     x--;
     for (s = 1; s < sizeof(s)*8; s <<= 1) x |= x >> s;
@@ -50,6 +50,7 @@ uintptr_t get_buddy(uintptr_t addr, uintptr_t base)
 
 block *split(block *b, size_t sz, uintptr_t base)
 {
+    assert(b->size >= sz);
     while (b->size != sz)
     {
         block *bb;
@@ -101,7 +102,9 @@ void *page_alloc(size_t sz)
             }
     }
 
-    panic("WARNING: Out of memory!");
+    for (i = 0; i < n_pools; ++i)
+        printf("Pool size: %d\n", pools[i].end - pools[i].start);
+    panic("page_alloc(%llu): Out of memory\n", sz);
     return NULL;
 }
 
@@ -177,5 +180,12 @@ void *page_realloc(void *page, size_t oldsize, size_t newsize)
         memcpy(res, page, oldsize);
         page_free(page, oldsize);
     }
+    return res;
+}
+
+void *page_zalloc(size_t size)
+{
+    void *res = page_alloc(size);
+    if (res) memset(res, 0, size);
     return res;
 }
