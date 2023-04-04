@@ -7,6 +7,7 @@
 #include <mem.h>
 #include <panic.h>
 #include <miniheap.h>
+#include <stdbool.h>
 
 typedef struct block
 {
@@ -16,7 +17,7 @@ typedef struct block
 
 typedef struct pool
 {
-    block *start;
+    block *start; /* NULL if unpaged */
     uintptr_t base;
     block *end;
 } pool; /* Ordered by address */
@@ -36,7 +37,7 @@ uintptr_t prev_pow2(uintptr_t x)
 uintptr_t next_pow2(uintptr_t x)
 {
     size_t s;
-    if (x == 0) return 0x1000;
+    if (x == 0) return 0;
 
     x--;
     for (s = 1; s < sizeof(s)*8; s <<= 1) x |= x >> s;
@@ -71,28 +72,42 @@ void page_alloc_init(void)
         size_t sz = prev_pow2(memmap[i].len);
         if (sz < PAGE_SIZE) continue;
         
-        pools[n_pools].base = (uintptr_t) kmap_phys(
-            (void *) memmap[i].base,
-            sz
-        );
-        pools[n_pools].end = (block *) (pools[n_pools].base + sz);
-        pools[n_pools].start = (block *) pools[n_pools].base;
-        pools[n_pools].start->size = sz;
-        pools[n_pools].start->next = pools[n_pools].end;
+        pools[n_pools].start = NULL;
+        pools[n_pools].base = memmap[i].base;
+        pools[n_pools].end = (block *) sz;
+
         ++n_pools;
     }
 }
 
 void *page_alloc(size_t sz)
 {
+    size_t i;
     sz = next_pow2(sz);
     if (sz < PAGE_SIZE) sz = PAGE_SIZE;
-    size_t i;
+
     for (i = 0; i < n_pools; ++i)
     {
         block *b;
         block *prev = NULL;
-        for (b = pools[i].start; b < pools[i].end; prev = b, b = b->next)
+
+        if (pools[i].start == NULL)
+        {
+            void *phys = (void *) pools[i].base;
+            size_t bsz = (size_t) pools[i].end;
+            void *virt = kmap_phys(phys, bsz);
+
+
+            if (bsz < sz) continue;
+            pools[i].base = (uintptr_t) virt;
+            pools[i].end = virt + bsz;
+            pools[i].start = virt;
+            pools[i].start->size = bsz;
+            pools[i].start->next = pools[i].end;
+        }
+
+        for (b = pools[i].start; b < pools[i].end; b = b->next)
+        {
             if (b->size >= sz)
             {
                 block *res = split(b, sz, pools[i].base);
@@ -100,10 +115,12 @@ void *page_alloc(size_t sz)
                 else pools[i].start = res->next;
                 return res;
             }
+            prev = b;
+        }
     }
 
     for (i = 0; i < n_pools; ++i)
-        printf("Pool size: %d\n", pools[i].end - pools[i].start);
+        printf("Pool size: %lld\n", pools[i].end - pools[i].start);
     panic("page_alloc(%llu): Out of memory\n", sz);
     return NULL;
 }
@@ -189,3 +206,5 @@ void *page_zalloc(size_t size)
     if (res) memset(res, 0, size);
     return res;
 }
+    size_t i;
+    size_t i;
