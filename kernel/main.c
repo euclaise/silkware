@@ -8,12 +8,14 @@
 #include <lai/helpers/sci.h>
 #include <timer.h>
 #include <page_alloc.h>
+#include <proc.h>
 
 extern void *high_addr;
 
 void call_user(void);
 void main(void)
 {
+    struct proc p1 = {0};
     serial_init();
     init_fb();
 
@@ -35,7 +37,9 @@ void main(void)
     init_syscalls();
     printf("Syscall initialization complete\n");
     screen.vaddr = 0;
-    refresh_pages(newproc_pages());
+
+    newproc_pages(&p1);
+    refresh_pages(p1.pt);
     call_user();
     __asm__ ("int $0");
 }

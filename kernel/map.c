@@ -1,4 +1,5 @@
 #include <map.h>
+#include <io.h>
 #include <stdint.h>
 #include <util.h>
 #include <stdbool.h>
@@ -35,8 +36,9 @@ map *map_new(size_t n)
     return res;
 }
 
-static void *map_find(map *m, uint64_t h, int8_t *k, size_t kn)
+void *map_get(const map *m, const void *k, size_t kn)
 {
+    uint64_t h = hash(k, kn);
     size_t idx = h % m->cap;
     size_t i = idx;
 
@@ -45,18 +47,11 @@ static void *map_find(map *m, uint64_t h, int8_t *k, size_t kn)
         if (m->cell[i].k
                 && m->cell[i].h == h
                 && likely(m->cell[i].k->n == kn)
-                && likely(memcmp(m->cell[i].k, k, kn) == 0))
-            return &m->cell[i];
+                && likely(memcmp(m->cell[i].k->item, k, kn) == 0))
+            return m->cell[i].v->item;
         i = (i + 1) % m->cap;
     } while (i != idx);
     return NULL;
-}
-
-void *map_get(map *m, int8_t *k, size_t kn)
-{
-    struct map_item *cell = map_find(m, hash(k, kn), k, kn);
-    if (cell == NULL) return NULL;
-    return cell->v->item;
 }
 
 map *map_grow(map *m, size_t n)
@@ -82,16 +77,19 @@ map *map_grow(map *m, size_t n)
     return new;
 }
 
-void map_set(map **mp, int8_t *k, size_t kn, int8_t *v, size_t vn)
+void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
 {
     map *m = *mp;
     uint64_t h = hash(k, kn);
     size_t idx = h % m->cap;
     size_t i = idx;
 
-    while (m->cell[i].k && i != idx) i = (i + 1) % m->cap;
+    do { i = (i + 1) % m->cap; } while (m->cell[i].k && i != idx);
+
     if (m->cell[i].k == NULL)
     {
+        m->cell[i].h = h;
+
         m->cell[i].k = FLEX_ALLOC(int8_t, kn);
         m->cell[i].k->n = kn;
         memcpy(m->cell[i].k->item, k, kn);
@@ -99,13 +97,14 @@ void map_set(map **mp, int8_t *k, size_t kn, int8_t *v, size_t vn)
         m->cell[i].v = FLEX_ALLOC(int8_t, vn);
         m->cell[i].v->n = vn;
         memcpy(m->cell[i].v->item, v, vn);
+
         return;
     }
 
     m = map_grow(m, m->cap * 1.25);
 
     i = idx = h % m->cap;
-    while (m->cell[i].k && i != idx) i = (i + 1) % m->cap;
+    do { i = (i + 1) % m->cap; } while (m->cell[i].k && i != idx);
     if (i == idx) unreachable;
 
     m->cell[i].h = h;
