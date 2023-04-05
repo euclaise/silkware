@@ -48,7 +48,6 @@ void arch_init(void)
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
     hpet_init();
     rand_init();
-    kalloc_init();
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);

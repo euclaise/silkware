@@ -233,7 +233,6 @@ void map_user_pages(
     
         addr = p->pt[pml4_idx] & ADDR_MASK;
         pdpt_t pdpt = *(pdpt_t *)map_get(p->addrs, &addr, sizeof(addr));
-        printf("Got virt=%p, phys=%p\n", pdpt, addr);
         if (!(pdpt[pdpt_idx] & X86_PAGE_PRESENT))
             pdpt[pdpt_idx] = new_tab(p) | top_flags;
 

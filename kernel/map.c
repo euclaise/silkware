@@ -97,7 +97,6 @@ void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
         m->cell[i].v = FLEX_ALLOC(int8_t, vn);
         m->cell[i].v->n = vn;
         memcpy(m->cell[i].v->item, v, vn);
-
         return;
     }
 
@@ -116,6 +115,28 @@ void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
     m->cell[i].v->n = vn;
     memcpy(m->cell[i].v, v, vn);
     *mp = m;
+}
+
+void map_del(map *m, const void *k, size_t kn)
+{
+    uint64_t h = hash(k, kn);
+    size_t idx = h % m->cap;
+    size_t i = idx;
+
+    do
+    {
+        if (m->cell[i].k
+                && m->cell[i].h == h
+                && likely(m->cell[i].k->n == kn)
+                && likely(memcmp(m->cell[i].k->item, k, kn) == 0))
+        {
+            kfree(m->cell[i].k);
+            kfree(m->cell[i].v);
+            m->cell[i].k = NULL;
+            return;
+        }
+        i = (i + 1) % m->cap;
+    } while (i != idx);
 }
 
 void map_free(map *m)

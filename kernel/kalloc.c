@@ -9,8 +9,6 @@
 #define NBINS (128)
 #define OVERALLOC_MAX (256)
 
-static uint64_t canary_seed;
-
 
 /* NOTE: Size fields do NOT include the header size */
 typedef struct block
@@ -33,9 +31,12 @@ typedef struct kalloc_state /* Per-CPU state */
 
 kalloc_state state;
 
-void kalloc_init(void)
+uint64_t canary(uint64_t x)
 {
-    canary_seed = rand64();
+	x ^= x << 13;
+	x ^= x >> 7;
+	x ^= x << 17;
+	return x;
 }
 
 static void insert_block(kalloc_state *state, block *new)
@@ -98,7 +99,7 @@ void *kalloc(size_t size)
             prev->next = new;
 
             cur->size = size;
-            cur->canary = (uint64_t) cur ^ canary_seed;
+            cur->canary = canary((uint64_t) cur);
 
             assert((void *) cur == (void *) cur->data - HDRSIZE);
             return cur->data;
@@ -110,7 +111,7 @@ void *kalloc(size_t size)
     page_blk_size = next_pow2(size + HDRSIZE*2);
 
     res->size = size;
-    res->canary = (uint64_t) res ^ canary_seed;
+    res->canary = canary((uint64_t) res);
 
     new = (block *) (res->data + size);
     new->size = page_blk_size - size - HDRSIZE*2;
@@ -125,8 +126,7 @@ void kfree(void *addr)
 {
     block *b = addr - HDRSIZE;
     /* TODO: Check that address is paged in */
-    if (b->canary != ((uint64_t) b ^ canary_seed))
-        panic("Heap overflow detected!");
+    if (b->canary != canary((uint64_t) b)) panic("Heap overflow detected!");
     insert_block(&state, b);
 }
 
