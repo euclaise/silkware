@@ -66,17 +66,48 @@ block *split(block *b, size_t sz, uintptr_t base)
 void page_alloc_init(void)
 {
     size_t i;
-    pools = miniheap_alloc(memmap_len*sizeof(pool));
+    size_t j = 0;
+
     for (i = 0; i < memmap_len; ++i)
     {
-        size_t sz = prev_pow2(memmap[i].len);
-        if (sz < PAGE_SIZE) continue;
-        
-        pools[n_pools].start = NULL;
-        pools[n_pools].base = memmap[i].base;
-        pools[n_pools].end = (block *) sz;
+        size_t len = memmap[i].len;
+        if (unlikely(len < PAGE_SIZE))
+            continue; /* Probably never happens in reality */
 
-        ++n_pools;
+        do {
+            ++n_pools;
+            len -= prev_pow2(len);
+        } while (len - prev_pow2(len) >= PAGE_SIZE);
+    }
+    pools = miniheap_alloc(n_pools*sizeof(pool));
+
+    for (i = 0; i < memmap_len; ++i)
+    {
+        uintptr_t phys = memmap[i].base;
+        size_t sz = memmap[i].len;
+        size_t szp2 = prev_pow2(sz);
+        if (unlikely(sz < PAGE_SIZE)) continue;
+
+        /* 
+         * Buddy allocator requires power-of-2 sizes, so we get the largest pow2
+         * size for each memmap block, then retry again with the rest of the
+         * block if there's more left over
+         */
+        do {
+            void *virt;
+            virt = kmap_phys(phys, szp2);
+            pools[j].base = (uintptr_t) virt;
+            pools[j].end = virt + szp2;
+            pools[j].start = virt;
+            pools[j].start->size = szp2;
+            pools[j].start->next = pools[j].end;
+
+            sz -= szp2;
+            phys += szp2;
+            szp2 = prev_pow2(sz);
+
+            ++j;
+        } while (sz - szp2 >= PAGE_SIZE);
     }
 }
 
@@ -86,25 +117,12 @@ void *page_alloc(size_t sz)
     sz = next_pow2(sz);
     if (sz < PAGE_SIZE) sz = PAGE_SIZE;
 
+    assert(pools != NULL);
+
     for (i = 0; i < n_pools; ++i)
     {
         block *b;
         block *prev = NULL;
-
-        if (pools[i].start == NULL)
-        {
-            void *phys = (void *) pools[i].base;
-            size_t bsz = (size_t) pools[i].end;
-            void *virt = kmap_phys(phys, bsz);
-
-
-            if (bsz < sz) continue;
-            pools[i].base = (uintptr_t) virt;
-            pools[i].end = virt + bsz;
-            pools[i].start = virt;
-            pools[i].start->size = bsz;
-            pools[i].start->next = pools[i].end;
-        }
 
         for (b = pools[i].start; b < pools[i].end; b = b->next)
         {
@@ -120,7 +138,11 @@ void *page_alloc(size_t sz)
     }
 
     for (i = 0; i < n_pools; ++i)
-        printf("Pool size: %lld\n", pools[i].end - pools[i].start);
+        printf(
+            "Pool size: %lld (%p)\n",
+            pools[i].end - pools[i].start,
+            pools[i].base
+        );
     panic("page_alloc(%llu): Out of memory\n", sz);
     return NULL;
 }
@@ -206,5 +228,3 @@ void *page_zalloc(size_t size)
     if (res) memset(res, 0, size);
     return res;
 }
-    size_t i;
-    size_t i;

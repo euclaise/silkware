@@ -9,6 +9,7 @@
 #include <lai/helpers/sci.h>
 #include <paging.h>
 #include <kalloc.h>
+#include <map.h>
 #include "idt.h"
 #include "serial.h"
 #include "addr.h"
@@ -39,6 +40,8 @@ void start(void)
 
 void gdt_init(void);
 void rand_init(void);
+extern map *kmap_pages;
+extern bool kmap_ready;
 
 void arch_init(void)
 {
@@ -48,6 +51,8 @@ void arch_init(void)
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
     hpet_init();
     rand_init();
+    kmap_pages = map_new(0x10);
+    kmap_ready = 1;
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);

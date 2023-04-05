@@ -96,7 +96,8 @@ void *kalloc(size_t size)
             new = (block *) (cur->data + size);
             new->size = cur->size - size - HDRSIZE;
             new->next = cur->next;
-            prev->next = new;
+            if (prev) prev->next = new;
+            else state.start = new;
 
             cur->size = size;
             cur->canary = canary((uint64_t) cur);

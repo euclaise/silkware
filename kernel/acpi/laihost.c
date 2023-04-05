@@ -31,7 +31,7 @@ void *laihost_realloc(void *ptr, size_t newsize, size_t oldsize)
 
 void *laihost_map(size_t address, size_t count)
 {
-    return kmap_phys((void *) address, count);
+    return kmap_phys(address, count);
 }
 
 void laihost_unmap(void *address, size_t count)
