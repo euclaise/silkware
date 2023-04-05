@@ -11,6 +11,8 @@
 #include <proc.h>
 #include "addr.h"
 
+/* This is very messy, should probably be rewritten */
+
 struct limine_kernel_address_request kern_addr_req = {
     .id = LIMINE_KERNEL_ADDRESS_REQUEST
 };
@@ -51,6 +53,9 @@ uint8_t tmp_pages[2][PAGE_SIZE] __attribute__((aligned(PAGE_SIZE)));
 #define PHYSK2VK(x) (void *)( \
         (uintptr_t)(x) - kern_resp.physical_base \
         + kern_resp.virtual_base)
+
+map *kmap_pages;
+bool kmap_ready;
 
 /* 
  * Maps the pages from src to src+length to the virtual addresses of dst to
@@ -170,42 +175,38 @@ void map_screen(void)
     end_pos = round_up_page((uintptr_t) end_pos + len);
 }
 
-void *kmap_phys(void *phys, size_t len)
-{
-    uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
-    uintptr_t res = end_pos + ((uintptr_t) phys - aligned);
-
-    premap_pages(
-        (uintptr_t) end_pos,
-        aligned,
-        len,
-        X86_PAGE_PRESENT | X86_PAGE_WRITABLE
-    );
-    end_pos = round_up_page(end_pos + len);
-
-    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += PAGE_SIZE)
-        __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
-
-    return (void *) res;
-}
-
 void kunmap(void *virt, size_t len)
 {
+    uintptr_t phys = kvirt2phys(kpml4, virt);
+    void **orig; /* Original allocation */
     premap_pages((uintptr_t) virt, 0, len, 0);
+    if (kmap_ready && (orig = map_get(kmap_pages, &phys, sizeof(virt))))
+    {
+        kfree(*orig);
+        map_del(kmap_pages, &virt, sizeof(virt));
+    }
     for (void *p = virt; p < (void *) virt + len; p += PAGE_SIZE)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 }
 
-uintptr_t new_tab(struct proc *p)
+uintptr_t new_tab(map **addrs)
 {
     void *virtpage = page_alloc(PAGE_SIZE);
     uintptr_t physpage = kvirt2phys(kpml4, virtpage); 
-    map_set(&p->addrs, &physpage, sizeof(physpage), &virtpage, sizeof(virtpage));
+    map_set(addrs, &physpage, sizeof(physpage), &virtpage, sizeof(virtpage));
     return physpage;
 }
 
-void map_user_pages(
-        struct proc *p,
+void *getvirt_map(map *m, uintptr_t phys)
+{
+    void **resp = map_get(m, &phys, sizeof(phys));
+    if (resp == NULL) return PHYSK2VK(phys);
+    return *resp;
+}
+
+void map_pages(
+        page_tab pt,
+        map **addrs,
         uintptr_t dst,
         uintptr_t src,
         size_t length,
@@ -228,26 +229,53 @@ void map_user_pages(
         int pd_idx   = (dst >> 21) & 0x1FF;
         int pt_idx   = (dst >> 12) & 0x1FF;
 
-        if (!(p->pt[pml4_idx] & X86_PAGE_PRESENT))
-            p->pt[pml4_idx] = new_tab(p) | top_flags;
+        if (!(pt[pml4_idx] & X86_PAGE_PRESENT))
+            pt[pml4_idx] = new_tab(addrs) | top_flags;
     
-        addr = p->pt[pml4_idx] & ADDR_MASK;
-        pdpt_t pdpt = *(pdpt_t *)map_get(p->addrs, &addr, sizeof(addr));
+        addr = pt[pml4_idx] & ADDR_MASK;
+        pdpt_t pdpt = getvirt_map(*addrs, addr);
         if (!(pdpt[pdpt_idx] & X86_PAGE_PRESENT))
-            pdpt[pdpt_idx] = new_tab(p) | top_flags;
+            pdpt[pdpt_idx] = new_tab(addrs) | top_flags;
 
         addr = pdpt[pdpt_idx] & ADDR_MASK;
-        pd_t pd = *(pd_t *)map_get(p->addrs, &addr, sizeof(addr));
+        pd_t pd = getvirt_map(*addrs, addr);
         if (!(pd[pd_idx] & X86_PAGE_PRESENT))
-            pd[pd_idx] = new_tab(p) | top_flags;
+            pd[pd_idx] = new_tab(addrs) | top_flags;
 
         addr = pd[pd_idx] & ADDR_MASK;
-        pt_t pt = *(pt_t *)map_get(p->addrs, &addr, sizeof(addr));
+        pt_t pt = getvirt_map(*addrs, addr);
         pt[pt_idx] = (src & ADDR_MASK) | x86_flags;
 
         dst += PAGE_SIZE;
         src += PAGE_SIZE;
     }
+}
+
+void *kmap_phys(uintptr_t phys, uintptr_t len)
+{
+    uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
+    uintptr_t res = end_pos + ((uintptr_t) phys - aligned);
+
+    if (!kmap_ready) premap_pages(
+            end_pos,
+            aligned,
+            len,
+            X86_PAGE_PRESENT | X86_PAGE_WRITABLE
+        );
+    else map_pages(
+            kpml4,
+            &kmap_pages,
+            (uintptr_t) end_pos,
+            aligned,
+            len,
+            PAGE_PRESENT | PAGE_WRITABLE
+        );
+    end_pos = round_up_page(end_pos + len);
+
+    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += PAGE_SIZE)
+        __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
+
+    return (void *) res;
 }
 
 void user_main(void);
@@ -259,8 +287,9 @@ void newproc_pages(void *pv)
 
     p->pt[511] = kpml4[511];
 
-    map_user_pages(
-        p,
+    map_pages(
+        p->pt,
+        &p->addrs,
         0x100000,
         (uintptr_t)
         K2PHYSK(user_main),

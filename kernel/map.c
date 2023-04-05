@@ -77,7 +77,7 @@ map *map_grow(map *m, size_t n)
     return new;
 }
 
-void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
+void map_insert(map **mp, const void *k, size_t kn, const void *v, size_t vn)
 {
     map *m = *mp;
     uint64_t h = hash(k, kn);
@@ -137,6 +137,12 @@ void map_del(map *m, const void *k, size_t kn)
         }
         i = (i + 1) % m->cap;
     } while (i != idx);
+}
+
+void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
+{
+    map_del(*mp, k, kn);
+    map_insert(mp, k, kn, v, vn);
 }
 
 void map_free(map *m)
