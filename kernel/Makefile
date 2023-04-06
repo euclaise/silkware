@@ -10,7 +10,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
 		 -fno-strict-aliasing           \
          -fno-stack-protector           \
 		 -fno-omit-frame-pointer        \
-         -fno-stack-check               \
+         -fstack-protector-strong       \
          -fno-lto                       \
          -fno-pie                       \
          -fno-pic                       \
