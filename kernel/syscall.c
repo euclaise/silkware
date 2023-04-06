@@ -6,7 +6,7 @@
 
 void syscall_test(void)
 {
-    printf("Hello from userspace!");
+    printf("Hello from userspace!\n");
 }
 
 void syscall_inval(void)
