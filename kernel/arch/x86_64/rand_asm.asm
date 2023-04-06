@@ -19,10 +19,3 @@ rdseed:
     loop .retry
 .done:
     ret
-
-global rdtsc
-rdtsc:
-    rdtsc
-    shl rdx, 32
-    or rax, rdx
-    ret

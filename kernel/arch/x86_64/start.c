@@ -11,11 +11,11 @@
 #include <kalloc.h>
 #include <map.h>
 #include <panic.h>
-#include <madt.h>
+#include <acpi.h>
+#include <apic.h>
 #include "idt.h"
 #include "serial.h"
 #include "addr.h"
-#include "acpi.h"
 #include "hpet.h"
 
 struct limine_hhdm_request hhdm_req = {
@@ -58,5 +58,5 @@ void arch_init(void)
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);
-    madt_init();
+    apic_init();
 }

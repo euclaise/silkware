@@ -1,14 +1,22 @@
-#include <stdint.h>
 #include <cpu.h>
+#include <assert.h>
 
-int32_t cpuid_features(void)
+void cpuid(int code, int *eax, int *ebx, int *ecx, int *edx)
 {
-    int32_t res;
+    int reax, rebx, recx, redx;
     __asm__ volatile (
         "cpuid"
-        : "=d"(res)
-        : "a"(1)
-        : "ebx", "ecx"
+        : "=a" (reax), "=b" (rebx), "=c" (recx), "=d"(redx)
+        : "a"(code)
     );
-    return res;
+
+    if (eax) *eax = reax;
+    if (ebx) *ebx = rebx;
+    if (ecx) *ecx = recx;
+    if (edx) *edx = redx;
+}
+
+void pause(void)
+{
+    __asm__ volatile ("pause");
 }

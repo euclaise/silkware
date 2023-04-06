@@ -1,11 +1,11 @@
 #include <acpi.h>
 #include <panic.h>
-#include <madt.h>
+#include <apic.h>
 
 struct madt *madt;
 uintptr_t lapic_phys;
 
-void madt_init(void)
+void apic_init(void)
 {
     int8_t *p;
     madt = acpi_find("APIC", 0);

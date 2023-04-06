@@ -1,9 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include <stdint.h>
-
-int32_t cpuid_features(void);
+void cpuid(int code, int *eax, int *ebx, int *ecx, int *edx);
 
 enum
 {
