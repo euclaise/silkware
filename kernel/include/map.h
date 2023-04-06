@@ -17,6 +17,7 @@ typedef struct
     struct map_item cell[1];
 } _packed map;
 #define MAP(x, y) map
+
 map *map_new(size_t n);
 map *map_grow(map *m, size_t n);
 void map_set(map **m, const void *k, size_t kn, const void *v, size_t vn);
