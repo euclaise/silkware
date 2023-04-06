@@ -10,6 +10,8 @@
 #include <paging.h>
 #include <kalloc.h>
 #include <map.h>
+#include <panic.h>
+#include <madt.h>
 #include "idt.h"
 #include "serial.h"
 #include "addr.h"
@@ -56,4 +58,5 @@ void arch_init(void)
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);
+    madt_init();
 }
