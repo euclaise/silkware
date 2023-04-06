@@ -13,6 +13,6 @@ struct madt
     int8_t data[1];
 } _packed;
 
-void madt_init(void);
+void apic_init(void);
 
 #endif

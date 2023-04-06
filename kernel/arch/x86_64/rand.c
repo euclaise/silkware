@@ -2,6 +2,7 @@
 #include <rand.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "hpet.h"
 
 bool has_rdseed;
 
@@ -18,5 +19,5 @@ void rand_init(void)
 uint64_t rand64(void)
 {
     if (has_rdseed) return rdseed();
-    return rdtsc();
+    return read_hpet();
 }

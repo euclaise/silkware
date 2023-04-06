@@ -9,6 +9,7 @@
 #include <timer.h>
 #include <page_alloc.h>
 #include <proc.h>
+#include <mp.h>
 
 extern void *high_addr;
 
@@ -20,8 +21,8 @@ void main(void)
     init_fb();
 
     printf("Silkware\n\n");
+    printf("CPU #%d of %d\n", get_cpuid(), get_ncpus());
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
-    printf("High: %p\n", high_addr);
     memmap_init();
     map_kern_pages();
     map_screen();
