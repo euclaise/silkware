@@ -3,6 +3,7 @@
 #include <mem.h>
 #include <assert.h>
 #include <acpi.h>
+#include <io.h>
 
 struct
 {
@@ -28,7 +29,7 @@ void *acpi_find(const char *sig, size_t index)
         return kmap_phys(phys, length);
     }
 
-    if (!xsdt) 
+    if (xsdt == NULL)
     {
         uintptr_t phys = (acpi64 ? xsdp.xsdt : (uint64_t) xsdp.rsdt);
 
@@ -46,16 +47,17 @@ void *acpi_find(const char *sig, size_t index)
     {
         acpi_header_t *t;
         uintptr_t phys;
+        uint32_t length;
         if (acpi64) phys = ((uint64_t *) xsdt->p)[i];
         else phys = (uintptr_t) ((uint32_t *) xsdt->p)[i];
 
         t = kmap_phys(phys, sizeof(acpi_header_t));
-        uint32_t length = t->length;
+        length = t->length;
 
         kunmap(t, sizeof(acpi_header_t));
         t = kmap_phys(phys, length);
         
-        if (memcmp(sig, t->signature, 4) == 0) count++;
+        if (memcmp(sig, t->signature, 4) == 0) ++count;
         if (count == index) return t;
 
         if (t != (acpi_header_t *)xsdt) kunmap(t, length);

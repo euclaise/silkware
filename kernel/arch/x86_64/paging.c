@@ -269,7 +269,8 @@ void map_pages(
 void *kmap_phys(uintptr_t phys, uintptr_t len)
 {
     uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
-    uintptr_t res = end_pos + ((uintptr_t) phys - aligned);
+    uintptr_t offset = (uintptr_t) phys - aligned;
+    uintptr_t res = end_pos + offset;
 
     if (!kmap_ready) premap_pages(
             end_pos,
@@ -280,7 +281,7 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
     else map_pages(
             kpml4,
             &kmap_pages,
-            (uintptr_t) end_pos,
+            end_pos,
             aligned,
             len,
             PAGE_PRESENT | PAGE_WRITABLE
