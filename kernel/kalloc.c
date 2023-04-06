@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <panic.h>
 #include <mem.h>
+#include <mp.h>
+#include <flex.h>
 
 #define NBINS (128)
 #define OVERALLOC_MAX (256)
@@ -24,12 +26,12 @@ typedef struct block
 
 #define HDRSIZE (sizeof(block) - sizeof(int8_t[1]))
 
-typedef struct kalloc_state /* Per-CPU state */
+struct kalloc_state /* Per-CPU state */
 {
     block *start; /* Freed list: a linked list, ordered by address*/
-} kalloc_state;
+};
 
-kalloc_state state;
+static struct kalloc_state *states;
 
 uint64_t canary(uint64_t x)
 {
@@ -39,7 +41,12 @@ uint64_t canary(uint64_t x)
 	return x;
 }
 
-static void insert_block(kalloc_state *state, block *new)
+void kalloc_init(void)
+{
+    states = page_zalloc(sizeof(struct kalloc_state)*ncpus);
+}
+
+static void insert_block(struct kalloc_state *state, block *new)
 {
     block *cur, *prev;
     prev = state->start;
@@ -83,11 +90,12 @@ void *kalloc(size_t size)
     block *cur, *prev, *res, *new;
     size_t page_blk_size;
     size = (size + (ALLOC_ALIGN - 1)) & ~(ALLOC_ALIGN - 1); /* Align up */
+    struct kalloc_state *state = &states[get_cpu_data()->id];
 
     /* Find fitting block and split it
      * Note: Blocks are ordered lowest-address first */
     prev = NULL;
-    for (cur = state.start; cur != NULL; prev = cur, cur = cur->next)
+    for (cur = state->start; cur != NULL; prev = cur, cur = cur->next)
     {
         /* Split block */
         if (cur->size >= size + HDRSIZE)
@@ -97,7 +105,7 @@ void *kalloc(size_t size)
             new->size = cur->size - size - HDRSIZE;
             new->next = cur->next;
             if (prev) prev->next = new;
-            else state.start = new;
+            else state->start = new;
 
             cur->size = size;
             cur->canary = canary((uint64_t) cur);
@@ -117,7 +125,7 @@ void *kalloc(size_t size)
     new = (block *) (res->data + size);
     new->size = page_blk_size - size - HDRSIZE*2;
 
-    insert_block(&state, new);
+    insert_block(state, new);
 
     assert((void *) res == (void *) res->data - HDRSIZE);
     return res->data;
@@ -128,7 +136,7 @@ void kfree(void *addr)
     block *b = addr - HDRSIZE;
     /* TODO: Check that address is paged in */
     if (b->canary != canary((uint64_t) b)) panic("Heap overflow detected!");
-    insert_block(&state, b);
+    insert_block(&states[get_cpu_data()->id], b);
 }
 
 void *krealloc(void *old, size_t newsize)

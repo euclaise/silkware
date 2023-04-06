@@ -8,6 +8,7 @@
 #include <panic.h>
 #include <miniheap.h>
 #include <stdbool.h>
+#include <lock.h>
 
 typedef struct block
 {
@@ -24,6 +25,7 @@ typedef struct pool
 
 static pool *pools;
 size_t n_pools;
+static DEF_LOCK(lock);
 
 uintptr_t prev_pow2(uintptr_t x)
 {
@@ -114,10 +116,11 @@ void page_alloc_init(void)
 void *page_alloc(size_t sz)
 {
     size_t i;
+    assert(pools != NULL);
+    ACQUIRE(&lock);
+
     sz = next_pow2(sz);
     if (sz < PAGE_SIZE) sz = PAGE_SIZE;
-
-    assert(pools != NULL);
 
     for (i = 0; i < n_pools; ++i)
     {
@@ -131,6 +134,7 @@ void *page_alloc(size_t sz)
                 block *res = split(b, sz, pools[i].base);
                 if (prev) prev->next = res->next;
                 else pools[i].start = res->next;
+                RELEASE(&lock);
                 return res;
             }
             prev = b;
@@ -144,6 +148,7 @@ void *page_alloc(size_t sz)
             pools[i].base
         );
     panic("page_alloc(%llu): Out of memory\n", sz);
+    RELEASE(&lock);
     return NULL;
 }
 
@@ -151,6 +156,8 @@ void page_free(void *pagev, size_t sz)
 {
     size_t i;
     block *page = pagev;
+
+    ACQUIRE(&lock);
 
     sz = next_pow2(sz);
     if (sz < PAGE_SIZE) sz = PAGE_SIZE;
@@ -182,7 +189,7 @@ void page_free(void *pagev, size_t sz)
                 l->next = b->next;
                 if (prev) prev->next = l;
                 else pools[i].start = l;
-                return;
+                goto end;
             }
 
             if (b > page)
@@ -191,24 +198,27 @@ void page_free(void *pagev, size_t sz)
                 {
                     page->next = pools[i].start;
                     pools[i].start = page;
-                    return;
+                    goto end;
                 }
                 prev->next = page;
                 page->next = b;
-                return;
+                goto end;
             }
 
             if (b == pools[i].end)
             {
                 prev->next = page;
                 page->next = pools[i].end;
-                return;
+                goto end;
             }
         }
     }
 
     /* Page not found in any pools */
     unreachable;
+
+end:
+    RELEASE(&lock);
 }
 
 void *page_realloc(void *page, size_t oldsize, size_t newsize)

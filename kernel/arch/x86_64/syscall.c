@@ -3,6 +3,7 @@
 #include <syscall.h>
 #include <arch_proc.h>
 #include <assert.h>
+#include <x86.h>
 
 #define EFER  (0xC0000080)
 #define STAR  (0xC0000081)
@@ -16,21 +17,6 @@
 #define EFLAGS_NESTED_TASK (1 << 14)
 #define EFLAGS_ALIGNMENT (1 << 18)
 
-uint64_t rdmsr(uint32_t msr)
-{
-    uint32_t low, high;
-    __asm__ volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(msr));
-
-    return ((uint64_t) high << 32) | low;
-}
-
-void wrmsr(uint32_t msr, uint64_t addr)
-{
-    uint32_t low = addr & 0xFFFFFFFF;
-    uint32_t high = addr >> 32;
-
-    __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(msr));
-}
 
 void syscall_entry();
 void init_syscalls(void)
