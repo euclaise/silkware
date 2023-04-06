@@ -2,7 +2,7 @@
 #include <screen.h>
 #include <io.h>
 #include <mem.h>
-#include "serial.h"
+#include <serial.h>
 
 extern int serial_ok;
 
