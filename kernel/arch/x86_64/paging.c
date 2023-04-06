@@ -9,6 +9,7 @@
 #include <miniheap.h>
 #include <page_alloc.h>
 #include <proc.h>
+#include <map.h>
 #include "addr.h"
 
 /* This is very messy, should probably be rewritten */
@@ -44,8 +45,6 @@ pml4e_t kpml4[512] __attribute__((aligned(PAGE_SIZE)));
 extern char kern_load[], kern_end[], page_tmp[];
 uintptr_t end_pos;
 
-uint8_t tmp_pages[2][PAGE_SIZE] __attribute__((aligned(PAGE_SIZE)));
-
 #define K2PHYSK(x) ( \
         (uintptr_t)(x) - kern_resp.virtual_base \
         + kern_resp.physical_base)
@@ -54,7 +53,7 @@ uint8_t tmp_pages[2][PAGE_SIZE] __attribute__((aligned(PAGE_SIZE)));
         (uintptr_t)(x) - kern_resp.physical_base \
         + kern_resp.virtual_base)
 
-map *kmap_pages;
+map *kmap_pages; /* phys->orig */
 bool kmap_ready;
 
 /* 
@@ -101,7 +100,7 @@ void premap_pages(
     }
 }
 
-void *map_page_tmp(void *dst, uintptr_t phys)
+static void *map_page_tmp(void *dst, uintptr_t phys)
 {
     premap_pages(
         (uintptr_t) dst,
@@ -123,13 +122,13 @@ uintptr_t kvirt2phys(page_tab pml4, void *virt)
     assert(virt != 0);
 
     assert(pml4[pml4_idx] & X86_PAGE_PRESENT);
-    pdpt_t pdpt = map_page_tmp(tmp_pages[1], pml4[pml4_idx] & ADDR_MASK);
+    pdpt_t pdpt = map_page_tmp(page_tmp, pml4[pml4_idx] & ADDR_MASK);
 
     assert(pdpt[pdpt_idx] & X86_PAGE_PRESENT);
-    pd_t pd = map_page_tmp(tmp_pages[1], pdpt[pdpt_idx] & ADDR_MASK);
+    pd_t pd = map_page_tmp(page_tmp, pdpt[pdpt_idx] & ADDR_MASK);
 
     assert(pd[pd_idx] & X86_PAGE_PRESENT);
-    pt_t pt = map_page_tmp(tmp_pages[1], pd[pd_idx] & ADDR_MASK);
+    pt_t pt = map_page_tmp(page_tmp, pd[pd_idx] & ADDR_MASK);
 
     return (pt[pt_idx] & ADDR_MASK) | ((uintptr_t) virt & 0xFFF);
 }
@@ -197,7 +196,7 @@ uintptr_t new_tab(map **addrs)
     return physpage;
 }
 
-void *getvirt_map(map *m, uintptr_t phys)
+static void *getvirt_map(map *m, uintptr_t phys)
 {
     void **resp = map_get(m, &phys, sizeof(phys));
     if (resp == NULL) return PHYSK2VK(phys);
@@ -282,18 +281,23 @@ void user_main(void);
 void newproc_pages(void *pv)
 {
     struct proc *p = pv;
-    p->addrs = map_new(16);
+    map *addrs = map_new(0x10);
+
     p->pt = page_alloc(PAGE_SIZE);
 
     p->pt[511] = kpml4[511];
 
     map_pages(
         p->pt,
-        &p->addrs,
+        &addrs,
         0x100000,
-        (uintptr_t)
         K2PHYSK(user_main),
         PAGE_SIZE,
         PAGE_PRESENT | PAGE_USER | PAGE_WRITABLE
     );
+
+    p->segs = FLEX_ALLOC(struct segment, 1);
+    p->segs->item[0].base = (void *) 0x100000;
+    p->segs->item[0].kvirt = user_main;
+    p->segs->item[0].len = PAGE_SIZE;
 }
