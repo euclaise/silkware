@@ -42,7 +42,11 @@ typedef pte_t   *pt_t;
 
 pml4e_t kpml4[512] __attribute__((aligned(PAGE_SIZE)));
 
-extern char kern_load[], kern_end[], page_tmp[];
+extern char kern_load[], kern_end[],
+        text_start[], text_end[],
+        rodata_start[], rodata_end[],
+        data_start[], data_end[],
+        page_tmp[];
 uintptr_t end_pos;
 
 #define K2PHYSK(x) ( \
@@ -153,10 +157,22 @@ void map_kern_pages(void)
     kern_resp = *kern_addr_req.response;
 
     premap_pages(
-        (uintptr_t) kern_load,
-        K2PHYSK(kern_load),
-        kern_end - kern_load,
-        X86_PAGE_PRESENT | X86_PAGE_WRITABLE
+        (uintptr_t) text_start,
+        K2PHYSK(text_start),
+        text_end - text_start,
+        X86_PAGE_PRESENT
+    );
+    premap_pages(
+        (uintptr_t) rodata_start,
+        K2PHYSK(rodata_start),
+        rodata_end - rodata_start,
+        X86_PAGE_PRESENT | X86_PAGE_NX
+    );
+    premap_pages(
+        (uintptr_t) data_start,
+        K2PHYSK(data_start),
+        data_end - data_start,
+        X86_PAGE_PRESENT | X86_PAGE_NX | X86_PAGE_WRITABLE
     );
     end_pos = round_up_page((uintptr_t) kern_end);
 }

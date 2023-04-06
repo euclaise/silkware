@@ -13,23 +13,28 @@ SECTIONS
     . = 0xffffffff80000000;
     .text : {
         kern_load = .;
+        text_start = .;
         *(.text*)
+        text_end = .;
     } :text
 
     . = ALIGN(0x1000);
 
     .limine : {
+        rodata_start = .;
         KEEP(*(.limine))
         QUAD(0)
     } :rodata
 
     .rodata : {
         *(.rodata*)
+        rodata_end = .;
     } :rodata
 
     . = ALIGN(0x1000);
 
     .data : {
+        data_start = .;
         *(.data*)
     } :data
 
@@ -52,6 +57,7 @@ SECTIONS
         miniheap_start = .;
         . += 0x64000; /* Bootstrap mini-heap */
         miniheap_end = .;
+        data_end = .;
         kern_end  =  .;
     } :data
 
