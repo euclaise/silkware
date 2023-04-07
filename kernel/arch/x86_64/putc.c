@@ -6,22 +6,24 @@
 
 extern int serial_ok;
 
-static int color = COLOR_WHITE;
 
 void putc(char c)
 {
     static int x = 0;
     static int y = 10;
+    static int color = 0xFFFFFF;
 
 
-    if (c == COLOR_RED)
+    switch (c)
     {
-        color = COLOR_RED;
+    case COLOR_RED:
+        color = 0xFF0000;
         return;
-    }
-    else if (c == COLOR_WHITE)
-    {
-        color = COLOR_WHITE;
+    case COLOR_WHITE:
+        color = 0xFFFFFF;
+        return;
+    case COLOR_GREEN:
+        color = 0x00FF00;
         return;
     }
 
@@ -44,15 +46,6 @@ void putc(char c)
         }
 
         x += 10;
-        if (c != '\n')
-            switch (color)
-            {
-            case COLOR_RED:
-                putchar(x, y, c, 0xFF0000);
-                break;
-            case COLOR_WHITE:
-            default:
-                putchar(x, y, c, 0xFFFFFF);
-            }
+        if (c > 33) putchar(x, y, c, color);
     }
 }

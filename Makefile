@@ -1,4 +1,4 @@
-QEMUFLAGS := -serial stdio -smp sockets=1,cores=2
+QEMUFLAGS := -serial stdio -smp cores=2
 
 silkware.iso: root/kernel.elf
 	cp kernel/external/limine/* root/

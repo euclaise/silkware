@@ -10,8 +10,6 @@ flush_gdt:
     mov ax, 0x10 ; 2 << 3
     mov ds, ax
     mov es, ax
-    mov fs, ax
-    mov gs, ax
     mov ss, ax
     
     mov ax, 0x28 ; 5 << 3
