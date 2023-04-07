@@ -40,8 +40,7 @@ void init_cpu_local(void)
 {
     void *res;
     cpu_main.self = &cpu_main;
-    wrmsr(0xC0000102 /* kernel gs base */, (uint64_t) &cpu_main);
-    __asm__ volatile ("swapgs");
+    wrmsr(0xC0000101 /* gs base */, (uint64_t) &cpu_main);
     __asm__ volatile ("mov %%gs:0, %0" : "=r"(res));
 }
 

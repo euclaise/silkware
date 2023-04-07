@@ -9,8 +9,8 @@ extern int serial_ok;
 
 void putc(char c)
 {
-    static int x = 0;
-    static int y = 10;
+    static uint32_t x = 0;
+    static uint32_t y = 10;
     static int color = 0xFFFFFF;
 
 
@@ -30,22 +30,25 @@ void putc(char c)
     if (serial_ok) serial_write(c);
     if (screen.vaddr)
     {
-        if (c == '\n' || x + 10 > (int) screen.width)
+        x += 10;
+        if (c == '\n' || x > screen.width)
         {
             x = 0;
-            y += 17;
-            if (y > (int) screen.height)
+            if (y + 17 + 10 > screen.height)
             {
-                memset(
+                memmove(
                     screen.vaddr,
-                    0,
-                    screen.height * screen.width * (screen.bpp / 8)
+                    screen.vaddr + screen.pitch * 17,
+                    screen.pitch * y
                 );
-                y = 17;
+                memset(
+                    screen.vaddr + screen.pitch*y,
+                    0,
+                    screen.pitch*(screen.height - y)
+                );
             }
+            else y += 17;
         }
-
-        x += 10;
         if (c > 33) putchar(x, y, c, color);
     }
 }
