@@ -21,9 +21,10 @@ void main(void)
     struct proc p1 = {0};
     serial_init();
     init_fb();
+    init_cpu_local();
 
-    printf("Silkware\n\n");
-    printf("CPU #%d of %d\n", cpu_id = get_cpuid(), ncpus = get_ncpus());
+    printf("%c Silkware%c\n\n", COLOR_GREEN, COLOR_WHITE);
+    printf("CPU %d of %d\n", cpu_id = get_cpuid(), ncpus = get_ncpus());
     cpu_main.self = &cpu_main;
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
 
