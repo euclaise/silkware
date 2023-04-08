@@ -30,7 +30,6 @@ void putc(char c)
     if (serial_ok) serial_write(c);
     if (screen.vaddr)
     {
-        x += 10;
         if (c == '\n' || x > screen.width)
         {
             x = 0;
@@ -49,6 +48,7 @@ void putc(char c)
             }
             else y += 17;
         }
-        if (c > 33) putchar(x, y, c, color);
+        x += 10;
+        if (c > 32) putchar(x, y, c, color);
     }
 }
