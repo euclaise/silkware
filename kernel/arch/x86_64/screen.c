@@ -2,7 +2,7 @@
 #include <io.h>
 #include <screen.h>
 #include <panic.h>
-#include <addr.h>
+#include <arch/addr.h>
 
 struct limine_framebuffer_request fb_req = {
     .id = LIMINE_FRAMEBUFFER_REQUEST

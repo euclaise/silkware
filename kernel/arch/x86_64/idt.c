@@ -3,7 +3,7 @@
 #include <kern.h>
 #include <panic.h>
 #include <util.h>
-#include <arch_proc.h>
+#include <arch/proc.h>
 
 struct idt_entry_t
 {

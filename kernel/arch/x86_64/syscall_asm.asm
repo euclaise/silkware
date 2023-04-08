@@ -1,4 +1,4 @@
-%include "arch/x86_64/pushall.inc"
+%include "arch/x86_64/include/arch/pushall.inc"
 
 global syscall_entry
 extern syscall_test

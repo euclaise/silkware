@@ -10,7 +10,7 @@
 #include <page_alloc.h>
 #include <proc.h>
 #include <map.h>
-#include <addr.h>
+#include <arch/addr.h>
 
 struct limine_kernel_address_request kern_addr_req = {
     .id = LIMINE_KERNEL_ADDRESS_REQUEST

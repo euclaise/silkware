@@ -1,4 +1,3 @@
-#include <arch_proc.h>
 #include <stdint.h>
 #include <syscall.h>
 #include <io.h>

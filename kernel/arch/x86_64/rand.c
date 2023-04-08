@@ -2,7 +2,7 @@
 #include <rand.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <hpet.h>
+#include <arch/hpet.h>
 
 bool has_rdseed;
 
