@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <io.h>
-#include "ports.h"
+#include <arch/ports.h>
 
 static inline uint32_t pciaddr(
         uint8_t bus,

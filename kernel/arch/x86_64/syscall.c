@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <proc.h>
 #include <syscall.h>
-#include <arch_proc.h>
+#include <arch/proc.h>
 #include <assert.h>
-#include <x86.h>
+#include <arch/x86.h>
 
 #define EFER  (0xC0000080)
 #define STAR  (0xC0000081)

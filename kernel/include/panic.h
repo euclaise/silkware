@@ -1,6 +1,6 @@
 #ifndef PANIC_H
 #define PANIC_H
-#include <arch_util.h>
+#include <u.h>
 #include <io.h>
 #include <kern.h>
 

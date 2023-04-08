@@ -12,11 +12,11 @@
 #include <map.h>
 #include <panic.h>
 #include <acpi.h>
-#include <apic.h>
-#include <idt.h>
-#include <serial.h>
-#include <addr.h>
-#include <hpet.h>
+#include <arch/apic.h>
+#include <arch/idt.h>
+#include <arch/serial.h>
+#include <arch/addr.h>
+#include <arch/hpet.h>
 
 struct limine_hhdm_request hhdm_req = {
     .id = LIMINE_HHDM_REQUEST

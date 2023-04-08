@@ -9,7 +9,7 @@
 #include <acpi.h>
 #include <timer.h>
 #include <util.h>
-#include "ports.h"
+#include <arch/ports.h>
 #include "pci.h"
 
 void *laihost_malloc(size_t size)

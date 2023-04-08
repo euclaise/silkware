@@ -1,4 +1,4 @@
-#include <cpu.h>
+#include <arch/cpu.h>
 #include <stddef.h>
 
 int get_cpuid(void)

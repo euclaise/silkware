@@ -1,4 +1,4 @@
-%include "arch/x86_64/pushall.inc"
+%include "arch/x86_64/include/arch/pushall.inc"
 
 extern isr_handle
 %macro isr_stub 0

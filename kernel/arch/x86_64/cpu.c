@@ -1,4 +1,4 @@
-#include <cpu.h>
+#include <arch/cpu.h>
 #include <assert.h>
 #include <stdint.h>
 

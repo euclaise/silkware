@@ -1,6 +1,6 @@
 #include <acpi.h>
 #include <panic.h>
-#include <apic.h>
+#include <arch/apic.h>
 
 struct madt *madt;
 uintptr_t lapic_phys;
