@@ -1,0 +1,2 @@
+- swapgs on interrupt enter.  If I'm understanding things correctly, I should
+  send an EOI to the LAPIC on interrupt exit
