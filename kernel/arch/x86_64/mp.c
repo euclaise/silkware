@@ -12,5 +12,5 @@ int get_ncpus(void)
 {
     int ebx;
     cpuid(1, NULL, &ebx, NULL, NULL);
-    return 1 + (ebx >> 16);
+    return ebx >> 16;
 }

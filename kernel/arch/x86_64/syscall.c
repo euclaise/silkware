@@ -5,9 +5,6 @@
 #include <assert.h>
 #include <arch/x86.h>
 
-#define EFER  (0xC0000080)
-#define STAR  (0xC0000081)
-#define LSTAR (0xC0000082)
 #define FMASK (0xC0000084)
 
 #define EFLAGS_CARRY (1 << 0)
@@ -23,11 +20,11 @@ void init_syscalls(void)
 {
     uint64_t kern_cs = 0x08;
     uint64_t user_cs = 0x18;
-    wrmsr(EFER, rdmsr(EFER) | 1); /* Enable syscall instruction */
+    wrmsr(MSR_EFER, rdmsr(MSR_EFER) | 1); /* Enable syscall instruction */
 
-    assert(rdmsr(EFER) & 1);
+    assert(rdmsr(MSR_EFER) & 1);
 
-    wrmsr(FMASK,
+    wrmsr(MSR_FMASK,
         EFLAGS_CARRY
         | EFLAGS_TRAP
         | EFLAGS_INTERRUPT
@@ -35,7 +32,7 @@ void init_syscalls(void)
         | EFLAGS_NESTED_TASK
         | EFLAGS_ALIGNMENT
     );
-    wrmsr(STAR, (user_cs << 48) | (kern_cs << 32));
+    wrmsr(MSR_STAR, (user_cs << 48) | (kern_cs << 32));
 
-    wrmsr(LSTAR, (uint64_t) syscall_entry);
+    wrmsr(MSR_LSTAR, (uint64_t) syscall_entry);
 }
