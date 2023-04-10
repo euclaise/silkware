@@ -7,7 +7,7 @@ extern isr_handle
     mov rdi, rsp
     call isr_handle
     popall
-    add rsp, 24
+    add rsp, 16
     iretq
 %endmacro
 

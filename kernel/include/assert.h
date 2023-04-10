@@ -7,7 +7,20 @@ void assert_test(
         int line,
         const char *func,
         const char *test_text);
+
+void assert_eq_test(
+        long long x,
+        long long y,
+        const char *file,
+        int line,
+        const char *func,
+        const char *test_text);
+
 #define assert(x) assert_test((x), __FILE__, __LINE__, __func__, #x)
+#define assert_eq(x, y) assert_eq_test(    \
+        (long long)(x), (long long)y, \
+        __FILE__, __LINE__, __func__, \
+        #x " == "#y)
 
 #ifdef __GNUC__
 #define _UNREACHABLE __builtin_unreachable()

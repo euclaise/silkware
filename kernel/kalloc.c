@@ -110,7 +110,7 @@ void *kalloc(size_t size)
             cur->size = size;
             cur->canary = canary((uint64_t) cur);
 
-            assert((void *) cur == (void *) cur->data - HDRSIZE);
+            assert_eq(cur, (uintptr_t) cur->data - HDRSIZE);
             return cur->data;
         }
     }
@@ -127,7 +127,7 @@ void *kalloc(size_t size)
 
     insert_block(state, new);
 
-    assert((void *) res == (void *) res->data - HDRSIZE);
+    assert_eq(res, (uintptr_t) res->data - HDRSIZE);
     return res->data;
 }
 
