@@ -9,6 +9,11 @@ void wrmsr(uint32_t msr, uint64_t addr);
 
 enum
 {
+    INT_TIMER = 32
+};
+
+enum
+{
     MSR_APIC         = 0x1B,
     MSR_EFER         = 0xC0000080,
     MSR_STAR         = 0xC0000081,

@@ -90,8 +90,7 @@ void apic_start(void)
     lapic_write(LAPIC_REG_LVT_TMR, LAPIC_TMR_MASKED);
     ticks = 0xFFFFFFFF - lapic_read(LAPIC_REG_TMR_CUR);
 
-    /* IRQ0 on interrupt 32 */
-    lapic_write(LAPIC_REG_LVT_TMR, 32 | LAPIC_TMR_PERIODIC);
+    lapic_write(LAPIC_REG_LVT_TMR, INT_TIMER | LAPIC_TMR_PERIODIC);
     lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
     lapic_write(LAPIC_REG_TMR_INITIAL, ticks / 10);
 }
