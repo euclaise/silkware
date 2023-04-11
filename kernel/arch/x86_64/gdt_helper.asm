@@ -12,7 +12,7 @@ flush_gdt:
     mov es, ax
     mov ss, ax
     
-    mov ax, 0x28 ; 5 << 3
+    mov ax, 0x2B ; (5 << 3) | 3
     ltr ax
     sti
     ret

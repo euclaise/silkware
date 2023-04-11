@@ -7,9 +7,11 @@
 
 #define ACCESS_S        (1 << 4) /* TSS if 0 */
 #define ACCESS_EXEC     (1 << 3)
-#define ACCESS_DC       (1 << 2)
+#define ACCESS_DC       (1 << 2) /* Direction bit / conforming bit, keep off */
 #define ACCESS_RW       (1 << 1)
 #define ACCESS_ACCESSED (1 << 0)
+
+#define DPL(x) ((x) << 5) /* Privilege level */
 
 
 #define GRAN_4K   (1 << 7)
@@ -65,7 +67,6 @@ struct tss_desc
 
 struct tss kernel_tss;
 
-
 struct gdt
 {
     struct gdt_desc entries[5];
@@ -93,7 +94,8 @@ struct gdt
             .limit_low = 0xFFFF,
             .base_low = 0,
             .base_mid = 0,
-            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_EXEC | ACCESS_RW | 3 << 5,
+            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_EXEC | ACCESS_RW
+                | DPL(3),
             .granularity = GRAN_4K | LONG_MODE | 0xF,
             .base_high = 0
         },
@@ -101,33 +103,34 @@ struct gdt
             .limit_low = 0xFFFF,
             .base_low = 0,
             .base_mid = 0,
-            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW | 3 << 5,
+            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW | DPL(3),
             .granularity = GRAN_4K | SZ_32 | 0xF,
             .base_high = 0
         }
-    }
+    },
+    .tss = {0}
 };
 
 char tss_stack[4096] __attribute__((aligned(16)));
+char tss_stack2[4096] __attribute__((aligned(16)));
 
 void init_tss(void)
 {
-    int limit = sizeof(struct tss) - 1;
     uint64_t base = (uint64_t) &kernel_tss;
 
     /* iopb is disabled by having a value larger than limit
      * This disables I/O access */
     kernel_tss.iopb = 0xFFFF;
     kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
-    kernel_tss.ist1 = kernel_tss.rsp0;
+    kernel_tss.ist1 = (uint64_t) tss_stack2 + sizeof(tss_stack2);
 
-    gdt.tss.limit_low = limit & 0xFFFF;
+    gdt.tss.limit_low = sizeof(struct tss) - 1;
     gdt.tss.base_low = base & 0xFFFF;
     gdt.tss.base_middle = (base >> 16) & 0xFF;
     gdt.tss.access = 0x89;
-    gdt.tss.granularity = (limit >> 16) & 0x0F;
+    gdt.tss.granularity = 0;
     gdt.tss.base_high = (base >> 24) & 0xFF;
-    gdt.tss.base_upper = (base >> 32) & 0xFFFFFFFF;
+    gdt.tss.base_upper = base >> 32;
     gdt.tss.reserved = 0;
 }
 
@@ -136,7 +139,7 @@ void gdt_init(void)
 {
     init_tss();
 
-    gdtr.limit = sizeof(struct gdt_desc)*5 + sizeof(struct tss_desc) - 1;
+    gdtr.limit = sizeof(gdt) - 1;
     gdtr.base = (uintptr_t) &gdt;
 
     flush_gdt();

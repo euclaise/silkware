@@ -15,7 +15,7 @@
 extern void *high_addr;
 
 void call_user(void);
-void main(void)
+void kmain(void)
 {
     int cpu_id;
     struct proc p1 = {0};

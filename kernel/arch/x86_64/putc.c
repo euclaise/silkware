@@ -36,12 +36,12 @@ void putc(char c)
             if (y + 17 + 10 > screen.height)
             {
                 memmove(
-                    screen.vaddr,
-                    screen.vaddr + screen.pitch * 17,
+                    (void *) screen.vaddr,
+                    (void *) (screen.vaddr + screen.pitch * 17),
                     screen.pitch * y
                 );
                 memset(
-                    screen.vaddr + screen.pitch*y,
+                    (void *) (screen.vaddr + screen.pitch*y),
                     0,
                     screen.pitch*(screen.height - y)
                 );

@@ -15,11 +15,11 @@
 #define EFLAGS_ALIGNMENT (1 << 18)
 
 
-void syscall_entry();
+void syscall_entry(void);
 void init_syscalls(void)
 {
-    uint64_t kern_cs = 0x08;
-    uint64_t user_cs = 0x18;
+    uint64_t kern_cs = 1 << 3;
+    uint64_t user_cs = (3 << 3) | 3;
     wrmsr(MSR_EFER, rdmsr(MSR_EFER) | 1); /* Enable syscall instruction */
 
     assert(rdmsr(MSR_EFER) & 1);
