@@ -28,10 +28,14 @@ uint32_t lapic_read(uint32_t reg)
     return *(volatile uint32_t *)(lapic_base + reg);
 }
 
-
 void lapic_write(uint32_t reg, uint32_t value)
 {
     *(volatile uint32_t *)(lapic_base + reg) = value;
+}
+
+void lapic_eoi(void)
+{
+    lapic_write(LAPIC_REG_EOI, 0);
 }
 
 void apic_init(void)

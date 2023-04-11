@@ -22,6 +22,7 @@ struct madt
 
 void apic_init(void);
 void apic_start(void);
+void lapic_eoi(void);
 
 enum
 {
@@ -29,9 +30,10 @@ enum
     LAPIC_REG_VERSION      = 0x30,
     LAPIC_REG_TPR          = 0x80, /* Task priority register */
     LAPIC_REG_APR          = 0x90, /* Arbiration priority register */
-    LAPIC_REG_PPR          = 0x90, /* Processor priority register */
-    LAPIC_REG_EOI          = 0xA0, /* End of interrupt */
-    LAPIC_REG_RRD          = 0x90, /* Remote read register */
+    LAPIC_REG_PPR          = 0xA0, /* Processor priority register */
+    LAPIC_REG_EOI          = 0xB0, /* End of interrupt */
+    LAPIC_REG_RRD          = 0xC0, /* Remote read register */
+    LAPIC_REG_LDR          = 0xD0, /* Logical destination register */
     LAPIC_REG_DEST_FORMAT  = 0xE0,
     LAPIC_REG_SPURIOUS     = 0xF0, /* Spurrious interrupt register */
     LAPIC_REG_ISR          = 0x100, /* In-service register */
