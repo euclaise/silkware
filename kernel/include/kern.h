@@ -9,7 +9,7 @@
 
 extern char kern_load[];
 NORETURN void freeze(void);
-void main(void);
+void kmain(void);
 void arch_init(void);
 void pause(void);
 void backtrace(void);

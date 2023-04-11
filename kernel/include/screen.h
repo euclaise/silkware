@@ -3,8 +3,8 @@
 
 struct framebuffer
 {
-    void *vaddr;
-    void *paddr;
+    uintptr_t vaddr;
+    uintptr_t paddr;
     uint32_t width;
     uint32_t height;
     uint32_t pitch;

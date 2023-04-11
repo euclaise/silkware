@@ -10,7 +10,7 @@ struct idt_entry_t
     uint16_t isr_low;
     uint16_t kernel_cs;
     uint8_t  ist;
-    uint8_t  attributes;
+    uint8_t  flags;
     uint16_t isr_mid;
     uint32_t isr_high;
     uint32_t reserved;
@@ -81,6 +81,7 @@ void isr_handle(struct irq_frame *frame)
     printf("   SP: %p\n", frame->sp);
     printf("   SS: %p\n", frame->ss);
     printf("  CR2: %p\n", cr2);
+    printf("  err: %p\n", frame->errorCode);
 
     backtrace();
     freeze();
@@ -152,18 +153,18 @@ void isr_handle(struct irq_frame *frame)
     X(248) X(249) X(250) X(251) \
     X(252) X(253) X(254) X(255)
 
-#define X(x) extern void isr ## x();
+#define X(x) void isr##x(void);
 X_ISR
 #undef X
 
-void idt_set(uint8_t i, void *isr, uint8_t flags)
+void idt_set(uint8_t i, void (*isr)(void), uint8_t flags)
 {
 	idt[i].isr_low    = (uintptr_t) isr & 0xFFFF;
 	idt[i].kernel_cs  = 1 << 3;
     idt[i].ist        = 1;
-    idt[i].attributes = flags;
+    idt[i].flags      = flags;
     idt[i].isr_mid    = ((uintptr_t) isr >> 16) & 0xFFFF;
-    idt[i].isr_high   = ((uintptr_t) isr >> 32) & 0xFFFFFFFF;
+    idt[i].isr_high   = (uintptr_t) isr >> 32;
     idt[i].reserved   = 0;
 }
 
@@ -172,7 +173,7 @@ void idt_init(void)
     idtr.base = (uint64_t) &idt[0];
     idtr.limit = sizeof(struct idt_entry_t) * 256 - 1;
 
-#define X(x) idt_set(x, isr ## x, 0x8E);
+#define X(x) idt_set(x, isr##x, 0x8E | 0x60);
     X_ISR
 #undef X
 

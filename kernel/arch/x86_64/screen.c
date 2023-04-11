@@ -22,8 +22,8 @@ void init_fb(void)
             )
             fb = fb_req.response->framebuffers[i];
 
-    screen.vaddr = fb->address;
-    screen.paddr = H2PHYS(fb->address);
+    screen.vaddr = (uintptr_t) fb->address;
+    screen.paddr = (uintptr_t) H2PHYS(fb->address);
     screen.width = fb->width;
     screen.height = fb->height;
     screen.pitch = fb->pitch;

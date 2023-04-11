@@ -184,7 +184,7 @@ void map_screen(void)
         len,
         X86_PAGE_PRESENT | X86_PAGE_WRITABLE | X86_PAGE_NX
     );
-    screen.vaddr = (void *) end_pos;
+    screen.vaddr = end_pos;
     end_pos = round_up_page((uintptr_t) end_pos + len);
 }
 
@@ -198,7 +198,11 @@ void kunmap(void *virt, size_t len)
         kfree(*orig);
         map_del(kmap_pages, &virt, sizeof(virt));
     }
-    for (void *p = virt; p < (void *) virt + len; p += PAGE_SIZE)
+    for (
+            uintptr_t p = (uintptr_t) virt;
+            p < (uintptr_t) virt + len;
+            p += PAGE_SIZE
+        )
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 }
 
@@ -313,6 +317,6 @@ void newproc_pages(void *pv)
 
     p->segs = FLEX_ALLOC(struct segment, 1);
     p->segs->item[0].base = (void *) 0x100000;
-    p->segs->item[0].kvirt = user_main;
+    p->segs->item[0].kvirt = (void *) user_main;
     p->segs->item[0].len = PAGE_SIZE;
 }

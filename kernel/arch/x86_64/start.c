@@ -37,7 +37,7 @@ void start(void)
     high_addr = (void *) hhdm_req.response->offset;
     xsdp = *(acpi_xsdp_t *) rsdp_req.response->address;
 
-    main();
+    kmain();
 }
 
 void gdt_init(void);

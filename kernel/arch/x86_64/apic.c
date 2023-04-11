@@ -52,7 +52,7 @@ void apic_init(void)
     for (
             p = madt->data;
             (uintptr_t)p < (uintptr_t)madt + madt->h.length;
-            p = (void *)p + p->len
+            p = (struct record *)((uintptr_t)p + p->len)
         )
     {
         switch (p->type)
