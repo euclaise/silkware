@@ -9,9 +9,9 @@ typedef uintptr_t *page_tab;
 extern uintptr_t end_pos;
 
 #define PAGE_PRESENT  (1 << 0)
-#define PAGE_WRITABLE (1 << 0)
-#define PAGE_USER     (1 << 0)
-#define PAGE_NX       (1 << 0)
+#define PAGE_WRITABLE (1 << 1)
+#define PAGE_USER     (1 << 2)
+#define PAGE_NX       (1 << 3)
 
 void refresh_pages(page_tab tab);
 void map_pages_pt(
