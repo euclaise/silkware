@@ -133,7 +133,7 @@ void *kalloc(size_t size)
 
 void kfree(void *addr)
 {
-    block *b = addr - HDRSIZE;
+    block *b = (block *) ((uintptr_t) addr - HDRSIZE);
     /* TODO: Check that address is paged in */
     if (b->canary != canary((uint64_t) b)) panic("Heap overflow detected!");
     insert_block(&states[get_cpu_data()->id], b);
@@ -141,7 +141,7 @@ void kfree(void *addr)
 
 void *krealloc(void *old, size_t newsize)
 {
-    block *oldb = old - HDRSIZE;
+    block *oldb = (block *) ((uintptr_t) old - HDRSIZE);
     void *res = kalloc(newsize);
     if (old)
     {

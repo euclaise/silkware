@@ -99,7 +99,7 @@ void page_alloc_init(void)
             void *virt;
             virt = kmap_phys(phys, szp2);
             pools[j].base = (uintptr_t) virt;
-            pools[j].end = virt + szp2;
+            pools[j].end = (void *)((uintptr_t) virt + szp2);
             pools[j].start = virt;
             pools[j].start->size = szp2;
             pools[j].start->next = pools[j].end;
