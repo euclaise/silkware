@@ -1,11 +1,14 @@
 %include "arch/x86_64/include/arch/pushall.inc"
 
+extern lapic_eoi
+
 extern isr_handle
 %macro isr_stub 0
     pushall
     cld
     mov rdi, rsp
     call isr_handle
+    call lapic_eoi
     popall
     add rsp, 16
     iretq
