@@ -65,12 +65,6 @@ void isr_handle(struct irq_frame *frame)
     uint64_t cr2;
     uint64_t num = frame->num;
 
-    if (num == 32)
-    {
-        printf("TICK\n");
-        return;
-    }
-
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s", irq_msg[num]);
@@ -81,6 +75,11 @@ void isr_handle(struct irq_frame *frame)
     printf("   SS: %p\n", frame->ss);
     printf("  CR2: %p\n", cr2);
     printf("  err: %p\n", frame->errorCode);
+
+    if (num == 32)
+    {
+        return;
+    }
 
     freeze();
 }
