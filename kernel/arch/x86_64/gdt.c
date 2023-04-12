@@ -2,9 +2,9 @@
 #include <mem.h>
 #include <kern.h>
 #include <util.h>
+#include <assert.h>
 
 #define ACCESS_PRESENT  (1 << 7)
-
 #define ACCESS_S        (1 << 4) /* TSS if 0 */
 #define ACCESS_EXEC     (1 << 3)
 #define ACCESS_DC       (1 << 2) /* Direction bit / conforming bit, keep off */
@@ -89,6 +89,14 @@ struct gdt
             .granularity = GRAN_4K | SZ_32 | 0xF,
             .base_high = 0
         },
+        { /* User Data */
+            .limit_low = 0xFFFF,
+            .base_low = 0,
+            .base_mid = 0,
+            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW | DPL(3),
+            .granularity = GRAN_4K | SZ_32 | 0xF,
+            .base_high = 0
+        },
         { /* User Code */
             .limit_low = 0xFFFF,
             .base_low = 0,
@@ -98,20 +106,12 @@ struct gdt
             .granularity = GRAN_4K | LONG_MODE | 0xF,
             .base_high = 0
         },
-        { /* User Data */
-            .limit_low = 0xFFFF,
-            .base_low = 0,
-            .base_mid = 0,
-            .access = ACCESS_PRESENT | ACCESS_S | ACCESS_RW | DPL(3),
-            .granularity = GRAN_4K | SZ_32 | 0xF,
-            .base_high = 0
-        }
     },
     .tss = {0}
 };
 
-char tss_stack[4096] __attribute__((aligned(16)));
-char tss_stack2[4096] __attribute__((aligned(16))); /* TODO: Replace these */
+char tss_stack[0x1000] __attribute__((aligned(16)));
+char tss_stack2[0x1000] __attribute__((aligned(16))); /* TODO: Replace these */
 
 void init_tss(void)
 {

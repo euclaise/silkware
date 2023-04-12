@@ -19,7 +19,7 @@ void syscall_entry(void);
 void init_syscalls(void)
 {
     uint64_t kern_cs = 1 << 3;
-    uint64_t user_cs = (3 << 3) | 3;
+    uint64_t user_ss = (3 << 3) | 3;
     wrmsr(MSR_EFER, rdmsr(MSR_EFER) | 1); /* Enable syscall instruction */
 
     assert(rdmsr(MSR_EFER) & 1);
@@ -32,7 +32,7 @@ void init_syscalls(void)
         | EFLAGS_NESTED_TASK
         | EFLAGS_ALIGNMENT
     );
-    wrmsr(MSR_STAR, (user_cs << 48) | (kern_cs << 32));
+    wrmsr(MSR_STAR, ((user_ss - 8) << 48) | (kern_cs << 32));
 
     wrmsr(MSR_LSTAR, (uint64_t) syscall_entry);
 }
