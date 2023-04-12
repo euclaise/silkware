@@ -60,7 +60,6 @@ char *irq_msg[] =
     "EXCEPTION: Machine check - #18\n"
 };
 
-__attribute__((no_caller_saved_registers))
 void isr_handle(struct irq_frame *frame)
 {
     uint64_t cr2;
@@ -83,9 +82,7 @@ void isr_handle(struct irq_frame *frame)
     printf("  CR2: %p\n", cr2);
     printf("  err: %p\n", frame->errorCode);
 
-    backtrace();
     freeze();
-    if (num == 8) freeze();
 }
 
 #define X_ISR X(0) X(1) X(2) X(3) \

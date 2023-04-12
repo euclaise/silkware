@@ -18,8 +18,8 @@ extern isr_handle
     align 4
     global isr%1
     isr%1:
-        push 0 ; error code dummy
-        push %1
+        push qword 0 ; error code dummy
+        push qword %1
         isr_stub
 %endmacro
 
@@ -27,11 +27,11 @@ extern isr_handle
     align 4
     global isr%1
     isr%1:
-        push %1
+        push qword %1
         isr_stub
 %endmacro
 
-%define iserr(i) (i == 8 || (i >= 10 && i <= 14) || i == 17 || i == 21 | i == 30)
+%define iserr(i) (i == 8 || (i >= 10 && i <= 14) || i == 17 || i == 30)
 
 
 %assign i 0

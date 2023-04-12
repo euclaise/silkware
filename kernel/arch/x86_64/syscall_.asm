@@ -1,10 +1,16 @@
 %include "arch/x86_64/include/arch/pushall.inc"
+%include "arch/x86_64/include/arch/mp.inc"
 
 global syscall_entry
 extern syscall_test
 extern syscall_inval
+extern cpu_data
 
 syscall_entry:
+    mov r10, [rel cpu_data + CPU_STACK_OFF]
+    mov [rel cpu_data + CPU_STACK_OFF], rsp
+    mov rsp, r10
+
     push rsp
     pushall
     cmp rax, 0

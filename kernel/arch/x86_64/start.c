@@ -5,8 +5,6 @@
 #include <mem.h>
 #include <kern.h>
 #include <io.h>
-#include <lai/core.h>
-#include <lai/helpers/sci.h>
 #include <paging.h>
 #include <kalloc.h>
 #include <map.h>
@@ -17,6 +15,7 @@
 #include <arch/serial.h>
 #include <arch/addr.h>
 #include <arch/hpet.h>
+#include <lai/helpers/sci.h>
 
 struct limine_hhdm_request hhdm_req = {
     .id = LIMINE_HHDM_REQUEST

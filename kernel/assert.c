@@ -29,7 +29,7 @@ void assert_eq_test(
 {
     if (x != y)
     {
-        printf("\nASSERTION FAILED: %lld == %lld", x, y);
+        printf("\nASSERTION FAILED: %p == %p", x, y);
         panic("%s:%d in %s: Assertion `%s' failed",
                 file,
                 line,

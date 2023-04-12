@@ -4,13 +4,12 @@
 #include <paging.h>
 #include <screen.h>
 #include <panic.h>
-#include <lai/core.h>
-#include <lai/helpers/sci.h>
 #include <timer.h>
 #include <page_alloc.h>
 #include <proc.h>
 #include <mp.h>
 #include <kalloc.h>
+#include <assert.h>
 
 extern void *high_addr;
 
@@ -25,7 +24,6 @@ void kmain(void)
 
     printf("%c Silkware%c\n\n", COLOR_GREEN, COLOR_WHITE);
     printf("CPU %d of %d\n", cpu_id = get_cpuid(), ncpus = get_ncpus());
-    cpu_main.self = &cpu_main;
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
 
     memmap_init();

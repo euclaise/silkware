@@ -13,7 +13,6 @@
 
 #define DPL(x) ((x) << 5) /* Privilege level */
 
-
 #define GRAN_4K   (1 << 7)
 #define SZ_32     (1 << 6)
 #define LONG_MODE (1 << 5)
@@ -65,7 +64,7 @@ struct tss_desc
     uint32_t reserved;
 } _packed;
 
-struct tss kernel_tss;
+struct tss kernel_tss __attribute__((aligned(8)));
 
 struct gdt
 {
@@ -112,7 +111,7 @@ struct gdt
 };
 
 char tss_stack[4096] __attribute__((aligned(16)));
-char tss_stack2[4096] __attribute__((aligned(16)));
+char tss_stack2[4096] __attribute__((aligned(16))); /* TODO: Replace these */
 
 void init_tss(void)
 {
@@ -124,7 +123,7 @@ void init_tss(void)
     kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
     kernel_tss.ist1 = (uint64_t) tss_stack2 + sizeof(tss_stack2);
 
-    gdt.tss.limit_low = sizeof(struct tss) - 1;
+    gdt.tss.limit_low = sizeof(struct tss);
     gdt.tss.base_low = base & 0xFFFF;
     gdt.tss.base_middle = (base >> 16) & 0xFF;
     gdt.tss.access = 0x89;

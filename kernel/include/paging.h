@@ -26,7 +26,7 @@ void map_kern_pages(void);
 void map_screen(void);
 void *kpremap_phys(void *phys, size_t len);
 void kunmap(void *virt, size_t len);
-intptr_t round_up_page(uintptr_t x);
+uintptr_t round_up_page(uintptr_t x);
 void *kmap_phys(uintptr_t phys, uintptr_t len);
 
 void newproc_pages(void *p);

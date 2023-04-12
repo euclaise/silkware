@@ -1,0 +1,2 @@
+- In some places, it is assumed that pointers will fit into a uint64_t or a long
+  long.  This is fine.
