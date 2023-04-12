@@ -8,7 +8,7 @@ extern cpu_data
 
 syscall_entry:
     mov r10, [rel cpu_data + CPU_STACK_OFF]
-    mov [rel cpu_data + CPU_STACK_OFF], rsp
+    mov [rel cpu_data + CPU_STACK_OFF], rsp ; Save process rsp
     mov rsp, r10
 
     push rsp
@@ -20,7 +20,12 @@ syscall_entry:
     call [jmp_tab + 8*rax]
     popall
     pop rsp
-    mov r11, 0x202
+
+    mov r10, [rel cpu_data + CPU_STACK_OFF]
+    mov [rel cpu_data + CPU_STACK_OFF], rsp ; Save kernel rsp
+    mov rsp, r10
+
+    mov r11, 0x202 ; Set RFLAGS
     o64 sysret
 
 jmp_tab:
