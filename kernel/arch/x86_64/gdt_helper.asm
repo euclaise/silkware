@@ -1,9 +1,8 @@
 global flush_gdt
 extern gdtr
 flush_gdt:
-    cli
     lgdt [gdtr]
-    push 0x8
+    push qword 0x8
     push .after
     retfq
 .after:
@@ -12,7 +11,6 @@ flush_gdt:
     mov es, ax
     mov ss, ax
     
-    mov ax, 0x2B ; (5 << 3) | 3
+    mov ax, 0x28 ; 5 << 3
     ltr ax
-    sti
     ret

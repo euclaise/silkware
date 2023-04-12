@@ -300,23 +300,34 @@ void user_main(void);
 void newproc_pages(void *pv)
 {
     struct proc *p = pv;
-    map *addrs = map_new(0x10);
 
     p->pt = page_alloc(PAGE_SIZE);
-
+    p->addrs = map_new(0x10);
     p->pt[511] = kpml4[511];
 
     map_pages(
         p->pt,
-        &addrs,
+        &p->addrs,
         0x100000,
         K2PHYSK(user_main),
         PAGE_SIZE,
-        PAGE_PRESENT | PAGE_USER | PAGE_WRITABLE
+        PAGE_PRESENT | PAGE_USER
     );
 
-    p->segs = FLEX_ALLOC(struct segment, 1);
+    p->segs = FLEX_ALLOC(struct segment, 2);
     p->segs->item[0].base = (void *) 0x100000;
     p->segs->item[0].kvirt = (void *) user_main;
     p->segs->item[0].len = PAGE_SIZE;
+
+    p->segs->item[1].kvirt = page_alloc(PAGE_SIZE);
+    p->segs->item[1].base = (void *)0xFFFFE000;
+    map_pages(
+        p->pt,
+        &p->addrs,
+        (uintptr_t) p->segs->item[1].base,
+        kvirt2phys(kpml4, p->segs->item[1].kvirt),
+        PAGE_SIZE,
+        PAGE_PRESENT | PAGE_USER | PAGE_WRITABLE | PAGE_NX
+    );
+    p->segs->item[1].len = PAGE_SIZE;
 }

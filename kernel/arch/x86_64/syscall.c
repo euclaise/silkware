@@ -7,12 +7,12 @@
 
 #define FMASK (0xC0000084)
 
-#define EFLAGS_CARRY (1 << 0)
-#define EFLAGS_TRAP (1 << 8)
-#define EFLAGS_INTERRUPT (1 << 9)
-#define EFLAGS_DIRECTION (1 << 10)
+#define EFLAGS_CARRY       (1 << 0)
+#define EFLAGS_TRAP        (1 << 8)
+#define EFLAGS_INTERRUPT   (1 << 9)
+#define EFLAGS_DIRECTION   (1 << 10)
 #define EFLAGS_NESTED_TASK (1 << 14)
-#define EFLAGS_ALIGNMENT (1 << 18)
+#define EFLAGS_ALIGNMENT   (1 << 18)
 
 
 void syscall_entry(void);

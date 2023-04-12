@@ -24,5 +24,6 @@ struct proc
     FLEX(fd_t) *fsfd; /* fd->fsfd map */
     FLEX(struct segment) *segs;
     page_tab pt;
+    map *addrs;
 };
 #endif

@@ -27,8 +27,7 @@ CFLAGS := -target $(ARCH)-freestanding  \
 		 -Iexternal/lai/lai/include     \
 		 -I../include                   \
 		 -I../include/arch/$(ARCH)      \
-		 -pedantic \
-		 -O2
+		 -pedantic
 
 LDFLAGS := -nostdlib              \
           -static                 \
