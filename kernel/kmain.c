@@ -13,7 +13,7 @@
 
 extern void *high_addr;
 
-void call_user(void);
+void return_user(void);
 void kmain(void)
 {
     int cpu_id;
@@ -43,8 +43,11 @@ void kmain(void)
     printf("Syscall initialization complete\n");
     screen.vaddr = 0;
 
+    proc_init(&p1);
     newproc_pages(&p1);
+    proc_activate(&p1);
+
     refresh_pages(p1.pt);
-    call_user();
+    return_user();
     __asm__ ("int $0");
 }

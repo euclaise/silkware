@@ -1,13 +1,12 @@
 #include <u.h>
 #include <assert.h>
-#include <stdint.h>
+#include <types.h>
 #include <paging.h>
 #include <io.h>
 #include <memmap.h>
 #include <mem.h>
 #include <panic.h>
 #include <miniheap.h>
-#include <stdbool.h>
 #include <lock.h>
 
 typedef struct block

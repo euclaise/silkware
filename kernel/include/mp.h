@@ -2,7 +2,8 @@
 #define MP_H
 #include <flex.h>
 #include <util.h>
-#include <stdint.h>
+#include <types.h>
+#include <proc.h>
 
 int get_cpuid(void);
 int get_ncpus(void);
@@ -11,6 +12,7 @@ extern int ncpus;
 struct cpu_data
 {
     void *kstack;
+    struct proc proc_current;
     int32_t id;
 } _packed;
 

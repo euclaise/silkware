@@ -1,7 +1,7 @@
 #ifndef SYSCALL_H
 #define SYSCALL_H
 
-#include <stdint.h>
+#include <types.h>
 struct syscall_state
 {
     uint8_t num;

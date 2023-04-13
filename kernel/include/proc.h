@@ -5,6 +5,7 @@
 #include <types.h>
 #include <map.h>
 #include <paging.h>
+#include <arch/proc.h>
 
 #define SEG_R (1 << 0)
 #define SEG_W (1 << 1)
@@ -20,10 +21,14 @@ struct segment
 
 struct proc
 {
+    struct arch_proc_state arch_state;
     pid_t pid;
-    FLEX(fd_t) *fsfd; /* fd->fsfd map */
-    FLEX(struct segment) *segs;
+    Flex(fd_t) *fsfd; /* fd->fsfd map */
+    Flex(struct segment) *segs;
     page_tab pt;
     map *addrs;
 };
+
+void proc_init(struct proc *p);
+void proc_activate(struct proc *p);
 #endif

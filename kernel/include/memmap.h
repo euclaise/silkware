@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <stddef.h>
+#include <types.h>
 struct memmap_entry
 {
     uintptr_t base;

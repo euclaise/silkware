@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <syscall.h>
+#include <types.h>
 #include <io.h>
 #include <panic.h>
 

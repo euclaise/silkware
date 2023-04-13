@@ -1,7 +1,7 @@
 #include <u.h>
+#include <types.h>
 #include <page_alloc.h>
 #include <rand.h>
-#include <stdint.h>
 #include <assert.h>
 #include <panic.h>
 #include <mem.h>
@@ -148,5 +148,12 @@ void *krealloc(void *old, size_t newsize)
         memcpy(res, old, oldb->size);
         kfree(old);
     }
+    return res;
+}
+
+void *kzalloc(size_t sz)
+{
+    void *res = kalloc(sz);
+    if (res) memset(res, 0, sz);
     return res;
 }
