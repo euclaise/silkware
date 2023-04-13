@@ -235,7 +235,7 @@ void map_pages(
         | (!!(flags & PAGE_USER) * X86_PAGE_USER)
         | (!!(flags & PAGE_WRITABLE) * X86_PAGE_WRITABLE)
         | (!!(flags & PAGE_NX) * X86_PAGE_NX);
-    const int top_flags = X86_PAGE_PRESENT | X86_PAGE_USER | X86_PAGE_WRITABLE;
+    int top_flags = X86_PAGE_PRESENT | X86_PAGE_USER | X86_PAGE_WRITABLE;
     uintptr_t dst_end = (dst + length + 0xFFF) & ~0xFFF;
     uintptr_t src_end = (src + length + 0xFFF) & ~0xFFF;
 
@@ -308,26 +308,26 @@ void newproc_pages(void *pv)
     map_pages(
         p->pt,
         &p->addrs,
-        0x100000,
+        PROC_ENTRY,
         K2PHYSK(user_main),
         PAGE_SIZE,
         PAGE_PRESENT | PAGE_USER
     );
 
     p->segs = FlexAlloc(struct segment, 2);
-    p->segs->item[0].base = (void *) 0x100000;
+    p->segs->item[0].base = (void *) PROC_ENTRY;
     p->segs->item[0].kvirt = (void *) user_main;
     p->segs->item[0].len = PAGE_SIZE;
 
     p->segs->item[1].kvirt = page_alloc(PAGE_SIZE);
-    p->segs->item[1].base = (void *)0xFFFFE000;
+    p->segs->item[1].len = 64 * PAGE_SIZE;
+    p->segs->item[1].base = (void *) (STACK_TOP - p->segs->item[1].len);
     map_pages(
         p->pt,
         &p->addrs,
         (uintptr_t) p->segs->item[1].base,
         kvirt2phys(kpml4, p->segs->item[1].kvirt),
-        PAGE_SIZE,
+        p->segs->item[1].len,
         PAGE_PRESENT | PAGE_USER | PAGE_WRITABLE | PAGE_NX
     );
-    p->segs->item[1].len = PAGE_SIZE;
 }

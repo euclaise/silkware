@@ -67,7 +67,7 @@ void isr_handle(struct irq_frame *frame)
 
     if (num == 32)
     {
-        printf("TICK\n");
+        /*printf("TICK\n");return*/
         return;
     }
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));

@@ -1,5 +1,6 @@
 #include <stdatomic.h>
 
+void pause(void);
 #define DEF_LOCK(x) atomic_flag x = ATOMIC_FLAG_INIT
 
 #define ACQUIRE(x) \

@@ -22,17 +22,9 @@ static uint64_t hash(const int8_t *c /* Hashee */, size_t n /* Size */)
 
 map *map_new(size_t n)
 {
-    size_t i;
     if (n < 8) n = 8;
-    map *res = kalloc(sizeof(map) + sizeof(struct map_item)*n);
-    res->n = 0;
+    map *res = kzalloc(sizeof(map) + sizeof(struct map_item)*n);
     res->cap = n;
-    for (i = 0; i < res->cap; ++i)
-    {
-        res->cell[i].h = 0;
-        res->cell[i].k = NULL;
-        res->cell[i].v = NULL;
-    }
     return res;
 }
 
@@ -40,16 +32,20 @@ void *map_get(const map *m, const void *k, size_t kn)
 {
     uint64_t h = hash(k, kn);
     size_t idx = h % m->cap;
-    size_t i = idx;
+    size_t i;
 
+    if (m->max == 0) return NULL;
+
+    if (idx > m->max) idx = m->max;
+    i = idx;
     do
     {
+        i = (i + 1) % (m->max + 1);
         if (m->cell[i].k
                 && m->cell[i].h == h
                 && likely(m->cell[i].k->n == kn)
                 && likely(memcmp(m->cell[i].k->item, k, kn) == 0))
             return m->cell[i].v->item;
-        i = (i + 1) % m->cap;
     } while (i != idx);
     return NULL;
 }
@@ -59,10 +55,10 @@ map *map_grow(map *m, size_t n)
     size_t i;
     map *new;
     
-    if (n <= m->n) return NULL;
+    if (n <= m->cap) return m;
     new = map_new(n);
 
-    for (i = 0; i < m->n; ++i)
+    for (i = 0; i <= m->max; ++i)
         if (m->cell[i].k)
         {
             size_t idx = m->cell[i].h % new->cap;
@@ -72,7 +68,7 @@ map *map_grow(map *m, size_t n)
             new->cell[idx].v = m->cell[i].v;
         }
 
-    new->n = m->n;
+    new->cap = m->cap;
     kfree(m);
     return new;
 }
@@ -97,6 +93,7 @@ void map_insert(map **mp, const void *k, size_t kn, const void *v, size_t vn)
         m->cell[i].v = FlexAlloc(int8_t, vn);
         m->cell[i].v->n = vn;
         memcpy(m->cell[i].v->item, v, vn);
+        if (i > m->max) m->max = i;
         return;
     }
 
@@ -114,6 +111,7 @@ void map_insert(map **mp, const void *k, size_t kn, const void *v, size_t vn)
     m->cell[i].v = FlexAlloc(int8_t, vn);
     m->cell[i].v->n = vn;
     memcpy(m->cell[i].v, v, vn);
+    if (i > m->max) m->max = i;
     *mp = m;
 }
 
@@ -121,10 +119,16 @@ void map_del(map *m, const void *k, size_t kn)
 {
     uint64_t h = hash(k, kn);
     size_t idx = h % m->cap;
-    size_t i = idx;
+    size_t i;
+
+    if (m->max == 0) return;
+
+    if (idx > m->max) idx = m->max;
+    i = idx;
 
     do
     {
+        i = (i + 1) % (m->max + 1);
         if (m->cell[i].k
                 && m->cell[i].h == h
                 && likely(m->cell[i].k->n == kn)
@@ -135,7 +139,6 @@ void map_del(map *m, const void *k, size_t kn)
             m->cell[i].k = NULL;
             return;
         }
-        i = (i + 1) % m->cap;
     } while (i != idx);
 }
 
@@ -148,7 +151,8 @@ void map_set(map **mp, const void *k, size_t kn, const void *v, size_t vn)
 void map_free(map *m)
 {
     size_t i;
-    for (i = 0; i < m->cap; ++i)
+
+    for (i = 0; i <= m->max; ++i)
         if (m->cell[i].k)
         {
             kfree(m->cell[i].k);

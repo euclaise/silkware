@@ -41,4 +41,7 @@ struct arch_proc_state
     uint64_t rsp;
     uint64_t rip;
 } _packed;
+
+#define STACK_TOP  (0x100000000)
+#define PROC_ENTRY (0x100000)
 #endif

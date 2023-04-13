@@ -4,6 +4,6 @@ align 0x1000
 user_main:
     push 1
     mov rax, 0
+    mov rdi, 1
     syscall
-    int 32
 a:  jmp a

@@ -12,7 +12,7 @@ extern int ncpus;
 struct cpu_data
 {
     void *kstack;
-    struct proc proc_current;
+    struct proc *proc_current;
     int32_t id;
 } _packed;
 
