@@ -1,5 +1,4 @@
-#include <stddef.h>
-#include <stdint.h>
+#include <types.h>
 
 void page_alloc_init(void);
 void *page_alloc(size_t size);

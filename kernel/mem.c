@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <stddef.h>
+#include <types.h>
 #include <mem.h>
 
 void *memmove(void *dst, const void *src, size_t n)

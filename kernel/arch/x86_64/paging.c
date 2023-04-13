@@ -314,7 +314,7 @@ void newproc_pages(void *pv)
         PAGE_PRESENT | PAGE_USER
     );
 
-    p->segs = FLEX_ALLOC(struct segment, 2);
+    p->segs = FlexAlloc(struct segment, 2);
     p->segs->item[0].base = (void *) 0x100000;
     p->segs->item[0].kvirt = (void *) user_main;
     p->segs->item[0].len = PAGE_SIZE;

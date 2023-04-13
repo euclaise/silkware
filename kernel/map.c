@@ -1,8 +1,7 @@
 #include <map.h>
 #include <io.h>
-#include <stdint.h>
 #include <util.h>
-#include <stdbool.h>
+#include <types.h>
 #include <mem.h>
 #include <assert.h>
 
@@ -24,7 +23,8 @@ static uint64_t hash(const int8_t *c /* Hashee */, size_t n /* Size */)
 map *map_new(size_t n)
 {
     size_t i;
-    map *res = kalloc(sizeof(map) + sizeof(struct map_item)*(n-1));
+    if (n < 8) n = 8;
+    map *res = kalloc(sizeof(map) + sizeof(struct map_item)*n);
     res->n = 0;
     res->cap = n;
     for (i = 0; i < res->cap; ++i)
@@ -90,28 +90,28 @@ void map_insert(map **mp, const void *k, size_t kn, const void *v, size_t vn)
     {
         m->cell[i].h = h;
 
-        m->cell[i].k = FLEX_ALLOC(int8_t, kn);
+        m->cell[i].k = FlexAlloc(int8_t, kn);
         m->cell[i].k->n = kn;
         memcpy(m->cell[i].k->item, k, kn);
 
-        m->cell[i].v = FLEX_ALLOC(int8_t, vn);
+        m->cell[i].v = FlexAlloc(int8_t, vn);
         m->cell[i].v->n = vn;
         memcpy(m->cell[i].v->item, v, vn);
         return;
     }
 
-    m = map_grow(m, m->cap * 1.25);
+    m = map_grow(m, m->cap * 1.5);
 
     i = idx = h % m->cap;
     do { i = (i + 1) % m->cap; } while (m->cell[i].k && i != idx);
     if (i == idx) unreachable;
 
     m->cell[i].h = h;
-    m->cell[i].k = FLEX_ALLOC(int8_t, kn);
+    m->cell[i].k = FlexAlloc(int8_t, kn);
     m->cell[i].k->n = kn;
     memcpy(m->cell[i].k, k, kn);
 
-    m->cell[i].v = FLEX_ALLOC(int8_t, vn);
+    m->cell[i].v = FlexAlloc(int8_t, vn);
     m->cell[i].v->n = vn;
     memcpy(m->cell[i].v, v, vn);
     *mp = m;

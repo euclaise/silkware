@@ -1,3 +1,6 @@
+#ifndef ARCH_PROC_H
+#define ARCH_PROC_H
+
 #include <stdint.h>
 #include <util.h>
 
@@ -31,3 +34,11 @@ struct syscall_regs
     struct regs regs;
     uint64_t rsp;
 } _packed;
+
+struct arch_proc_state
+{
+    struct regs regs;
+    uint64_t rsp;
+    uint64_t rip;
+} _packed;
+#endif

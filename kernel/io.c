@@ -1,7 +1,6 @@
 #include <io.h>
-#include <stdint.h>
+#include <types.h>
 #include <kern.h>
-#include <stdarg.h>
 
 #define NANOPRINTF_IMPLEMENTATION
 #define NANOPRINTF_USE_FIELD_WIDTH_FORMAT_SPECIFIERS 1

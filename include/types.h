@@ -4,9 +4,13 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdarg.h>
+
+typedef int64_t ssize_t;
 
 typedef uint64_t pid_t;
 typedef int32_t fd_t;
+typedef int8_t byte;
 
 typedef struct note_t
 {

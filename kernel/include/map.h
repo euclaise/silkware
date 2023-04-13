@@ -6,17 +6,16 @@
 struct map_item
 {
     uint64_t h;      /* Hash */
-    FLEX(int8_t) *k; /* Key */
-    FLEX(int8_t) *v; /* Value */
+    Flex(int8_t) *k; /* Key */
+    Flex(int8_t) *v; /* Value */
 } _packed;
 
 typedef struct
 {
     size_t n;
     size_t cap;
-    struct map_item cell[1];
+    struct map_item cell[];
 } _packed map;
-#define MAP(x, y) map
 
 map *map_new(size_t n);
 map *map_grow(map *m, size_t n);
