@@ -24,5 +24,5 @@ endstruc
 
 struc cpu_data_t
     .kstack: resq 1
-    .proc_state: resb proc_state_t_size
+    .proc_state: resq 1 ; ptr->proc_state_t_size
 endstruc

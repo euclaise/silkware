@@ -6,6 +6,7 @@
 #include <map.h>
 #include <paging.h>
 #include <arch/proc.h>
+#include <map.h>
 
 #define SEG_R (1 << 0)
 #define SEG_W (1 << 1)
@@ -29,6 +30,11 @@ struct proc
     map *addrs;
 };
 
-void proc_init(struct proc *p);
-void proc_activate(struct proc *p);
+extern map *procmap;
+
+void procp_init(struct proc *p);
+
+void proc_init(void);
+void proc_activate(pid_t proc);
+pid_t proc_new(void);
 #endif

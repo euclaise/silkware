@@ -12,7 +12,7 @@ struct map_item
 
 typedef struct
 {
-    size_t n;
+    size_t max;
     size_t cap;
     struct map_item cell[];
 } _packed map;
@@ -23,4 +23,5 @@ void map_set(map **m, const void *k, size_t kn, const void *v, size_t vn);
 void map_free(map *m);
 void *map_get(const map *m, const void *k, size_t kn);
 void map_del(map *m, const void *k, size_t kn);
+void map_insert(map **mp, const void *k, size_t kn, const void *v, size_t vn);
 #endif

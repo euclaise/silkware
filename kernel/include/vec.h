@@ -3,7 +3,7 @@
 
 #include <types.h>
 
-#define Vec(T) struct { size_t c; size_t n; T item[]; }
+#define Vec(T) struct { size_t c; size_t n; T item[]; } *
 
 void vec_push_fn(void **vv, void *x, size_t itemsz);
 void vec_pop_fn(void *vv, size_t itemsz);

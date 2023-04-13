@@ -17,7 +17,6 @@ void return_user(void);
 void kmain(void)
 {
     int cpu_id;
-    struct proc p1 = {0};
     serial_init();
     init_fb();
     init_cpu_local();
@@ -43,11 +42,9 @@ void kmain(void)
     printf("Syscall initialization complete\n");
     screen.vaddr = 0;
 
-    proc_init(&p1);
-    newproc_pages(&p1);
-    proc_activate(&p1);
+    proc_init();
+    proc_activate(proc_new());
 
-    refresh_pages(p1.pt);
     return_user();
     __asm__ ("int $0");
 }
