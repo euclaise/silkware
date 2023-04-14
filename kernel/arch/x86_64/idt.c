@@ -4,7 +4,7 @@
 #include <panic.h>
 #include <util.h>
 #include <arch/proc.h>
-#include <arch/ctx.h>
+#include <ctx.h>
 
 struct idt_entry_t
 {
@@ -56,7 +56,7 @@ void isr_handle(struct irq_frame *frame)
 
     if (num == 32)
     {
-        if (sched_ready) ctx_switch(*frame);
+        if (sched_ready) ctx_switch(frame);
         return;
     }
 

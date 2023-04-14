@@ -3,7 +3,7 @@
 
 global syscall_entry
 extern syscall_test
-extern syscall_wait
+extern syscall_exit
 extern syscall_inval
 extern cpu_data
 
@@ -31,4 +31,4 @@ syscall_entry:
 
 jmp_tab:
     dq syscall_test
-    dq syscall_wait
+    dq syscall_exit

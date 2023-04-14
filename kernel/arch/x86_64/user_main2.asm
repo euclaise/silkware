@@ -6,6 +6,4 @@ user_main2:
     mov rdi, 2
     mov rax, 0
     syscall
-    mov rax, 1
-    syscall
     jmp .a

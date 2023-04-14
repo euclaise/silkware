@@ -10,7 +10,7 @@
 #define NPRIOR (5) /* Number of priority levels */
 
 bool sched_ready;
-uint32_t sched_n;
+uint32_t sched_n; /* TODO: Make this CPU-local */
 
 struct node
 {
@@ -57,6 +57,9 @@ static void push_end(struct node *new, int priority)
 void schedule(pid_t pid, int priority)
 {
     struct node *new = kalloc(sizeof(struct node));
+    ++sched_n;
+    sched_update_duration();
+
     new->pid = pid;
     new->next = NULL;
     push_end(new, priority);
@@ -90,12 +93,10 @@ void proc_next(void)
     pid_t pid;
     struct queue *tmp;
 
-    sched_n++;
-    sched_update_duration();
-
     if ((pid = sched_pop()))
     {
         proc_activate(pid);
+        printf("A: %d\n", pid);
         return;
     }
 
@@ -103,9 +104,43 @@ void proc_next(void)
     queues.inactive = queues.active;
     queues.active = tmp;
 
-
     if ((pid = sched_pop()) == 0) panic("No processes available!");
     proc_activate(pid);
+    printf("A: %d\n", pid);
+}
+
+static bool queue_tryremove(struct queue *q, pid_t pid)
+{
+    size_t i;
+    struct node *n;
+    for (i = 0; i < NPRIOR; ++i)
+    {
+        struct node *prev = NULL;
+        for (n = q->start[i]; n != NULL; n = n->next)
+        {
+            if (n->pid == pid)
+            {
+                if (q->end[i] == n) q->end[i] = prev;
+                
+                if (prev) prev->next = n->next;
+                else q->start[i] = n->next;
+
+                kfree(n);
+                return true;
+            }
+            prev = n;
+        }
+    }
+    return false;
+}
+
+void unschedule(pid_t pid)
+{
+    --sched_n;
+    sched_update_duration();
+
+    if (!queue_tryremove(queues.active, pid))
+        queue_tryremove(queues.inactive, pid);
 }
 
 void sched_begin(void)
