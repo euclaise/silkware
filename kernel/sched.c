@@ -9,6 +9,8 @@
 
 #define NPRIOR (5) /* Number of priority levels */
 
+bool sched_ready;
+
 struct node
 {
     struct node *next;
@@ -40,36 +42,44 @@ void proc_activate(pid_t pid)
     assert(cpu->proc_current != NULL);
 }
 
+static void push_end(struct node *new, int priority)
+{
+    if (queues.inactive->end[priority])
+        queues.inactive->end[priority]->next = new;
+
+    queues.inactive->end[priority] = new;
+
+    if (queues.inactive->start[priority] == NULL)
+        queues.inactive->start[priority] = new;
+}
+
 void schedule(pid_t pid, int priority)
 {
     struct node *new = kalloc(sizeof(struct node));
     new->pid = pid;
     new->next = NULL;
-    if (queues.inactive->end[priority])
-        queues.inactive->end[priority]->next = new;
-    queues.inactive->end[priority] = new;
-    if (queues.active->start[priority] == NULL)
-        queues.active->start[priority] = new;
+    push_end(new, priority);
 }
 
 static pid_t sched_pop(void)
 {
-    struct node *node;
-    pid_t res;
     size_t i;
     for (i = 0; i < NPRIOR; ++i)
         if (queues.active->start[i])
         {
+            struct node *node;
+
             node = queues.active->start[i];
+            if (!node) continue;
+
+            if (queues.active->end[i] == node) queues.active->end[i] = NULL;
+
             queues.active->start[i] = node->next;
             node->next = NULL;
 
-            if (queues.inactive->end[i]) queues.inactive->end[i]->next = node;
-            queues.inactive->end[i] = node;
-            if (queues.active->start[i] == NULL) queues.active->start[i] = node;
+            push_end(node, i);
 
-            res = node->pid;
-            return res;
+            return node->pid;
         }
     return 0;
 }
@@ -92,4 +102,10 @@ void proc_next(void)
 
     if ((pid = sched_pop()) == 0) panic("No processes available!");
     proc_activate(pid);
+}
+
+void sched_begin(void)
+{
+    sched_ready = true;
+    while (1) pause();
 }

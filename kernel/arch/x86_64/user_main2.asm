@@ -1,9 +1,9 @@
-global user_main1
+global user_main2
 
 align 0x1000
-user_main1:
+user_main2:
 .a:
-    mov rdi, 1
+    mov rdi, 2
     mov rax, 0
     syscall
     mov rax, 1

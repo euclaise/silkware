@@ -5,8 +5,10 @@
 %endmacro
 
 global return_user_
+extern lapic_eoi
 extern cpu_data
 return_user_:
+    call lapic_eoi
     mov ax, 0x1B ; (3 << 3) | 3, data selector 
     mov ds, ax
     mov es, ax
@@ -23,7 +25,8 @@ return_user_:
     mov rbx, [rax + proc_state_t.rsp]
     push rbx
 
-    pushf ; flags
+    mov rbx, [rax + proc_state_t.flags]
+    push rbx
 
     push 0x23 ; (4 << 3) | 3, code selector
 

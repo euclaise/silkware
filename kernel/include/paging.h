@@ -29,5 +29,5 @@ void kunmap(void *virt, size_t len);
 uintptr_t round_up_page(uintptr_t x);
 void *kmap_phys(uintptr_t phys, uintptr_t len);
 
-void newproc_pages(void *p);
+void newproc_pages(void *p, void *start, size_t len);
 #endif

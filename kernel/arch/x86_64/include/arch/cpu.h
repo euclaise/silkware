@@ -4,9 +4,6 @@
 
 void cpuid(int code, int *eax, int *ebx, int *ecx, int *edx);
 
-uint64_t rdmsr(uint32_t msr);
-void wrmsr(uint32_t msr, uint64_t addr);
-
 enum
 {
     CPUID_FEAT_ECX_SSE3       = 1 << 0, 

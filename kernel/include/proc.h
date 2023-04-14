@@ -36,5 +36,5 @@ void procp_init(struct proc *p);
 
 void proc_init(void);
 void proc_activate(pid_t proc);
-pid_t proc_new(void);
+pid_t proc_new(void *start, size_t len);
 #endif

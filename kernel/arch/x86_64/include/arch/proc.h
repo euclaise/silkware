@@ -40,6 +40,20 @@ struct arch_proc_state
     struct regs regs;
     uint64_t rsp;
     uint64_t rip;
+    uint64_t flags;
+} _packed;
+
+struct irq_frame
+{
+    struct regs regs;
+
+    uint64_t num;
+    uint64_t errorCode;
+    uint64_t ip;
+    uint64_t cs;
+    uint64_t flags;
+    uint64_t sp;
+    uint64_t ss;
 } _packed;
 
 #define STACK_TOP  (0x100000000)
