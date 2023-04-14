@@ -296,8 +296,7 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
     return (void *) res;
 }
 
-void user_main(void);
-void newproc_pages(void *pv)
+void newproc_pages(void *pv, void *start, size_t len)
 {
     struct proc *p = pv;
 
@@ -309,15 +308,15 @@ void newproc_pages(void *pv)
         p->pt,
         &p->addrs,
         PROC_ENTRY,
-        K2PHYSK(user_main),
+        K2PHYSK(start),
         PAGE_SIZE,
         PAGE_PRESENT | PAGE_USER
     );
 
     p->segs = FlexAlloc(struct segment, 2);
     p->segs->item[0].base = (void *) PROC_ENTRY;
-    p->segs->item[0].kvirt = (void *) user_main;
-    p->segs->item[0].len = PAGE_SIZE;
+    p->segs->item[0].kvirt = (void *) start;
+    p->segs->item[0].len = round_up_page(len);
 
     p->segs->item[1].kvirt = page_alloc(PAGE_SIZE);
     p->segs->item[1].len = 64 * PAGE_SIZE;

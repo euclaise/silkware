@@ -17,7 +17,7 @@ void proc_init(void)
     assert(procmap != NULL);
 }
 
-pid_t proc_new(void)
+pid_t proc_new(void *start, size_t len)
 {
     struct proc p = {0};
     ACQUIRE(&pid_cur_lock);
@@ -26,7 +26,7 @@ pid_t proc_new(void)
 
     p.pid = pid_cur;
     procp_init(&p);
-    newproc_pages(&p);
+    newproc_pages(&p, start, len);
 
     map_insert(&procmap, &pid, sizeof(pid), &p, sizeof(p));
     return p.pid;

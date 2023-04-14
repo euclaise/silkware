@@ -14,6 +14,9 @@
 extern void *high_addr;
 
 void return_user(void);
+void user_main1(void);
+void user_main2(void);
+
 void kmain(void)
 {
     int cpu_id;
@@ -44,8 +47,7 @@ void kmain(void)
 
     sched_init();
     proc_init();
-    schedule(proc_new(), 0);
-    proc_next();
-    return_user();
-    __asm__ ("int $0");
+    schedule(proc_new((void *) user_main1, PAGE_SIZE), 1);
+    schedule(proc_new((void *) user_main2, PAGE_SIZE), 2);
+    sched_begin();
 }

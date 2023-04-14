@@ -1,9 +1,10 @@
-#include <stdint.h>
+#include <types.h>
 #include <io.h>
 #include <kern.h>
 #include <panic.h>
 #include <util.h>
 #include <arch/proc.h>
+#include <arch/ctx.h>
 
 struct idt_entry_t
 {
@@ -23,19 +24,6 @@ static struct
     uint16_t limit;
     uint64_t base;
 } _packed idtr;
-
-struct irq_frame
-{
-    struct regs regs;
-
-    uint64_t num;
-    uint64_t errorCode;
-    uint64_t ip;
-    uint64_t cs;
-    uint64_t flags;
-    uint64_t sp;
-    uint64_t ss;
-} _packed;
 
 char *irq_msg[] =
 {
@@ -60,6 +48,7 @@ char *irq_msg[] =
     "EXCEPTION: Machine check - #18\n"
 };
 
+extern bool sched_ready;
 void isr_handle(struct irq_frame *frame)
 {
     uint64_t cr2;
@@ -67,9 +56,10 @@ void isr_handle(struct irq_frame *frame)
 
     if (num == 32)
     {
-        /*printf("TICK\n");return*/
+        if (sched_ready) ctx_switch(*frame);
         return;
     }
+
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s", irq_msg[num]);

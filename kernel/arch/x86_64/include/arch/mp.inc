@@ -20,6 +20,7 @@ struc proc_state_t
     .regs: resb regs_t_size
     .rsp: resq 1
     .rip: resq 1
+    .flags: resq 1
 endstruc
 
 struc cpu_data_t

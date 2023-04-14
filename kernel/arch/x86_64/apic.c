@@ -70,7 +70,7 @@ void apic_init(void)
     assert_eq(numcores, ncpus);
     lapic_base = (uintptr_t) kmap_phys(lapic_base, PAGE_SIZE);
     printf("LAPIC at phys=%p\n", lapic_base);
-    /*apic_start();*/
+    apic_start();
 }
 
 void apic_start(void)
@@ -92,5 +92,7 @@ void apic_start(void)
 
     lapic_write(LAPIC_REG_LVT_TMR, INT_TIMER | LAPIC_TMR_PERIODIC);
     lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
-    lapic_write(LAPIC_REG_TMR_INITIAL, ticks / 10);
+
+    if (ticks == 0) ticks = 1;
+    lapic_write(LAPIC_REG_TMR_INITIAL, ticks);
 }
