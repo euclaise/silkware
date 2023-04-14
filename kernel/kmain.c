@@ -6,7 +6,7 @@
 #include <panic.h>
 #include <timer.h>
 #include <page_alloc.h>
-#include <proc.h>
+#include <sched.h>
 #include <mp.h>
 #include <kalloc.h>
 #include <assert.h>
@@ -40,11 +40,12 @@ void kmain(void)
 
     init_syscalls();
     printf("Syscall initialization complete\n");
-    screen.vaddr = 0;
+    /*screen.vaddr = 0;*/
 
+    sched_init();
     proc_init();
-    proc_activate(proc_new());
-
+    schedule(proc_new(), 0);
+    proc_next();
     return_user();
     __asm__ ("int $0");
 }
