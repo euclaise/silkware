@@ -7,6 +7,7 @@
 void sched_init(void);
 void proc_next(void);
 void schedule(pid_t pid, int priority);
+void unschedule(pid_t pid);
 void sched_begin(void);
 void sched_update_duration(void);
 extern uint32_t sched_n;

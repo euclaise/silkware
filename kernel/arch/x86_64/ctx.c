@@ -2,6 +2,7 @@
 #include <mp.h>
 #include <sched.h>
 #include <arch/proc.h>
+#include <assert.h>
 
 void return_user_(void);
 
@@ -16,12 +17,13 @@ struct arch_proc_state irq2state(struct irq_frame frame)
     return state;
 }
 
-void ctx_switch(struct irq_frame frame)
+void ctx_switch(struct irq_frame *frame)
 {
     struct cpu_data *cpu = get_cpu_data();
-    if (cpu->proc_current)
-        cpu->proc_current->arch_state = irq2state(frame);
+    if (cpu->proc_current && frame)
+        cpu->proc_current->arch_state = irq2state(*frame);
     proc_next();
     refresh_pages(get_cpu_data()->proc_current->pt);
+    assert(get_cpu_data()->proc_current->arch_state.rip);
     return_user_();
 }
