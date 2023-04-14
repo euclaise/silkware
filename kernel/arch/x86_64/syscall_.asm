@@ -3,6 +3,7 @@
 
 global syscall_entry
 extern syscall_test
+extern syscall_wait
 extern syscall_inval
 extern cpu_data
 
@@ -13,7 +14,7 @@ syscall_entry:
 
     push rsp
     pushall
-    cmp rax, 0
+    cmp rax, 1
     jle .cont
     call syscall_inval
 .cont:
@@ -30,3 +31,4 @@ syscall_entry:
 
 jmp_tab:
     dq syscall_test
+    dq syscall_wait
