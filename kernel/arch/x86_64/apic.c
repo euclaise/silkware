@@ -73,10 +73,22 @@ void apic_init(void)
     apic_start();
 }
 
+static uint32_t ticks; /* Ticks in 1 ms */
+
+void apic_set_duration(uint32_t us)
+{
+    uint32_t ticks_value = (ticks * us) / 1000;
+    if (ticks_value == 0) ticks_value = 1;
+    
+    lapic_write(LAPIC_REG_LVT_TMR, INT_TIMER | LAPIC_TMR_PERIODIC);
+    lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
+
+    lapic_write(LAPIC_REG_TMR_INITIAL, ticks_value);
+
+}
+
 void apic_start(void)
 {
-    uint32_t ticks; /* Ticks in 10ms */
-
     lapic_write(LAPIC_REG_SPURIOUS,
         lapic_read(LAPIC_REG_SPURIOUS)
         | LAPIC_SPURIOUS_ALL
@@ -88,11 +100,8 @@ void apic_start(void)
 
     timer_sleep_ms(10);
     lapic_write(LAPIC_REG_LVT_TMR, LAPIC_TMR_MASKED);
-    ticks = 0xFFFFFFFF - lapic_read(LAPIC_REG_TMR_CUR);
-
-    lapic_write(LAPIC_REG_LVT_TMR, INT_TIMER | LAPIC_TMR_PERIODIC);
-    lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
-
+    ticks = (0xFFFFFFFF - lapic_read(LAPIC_REG_TMR_CUR)) / 10;
     if (ticks == 0) ticks = 1;
-    lapic_write(LAPIC_REG_TMR_INITIAL, ticks);
+
+    apic_set_duration(1000 * 10); /* 10 ms */
 }

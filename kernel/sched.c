@@ -10,6 +10,7 @@
 #define NPRIOR (5) /* Number of priority levels */
 
 bool sched_ready;
+uint32_t sched_n;
 
 struct node
 {
@@ -88,6 +89,9 @@ void proc_next(void)
 {
     pid_t pid;
     struct queue *tmp;
+
+    sched_n++;
+    sched_update_duration();
 
     if ((pid = sched_pop()))
     {

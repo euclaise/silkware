@@ -23,6 +23,7 @@ struct madt
 void apic_init(void);
 void apic_start(void);
 void lapic_eoi(void);
+void apic_set_duration(uint32_t us);
 
 enum
 {
