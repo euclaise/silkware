@@ -1,7 +1,8 @@
 #include <stdatomic.h>
 
 void pause(void);
-#define DEF_LOCK(x) atomic_flag x = ATOMIC_FLAG_INIT
+typedef atomic_flag lock_t;
+#define LOCK_INIT ATOMIC_FLAG_INIT
 
 #define ACQUIRE(x) \
     while (atomic_flag_test_and_set_explicit((x), memory_order_acquire)) pause()

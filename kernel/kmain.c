@@ -22,7 +22,6 @@ void kmain(void)
     int cpu_id;
     serial_init();
     init_fb();
-    init_cpu_local();
 
     printf("%c Silkware%c\n\n", COLOR_GREEN, COLOR_WHITE);
     printf("CPU %d of %d\n", cpu_id = get_cpuid(), ncpus = get_ncpus());
@@ -30,8 +29,12 @@ void kmain(void)
 
     memmap_init();
     map_kern_pages();
-    map_screen();
     refresh_pages(NULL);
+
+    init_cpu_local();
+
+    map_screen();
+
     page_alloc_init();
     kalloc_init();
 

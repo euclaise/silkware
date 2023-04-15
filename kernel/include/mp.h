@@ -4,6 +4,7 @@
 #include <util.h>
 #include <types.h>
 #include <proc.h>
+#include <u.h>
 
 int get_cpuid(void);
 int get_ncpus(void);
@@ -16,7 +17,7 @@ struct cpu_data
     int32_t id;
 } _packed;
 
-extern struct cpu_data cpu_data;
+extern int8_t cpu_data[];
 
 struct cpu_data *get_cpu_data(void);
 void init_cpu_local(void);

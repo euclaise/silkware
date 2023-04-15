@@ -10,7 +10,7 @@
 #define NPRIOR (5) /* Number of priority levels */
 
 bool sched_ready;
-uint32_t sched_n; /* TODO: Make this CPU-local */
+uint32_t sched_n;
 
 struct node
 {
@@ -96,7 +96,6 @@ void proc_next(void)
     if ((pid = sched_pop()))
     {
         proc_activate(pid);
-        printf("A: %d\n", pid);
         return;
     }
 
@@ -106,7 +105,6 @@ void proc_next(void)
 
     if ((pid = sched_pop()) == 0) panic("No processes available!");
     proc_activate(pid);
-    printf("A: %d\n", pid);
 }
 
 static bool queue_tryremove(struct queue *q, pid_t pid)
