@@ -68,8 +68,8 @@ void apic_init(void)
     }
 
     assert_eq(numcores, ncpus);
-    lapic_base = (uintptr_t) kmap_phys(lapic_base, PAGE_SIZE);
     printf("LAPIC at phys=%p\n", lapic_base);
+    lapic_base = (uintptr_t) kmap_phys(lapic_base, PAGE_SIZE);
     apic_start();
 }
 

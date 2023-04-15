@@ -34,10 +34,3 @@ void wrmsr(uint32_t msr, uint64_t x)
 
     __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(msr));
 }
-
-void init_cpu_local(void)
-{
-    int ebx;
-    cpuid(1, NULL, &ebx, NULL, NULL);
-    get_cpu_data()->id = ebx >> 24;
-}

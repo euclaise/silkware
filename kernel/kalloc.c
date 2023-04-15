@@ -21,10 +21,10 @@ typedef struct block
         struct block *next;
         uint64_t canary;
     };
-    int8_t data[1];
+    int8_t data[];
 } __attribute__((packed)) block;
 
-#define HDRSIZE (sizeof(block) - sizeof(int8_t[1]))
+#define HDRSIZE (sizeof(block))
 
 struct kalloc_state /* Per-CPU state */
 {
@@ -33,12 +33,9 @@ struct kalloc_state /* Per-CPU state */
 
 static struct kalloc_state *states;
 
-uint64_t canary(uint64_t x)
+static inline uint64_t canary(uint64_t x)
 {
-	x ^= x << 13;
-	x ^= x >> 7;
-	x ^= x << 17;
-	return x;
+	return srand_insecure(x);
 }
 
 void kalloc_init(void)

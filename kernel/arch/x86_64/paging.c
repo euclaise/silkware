@@ -11,6 +11,7 @@
 #include <proc.h>
 #include <map.h>
 #include <arch/addr.h>
+#include <mp.h>
 
 struct limine_kernel_address_request kern_addr_req = {
     .id = LIMINE_KERNEL_ADDRESS_REQUEST
@@ -38,13 +39,13 @@ typedef pdpte_t *pdpt_t;
 typedef pde_t   *pd_t;
 typedef pte_t   *pt_t;
 
-pml4e_t kpml4[512] __attribute__((aligned(PAGE_SIZE)));
+pml4e_t *kpml4_tabs;
 
 extern char kern_load[], kern_end[],
         text_start[], text_end[],
         rodata_start[], rodata_end[],
-        data_start[], data_end[],
-        page_tmp[];
+        data_start[], data_end[], page_tmp[];
+
 uintptr_t end_pos;
 
 #define K2PHYSK(x) ( \
@@ -76,6 +77,7 @@ void premap_pages(
     const int top_flags = X86_PAGE_PRESENT | X86_PAGE_USER | X86_PAGE_WRITABLE;
     uintptr_t dst_end = (dst + length + 0xFFF) & ~0xFFF;
     uintptr_t src_end = (src + length + 0xFFF) & ~0xFFF;
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
 
     while (dst < dst_end && src < src_end) {
         int pml4_idx = (dst >> 39) & 0x1FF;
@@ -137,6 +139,7 @@ uintptr_t kvirt2phys(page_tab pml4, void *virt)
 
 void refresh_pages(pml4_t pml4)
 {
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
     if (pml4 == NULL) pml4 = kpml4;
     __asm__ (
         "mov %0, %%cr3\n"
@@ -151,6 +154,9 @@ void map_kern_pages(void)
 {
     if (kern_addr_req.response == NULL)
         panic("Could not get kernel physical addr");
+
+    if (kpml4_tabs == NULL)
+        kpml4_tabs = miniheap_alloc(PAGE_SIZE * get_ncpus());
 
     kern_resp = *kern_addr_req.response;
 
@@ -173,6 +179,13 @@ void map_kern_pages(void)
         X86_PAGE_PRESENT | X86_PAGE_NX | X86_PAGE_WRITABLE
     );
     end_pos = round_up_page((uintptr_t) kern_end);
+
+    premap_pages(
+        (uintptr_t) cpu_data,
+        K2PHYSK(miniheap_alloc(PAGE_SIZE)),
+        PAGE_SIZE,
+        PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX
+    );
 }
 
 void map_screen(void)
@@ -190,6 +203,7 @@ void map_screen(void)
 
 void kunmap(void *virt, size_t len)
 {
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
     uintptr_t phys = kvirt2phys(kpml4, virt);
     void **orig; /* Original allocation */
     premap_pages((uintptr_t) virt, 0, len, 0);
@@ -208,6 +222,7 @@ void kunmap(void *virt, size_t len)
 
 uintptr_t new_tab(map **addrs)
 {
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
     void *virtpage = page_alloc(PAGE_SIZE);
     uintptr_t physpage = kvirt2phys(kpml4, virtpage); 
     map_set(addrs, &physpage, sizeof(physpage), &virtpage, sizeof(virtpage));
@@ -273,6 +288,7 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
     uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
     uintptr_t offset = (uintptr_t) phys - aligned;
     uintptr_t res = end_pos + offset;
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
 
     if (!kmap_ready) premap_pages(
             end_pos,
@@ -299,6 +315,7 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
 void newproc_pages(void *pv, void *start, size_t len)
 {
     struct proc *p = pv;
+    pml4_t kpml4 = &kpml4_tabs[get_cpuid() * 512];
 
     p->pt = page_alloc(PAGE_SIZE);
     p->addrs = map_new(0x10);
