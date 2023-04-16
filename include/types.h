@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <stdatomic.h>
 
 typedef int64_t ssize_t;
 

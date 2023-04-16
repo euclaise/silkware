@@ -6,7 +6,7 @@
 -Iexternal/lai/lai/include
 -I../include
 -Ifonts
--std=c99
+-std=c11
 -Wall
 -Wextra
 -pedantic

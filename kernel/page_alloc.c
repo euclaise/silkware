@@ -24,7 +24,7 @@ typedef struct pool
 
 static pool *pools;
 size_t n_pools;
-static lock_t lock;
+static lock_t lock = LOCK_INIT;
 
 uintptr_t prev_pow2(uintptr_t x)
 {

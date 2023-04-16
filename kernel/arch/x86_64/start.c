@@ -1,6 +1,4 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include <types.h>
 #include <limine.h>
 #include <mem.h>
 #include <kern.h>
@@ -11,10 +9,11 @@
 #include <panic.h>
 #include <acpi.h>
 #include <arch/apic.h>
-#include <arch/idt.h>
+#include <arch/x86.h>
 #include <arch/serial.h>
 #include <arch/addr.h>
 #include <arch/hpet.h>
+#include <rand.h>
 #include <lai/helpers/sci.h>
 
 struct limine_hhdm_request hhdm_req = {
@@ -39,8 +38,6 @@ void start(void)
     kmain();
 }
 
-void gdt_init(void);
-void rand_init(void);
 extern map *kmap_pages;
 extern bool kmap_ready;
 

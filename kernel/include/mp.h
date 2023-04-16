@@ -21,4 +21,5 @@ extern int8_t cpu_data[];
 
 struct cpu_data *get_cpu_data(void);
 void init_cpu_local(void);
+void mp_init(void);
 #endif
