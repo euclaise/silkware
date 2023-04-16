@@ -138,11 +138,17 @@ uintptr_t kvirt2phys(page_tab pml4, void *virt)
 
 void refresh_pages(pml4_t pml4)
 {
+    uintptr_t phys;
     if (pml4 == NULL) pml4 = kpml4;
+    if (pml4 == kpml4) phys = K2PHYSK(pml4);
+    else phys = kvirt2phys(cur_page_tab, pml4); 
+    /* TODO: This is hacky, using pml4==kpml4 as a proxy for if we're
+     * initializing a processor or actually chainging the page table */
+
     __asm__ (
         "mov %0, %%cr3\n"
         :
-        : "r" (cur_page_tab ? kvirt2phys(cur_page_tab, pml4) : K2PHYSK(pml4))
+        : "r" (phys)
         : "memory"
     );
     cur_page_tab = pml4;
@@ -198,14 +204,8 @@ void map_screen(void)
 
 void kunmap(void *virt, size_t len)
 {
-    uintptr_t phys = kvirt2phys(kpml4, virt);
-    void **orig; /* Original allocation */
     premap_pages((uintptr_t) virt, 0, len, 0);
-    if (kmap_ready && (orig = map_get(kmap_pages, &phys, sizeof(virt))))
-    {
-        kfree(*orig);
-        map_del(kmap_pages, &virt, sizeof(virt));
-    }
+    if (kmap_ready) map_del(kmap_pages, &virt, sizeof(virt));
     for (
             uintptr_t p = (uintptr_t) virt;
             p < (uintptr_t) virt + len;
@@ -218,15 +218,22 @@ uintptr_t new_tab(map **addrs)
 {
     void *virtpage = page_alloc(PAGE_SIZE);
     uintptr_t physpage = kvirt2phys(kpml4, virtpage); 
-    map_set(addrs, &physpage, sizeof(physpage), &virtpage, sizeof(virtpage));
+    map_set(addrs, &physpage, sizeof(physpage), virtpage, PAGE_SIZE);
     return physpage;
 }
 
 static void *getvirt_map(map *m, uintptr_t phys)
 {
-    void **resp = map_get(m, &phys, sizeof(phys));
+    void *resp = map_get(m, &phys, sizeof(phys));
     if (resp == NULL) return PHYSK2VK(phys);
-    return *resp;
+    return resp;
+}
+
+void mp_pages(void)
+{
+    map_kern_pages();
+    map_screen();
+    refresh_pages(NULL);
 }
 
 void map_pages(
@@ -278,8 +285,8 @@ void map_pages(
 
 void *kmap_phys(uintptr_t phys, uintptr_t len)
 {
-    uintptr_t aligned = (uintptr_t) phys & ~0xFFF;
-    uintptr_t offset = (uintptr_t) phys - aligned;
+    uintptr_t aligned = phys & ~0xFFF;
+    uintptr_t offset = phys - aligned;
     uintptr_t res = end_pos + offset;
 
     if (!kmap_ready) premap_pages(

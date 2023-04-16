@@ -37,7 +37,6 @@ void kmain(void)
     page_alloc_init();
     kalloc_init();
 
-    mp_init();
 
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
@@ -48,6 +47,7 @@ void kmain(void)
     init_syscalls();
     printf("Syscall initialization complete\n");
 
+    mp_init();
     sched_init();
     proc_init();
     schedule(proc_new((void *) user_main1, PAGE_SIZE), 1);

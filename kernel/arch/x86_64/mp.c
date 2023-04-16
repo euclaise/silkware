@@ -18,6 +18,13 @@ struct limine_smp_request smp_req = { .id = LIMINE_SMP_REQUEST };
 static bool ready;
 static volatile int cpus_ready = 1;
 
+static int get_cpuid_cpuid(void)
+{
+    int ebx;
+    cpuid(1, NULL, &ebx, NULL, NULL);
+    return ebx >> 24;
+}
+
 int get_cpuid(void)
 {
     if (unlikely(!ready))
@@ -39,24 +46,28 @@ int get_ncpus(void)
 void init_cpu_local(void)
 {
     struct cpu_data *cpu = get_cpu_data();
-    cpu->id = get_cpuid();
+    cpu->id = get_cpuid_cpuid();
     ready = 1;
 }
 
+void mp_pages(void);
+void apic_start(void);
+
 void mp_start(void)
 {
-    refresh_pages(NULL);
+    mp_pages();
     init_cpu_local();
 
     idt_init();
     gdt_init();
     rand_init();
-    apic_init();
+    apic_start();
 
     init_syscalls();
 
     ++cpus_ready;
 
+    printf("CPU %d ready", get_cpuid());
     while (1) pause();
 }
 
@@ -83,6 +94,5 @@ void mp_init(void)
         cpu = kmap_phys(H2PHYS(cpu), sizeof(*cpu));
         __atomic_store_n(&cpu->goto_address, _mp_start, __ATOMIC_RELEASE);
     }
-
     while (cpus_ready != ncpus);
 }
