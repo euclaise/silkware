@@ -9,7 +9,7 @@
 map *procmap;
 
 pid_t pid_cur;
-static lock_t pid_cur_lock;
+static lock_t pid_cur_lock = LOCK_INIT;
 
 void proc_init(void)
 {

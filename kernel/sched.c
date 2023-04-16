@@ -6,11 +6,11 @@
 #include <assert.h>
 #include <io.h>
 #include <panic.h>
+#include <lock.h>
 
 #define NPRIOR (5) /* Number of priority levels */
 
 bool sched_ready;
-uint32_t sched_n;
 
 struct node
 {
@@ -24,16 +24,19 @@ struct queue
     struct node *end[NPRIOR];
 };
 
-static struct
-{
-    struct queue *active;
-    struct queue *inactive;
-} queues;
+struct sched_cpu_queue *sched_cpu_queues;
 
 void sched_init(void)
 {
-    queues.active = kzalloc(sizeof(struct queue));
-    queues.inactive = kzalloc(sizeof(struct queue));
+    int i;
+    sched_cpu_queues = kalloc(sizeof(struct queue)*ncpus);
+
+    for (i = 0; i < ncpus; ++i)
+    {
+        sched_cpu_queues[i].active = kzalloc(sizeof(struct queue));
+        sched_cpu_queues[i].inactive = kzalloc(sizeof(struct queue));
+        LOCK_CLEAR(&sched_cpu_queues[i].lock);
+    }
 }
 
 void proc_activate(pid_t pid)
@@ -43,68 +46,93 @@ void proc_activate(pid_t pid)
     assert(cpu->proc_current != NULL);
 }
 
-static void push_end(struct node *new, int priority)
+static void push_unlocked(
+    struct sched_cpu_queue *cpu_queue,
+    struct node *new,
+    int priority)
 {
-    if (queues.inactive->end[priority])
-        queues.inactive->end[priority]->next = new;
+    if (cpu_queue->inactive->end[priority])
+        cpu_queue->inactive->end[priority]->next = new;
 
-    queues.inactive->end[priority] = new;
+    cpu_queue->inactive->end[priority] = new;
 
-    if (queues.inactive->start[priority] == NULL)
-        queues.inactive->start[priority] = new;
+    if (cpu_queue->inactive->start[priority] == NULL)
+        cpu_queue->inactive->start[priority] = new;
+
 }
 
-void schedule(pid_t pid, int priority)
-{
-    struct node *new = kalloc(sizeof(struct node));
-    ++sched_n;
-    sched_update_duration();
-
-    new->pid = pid;
-    new->next = NULL;
-    push_end(new, priority);
-}
-
-static pid_t sched_pop(void)
+static pid_t pop_unlocked(struct sched_cpu_queue *cpu_queue)
 {
     size_t i;
     for (i = 0; i < NPRIOR; ++i)
-        if (queues.active->start[i])
+        if (cpu_queue->active->start[i])
         {
             struct node *node;
 
-            node = queues.active->start[i];
+            node = cpu_queue->active->start[i];
             if (!node) continue;
 
-            if (queues.active->end[i] == node) queues.active->end[i] = NULL;
+            if (cpu_queue->active->end[i] == node)
+                cpu_queue->active->end[i] = NULL;
 
-            queues.active->start[i] = node->next;
+            cpu_queue->active->start[i] = node->next;
             node->next = NULL;
 
-            push_end(node, i);
+            push_unlocked(cpu_queue, node, i);
 
             return node->pid;
         }
     return 0;
 }
 
+void schedule(pid_t pid, int priority)
+{
+    uint32_t n_min;
+    int cpu_min;
+    int cpu;
+
+    struct node *new = kalloc(sizeof(struct node));
+    new->pid = pid;
+    new->next = NULL;
+
+    for (cpu = 0, n_min = UINT32_MAX; cpu < ncpus; ++cpu)
+    {
+        if (sched_cpu_queues[cpu].n < n_min)
+        {
+            cpu_min = cpu;
+            n_min = sched_cpu_queues[cpu].n;
+        }
+    }
+
+    ACQUIRE(&sched_cpu_queues[cpu_min].lock);
+    ++sched_cpu_queues[cpu_min].n;
+    push_unlocked(&sched_cpu_queues[cpu_min], new, priority);
+    RELEASE(&sched_cpu_queues[cpu_min].lock);
+}
+
 void proc_next(void)
 {
     pid_t pid;
     struct queue *tmp;
+    int cpuid = get_cpuid();
 
-    if ((pid = sched_pop()))
+    ACQUIRE(&sched_cpu_queues[cpuid].lock);
+    if ((pid = pop_unlocked(&sched_cpu_queues[cpuid])))
     {
         proc_activate(pid);
+
+        RELEASE(&sched_cpu_queues[cpuid].lock);
         return;
     }
 
-    tmp = queues.inactive;
-    queues.inactive = queues.active;
-    queues.active = tmp;
+    tmp = sched_cpu_queues[cpuid].inactive;
+    sched_cpu_queues[cpuid].inactive = sched_cpu_queues[cpuid].active;
+    sched_cpu_queues[cpuid].active = tmp;
 
-    if ((pid = sched_pop()) == 0) panic("No processes available!");
+    if ((pid = pop_unlocked(&sched_cpu_queues[cpuid])) == 0)
+        panic("No processes available!");
     proc_activate(pid);
+    RELEASE(&sched_cpu_queues[cpuid].lock);
 }
 
 static bool queue_tryremove(struct queue *q, pid_t pid)
@@ -134,11 +162,17 @@ static bool queue_tryremove(struct queue *q, pid_t pid)
 
 void unschedule(pid_t pid)
 {
-    --sched_n;
+    int cpuid = get_cpuid();
+
+    ACQUIRE(&sched_cpu_queues[cpuid].lock);
+
+    --sched_cpu_queues[cpuid].n;
     sched_update_duration();
 
-    if (!queue_tryremove(queues.active, pid))
-        queue_tryremove(queues.inactive, pid);
+    if (!queue_tryremove(sched_cpu_queues[cpuid].active, pid))
+        queue_tryremove(sched_cpu_queues[cpuid].inactive, pid);
+
+    RELEASE(&sched_cpu_queues[cpuid].lock);
 }
 
 void sched_begin(void)

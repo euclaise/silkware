@@ -22,4 +22,7 @@ enum
 #define  MSR_GS_BASE      (0xC0000101)
 #define  MSR_KERN_GS_BASE (0xc0000102)
 
+void gdt_init(void);
+void idt_init(void);
+
 #endif

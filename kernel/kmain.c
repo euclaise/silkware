@@ -29,14 +29,15 @@ void kmain(void)
 
     memmap_init();
     map_kern_pages();
+    map_screen();
     refresh_pages(NULL);
 
     init_cpu_local();
 
-    map_screen();
-
     page_alloc_init();
     kalloc_init();
+
+    mp_init();
 
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
@@ -46,7 +47,6 @@ void kmain(void)
 
     init_syscalls();
     printf("Syscall initialization complete\n");
-    /*screen.vaddr = 0;*/
 
     sched_init();
     proc_init();
