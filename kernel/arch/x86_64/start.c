@@ -41,9 +41,13 @@ void start(void)
 extern map *kmap_pages;
 extern bool kmap_ready;
 
+
+void gdt_meta_init(void);
+
 void arch_init(void)
 {
     idt_init();
+    gdt_meta_init();
     gdt_init();
     printf("ACPI Revision: %d\n", xsdp.revision);
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;

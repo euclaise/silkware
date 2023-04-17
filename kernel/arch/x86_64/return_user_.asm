@@ -6,9 +6,10 @@
 
 global return_user_
 extern lapic_eoi
-extern cpu_data
+extern get_cpu_data
 return_user_:
     call lapic_eoi
+
     mov ax, 0x1B ; (3 << 3) | 3, data selector 
     mov ds, ax
     mov es, ax
@@ -21,7 +22,8 @@ return_user_:
     ;       rip
     push 0x1B
 
-    mov rax, [rel cpu_data + cpu_data_t.proc_state]
+    mov rax, [gs:0]
+    mov rax, [rax + cpu_data_t.proc_state]
     mov rbx, [rax + proc_state_t.rsp]
     push rbx
 
@@ -33,7 +35,8 @@ return_user_:
     mov rbx, [rax + proc_state_t.rip]
     push rbx
 
-    mov [rel cpu_data + cpu_data_t.kstack], rsp ; Save kernel rsp
+    mov rax, [gs:0]
+    mov [rax + cpu_data_t.kstack], rsp ; Save kernel rsp
 
     restore r15
     restore r14

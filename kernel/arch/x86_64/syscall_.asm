@@ -8,8 +8,9 @@ extern syscall_inval
 extern cpu_data
 
 syscall_entry:
-    mov r10, [rel cpu_data + cpu_data_t.kstack]
-    mov [rel cpu_data + cpu_data_t.kstack], rsp ; Save process rsp
+    mov rax, [gs:0]
+    mov r10, [rax + cpu_data_t.kstack]
+    mov [rax + cpu_data_t.kstack], rsp ; Save process rsp
     mov rsp, r10
 
     push rsp
@@ -22,8 +23,9 @@ syscall_entry:
     popall
     pop rsp
 
-    mov r10, [rel cpu_data + cpu_data_t.kstack]
-    mov [rel cpu_data + cpu_data_t.kstack], rsp ; Save kernel rsp
+    mov rax, [gs:0]
+    mov r10, [rax + cpu_data_t.kstack]
+    mov [rax + cpu_data_t.kstack], rsp ; Save kernel rsp
     mov rsp, r10
 
     mov r11, 0x202 ; Set RFLAGS

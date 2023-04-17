@@ -6,7 +6,6 @@
 #include <proc.h>
 #include <u.h>
 
-int get_cpuid(void);
 int get_ncpus(void);
 extern int ncpus;
 
@@ -15,9 +14,10 @@ struct cpu_data
     void *kstack;
     struct proc *proc_current;
     int32_t id;
+    page_tab cur_pt;
 } _packed;
 
-extern int8_t cpu_data[];
+extern struct cpu_data cpu_data[];
 
 struct cpu_data *get_cpu_data(void);
 void init_cpu_local(void);

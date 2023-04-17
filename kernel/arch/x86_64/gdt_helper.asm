@@ -1,7 +1,7 @@
 global flush_gdt
 extern gdtr
 flush_gdt:
-    lgdt [gdtr]
+    lgdt [rdi]
     push qword 0x8
     push .after
     retfq

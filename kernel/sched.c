@@ -114,7 +114,7 @@ void proc_next(void)
 {
     pid_t pid;
     struct queue *tmp;
-    int cpuid = get_cpuid();
+    int cpuid = get_cpu_data()->id;
 
     ACQUIRE(&sched_cpu_queues[cpuid].lock);
     if ((pid = pop_unlocked(&sched_cpu_queues[cpuid])))
@@ -162,7 +162,7 @@ static bool queue_tryremove(struct queue *q, pid_t pid)
 
 void unschedule(pid_t pid)
 {
-    int cpuid = get_cpuid();
+    int cpuid = get_cpu_data()->id;
 
     ACQUIRE(&sched_cpu_queues[cpuid].lock);
 

@@ -87,7 +87,7 @@ void *kalloc(size_t size)
     block *cur, *prev, *res, *new;
     size_t page_blk_size;
     size = (size + (ALLOC_ALIGN - 1)) & ~(ALLOC_ALIGN - 1); /* Align up */
-    struct kalloc_state *state = &states[get_cpuid()];
+    struct kalloc_state *state = &states[get_cpu_data()->id];
 
     /* Find fitting block and split it
      * Note: Blocks are ordered lowest-address first */
@@ -133,7 +133,7 @@ void kfree(void *addr)
     block *b = (block *) ((uintptr_t) addr - HDRSIZE);
     /* TODO: Check that address is paged in */
     if (b->canary != canary((uint64_t) b)) panic("Heap overflow detected!");
-    insert_block(&states[get_cpuid()], b);
+    insert_block(&states[get_cpu_data()->id], b);
 }
 
 void *krealloc(void *old, size_t newsize)
