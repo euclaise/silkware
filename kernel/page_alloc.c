@@ -72,15 +72,16 @@ void page_alloc_init(void)
     for (i = 0; i < memmap_len; ++i)
     {
         size_t len = memmap[i].len;
-        if (unlikely(len < PAGE_SIZE))
-            continue; /* Probably never happens in reality */
+        if (len < PAGE_SIZE) continue;
 
         do {
             ++n_pools;
             len -= prev_pow2(len);
         } while (len - prev_pow2(len) >= PAGE_SIZE);
     }
+    assert(n_pools != 0);
     pools = miniheap_alloc(n_pools*sizeof(pool));
+    assert(pools != NULL);
 
     for (i = 0; i < memmap_len; ++i)
     {

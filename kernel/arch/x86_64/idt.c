@@ -5,6 +5,7 @@
 #include <util.h>
 #include <arch/proc.h>
 #include <ctx.h>
+#include <mp.h>
 
 struct idt_entry_t
 {
@@ -63,6 +64,7 @@ void isr_handle(struct irq_frame *frame)
     __asm__ volatile ("mov %%cr2, %0" : "=r" (cr2));
     if (num > 18) printf("EXCEPTION: Reserved - #%d\n", num);
     else printf("%s", irq_msg[num]);
+    printf("  CPU: %d\n", get_cpu_data()->id);
     printf("   IP: %p\n", frame->ip);
     printf("   CS: %p\n", frame->cs);
     printf("FLAGS: %p\n", frame->flags);
@@ -154,6 +156,12 @@ void idt_set(uint8_t i, void (*isr)(void), uint8_t flags)
     idt[i].reserved   = 0;
 }
 
+void idt_load(void)
+{
+    __asm__ volatile ("lidt %0" : : "m"(idtr));
+    __asm__ volatile ("sti");
+}
+
 void idt_init(void)
 {
     idtr.base = (uint64_t) &idt[0];
@@ -163,6 +171,5 @@ void idt_init(void)
     X_ISR
 #undef X
 
-    __asm__ volatile ("lidt %0" : : "m"(idtr));
-    __asm__ volatile ("sti");
+    idt_load();
 }

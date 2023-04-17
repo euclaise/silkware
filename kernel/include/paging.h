@@ -12,6 +12,7 @@ extern uintptr_t end_pos;
 #define PAGE_WRITABLE (1 << 1)
 #define PAGE_USER     (1 << 2)
 #define PAGE_NX       (1 << 3)
+#define PAGE_NOCACHE  (1 << 4)
 
 void refresh_pages(page_tab tab);
 void map_pages_pt(
@@ -28,6 +29,7 @@ void *kpremap_phys(void *phys, size_t len);
 void kunmap(void *virt, size_t len);
 uintptr_t round_up_page(uintptr_t x);
 void *kmap_phys(uintptr_t phys, uintptr_t len);
+void *kmap_phys_nocache(uintptr_t phys, uintptr_t len);
 
 void newproc_pages(void *p, void *start, size_t len);
 #endif

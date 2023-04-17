@@ -58,12 +58,9 @@ SECTIONS
         . += 0x64000; /* Bootstrap mini-heap */
         miniheap_end = .;
         data_end = .;
+        kern_end  =  .;
     } :data
 
-    . = ALIGN(0x1000);
-    cpu_data = .;
-    . += 0x1000;
-    kern_end  =  .;
 
     /DISCARD/ : {
         *(.eh_frame)

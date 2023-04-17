@@ -15,25 +15,15 @@
 
 struct limine_smp_request smp_req = { .id = LIMINE_SMP_REQUEST };
 
-static bool ready;
 static volatile int cpus_ready = 1;
 
-static int get_cpuid_cpuid(void)
+struct cpu_data *cpu_ptrs[128];
+
+static int get_cpuid(void)
 {
     int ebx;
     cpuid(1, NULL, &ebx, NULL, NULL);
     return ebx >> 24;
-}
-
-int get_cpuid(void)
-{
-    if (unlikely(!ready))
-    {
-        int ebx;
-        cpuid(1, NULL, &ebx, NULL, NULL);
-        return ebx >> 24;
-    }
-    return get_cpu_data()->id;
 }
 
 int get_ncpus(void)
@@ -45,34 +35,35 @@ int get_ncpus(void)
 
 void init_cpu_local(void)
 {
-    struct cpu_data *cpu = get_cpu_data();
-    cpu->id = get_cpuid_cpuid();
-    ready = 1;
+    int id = get_cpuid();
+    cpu_ptrs[id] = &cpu_data[id];
+    cpu_data[id].id = id;
+
+    wrmsr(MSR_GS_BASE, (uint64_t) &cpu_ptrs[id]);
 }
 
 void mp_pages(void);
 void apic_start(void);
+void idt_load(void);
 
 void mp_start(void)
 {
     mp_pages();
     init_cpu_local();
 
-    idt_init();
+    idt_load();
     gdt_init();
-    rand_init();
     apic_start();
 
     init_syscalls();
 
     ++cpus_ready;
 
-    printf("CPU %d ready", get_cpuid());
+    printf("CPU %d ready\n", get_cpu_data()->id);
     while (1) pause();
 }
 
 void _mp_start(struct limine_smp_info *info);
-extern void *high_addr;
 
 void mp_init(void)
 {

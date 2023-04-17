@@ -1,8 +1,10 @@
-#include <stdint.h>
+#include <types.h>
 #include <mem.h>
 #include <kern.h>
 #include <util.h>
 #include <assert.h>
+#include <mp.h>
+#include <page_alloc.h>
 
 #define ACCESS_PRESENT  (1 << 7)
 #define ACCESS_S        (1 << 4) /* TSS if 0 */
@@ -27,11 +29,11 @@ struct gdt_desc
     uint8_t base_high;
 } _packed;
 
-struct gdtptr
+struct gdtr
 {
     uint16_t limit;
     uint64_t base;
-} _packed gdtr;
+} _packed;
 
 struct tss
 {
@@ -64,13 +66,13 @@ struct tss_desc
     uint32_t reserved;
 } _packed;
 
-struct tss kernel_tss __attribute__((aligned(8)));
+struct tss *cpu_tss;
 
 struct gdt
 {
     struct gdt_desc entries[5];
     struct tss_desc tss;
-} _packed gdt = {
+} _packed gdt_base = {
     .entries = {
         {0},
         { /* Kernel Code */
@@ -110,36 +112,46 @@ struct gdt
     .tss = {0}
 };
 
-char tss_stack[0x1000] __attribute__((aligned(16)));
-char tss_stack2[0x1000] __attribute__((aligned(16))); /* TODO: Replace these */
+struct gdt *cpu_gdt;
+struct gdtr *cpu_gdtr;
 
-void init_tss(void)
+void *make_gdt(void)
 {
-    uint64_t base = (uint64_t) &kernel_tss;
+    int id = get_cpu_data()->id;
+    uint64_t base = (uint64_t) &cpu_tss[id];
+
+    cpu_gdt[id] = gdt_base;
 
     /* iopb is disabled by having a value larger than limit
      * This disables I/O access */
-    kernel_tss.iopb = 0xFFFF;
-    kernel_tss.rsp0 = (uint64_t) tss_stack + sizeof(tss_stack);
-    kernel_tss.ist1 = (uint64_t) tss_stack2 + sizeof(tss_stack2);
+    cpu_tss[id].iopb = 0xFFFF;
+    cpu_tss[id].rsp0 = (uint64_t) page_alloc(PAGE_SIZE) + PAGE_SIZE;
+    cpu_tss[id].ist1 = (uint64_t) page_alloc(PAGE_SIZE) + PAGE_SIZE;
 
-    gdt.tss.limit_low = sizeof(struct tss);
-    gdt.tss.base_low = base & 0xFFFF;
-    gdt.tss.base_middle = (base >> 16) & 0xFF;
-    gdt.tss.access = 0x89;
-    gdt.tss.granularity = 0;
-    gdt.tss.base_high = (base >> 24) & 0xFF;
-    gdt.tss.base_upper = base >> 32;
-    gdt.tss.reserved = 0;
+    cpu_gdt[id].tss.limit_low = sizeof(struct tss);
+    cpu_gdt[id].tss.base_low = base & 0xFFFF;
+    cpu_gdt[id].tss.base_middle = (base >> 16) & 0xFF;
+    cpu_gdt[id].tss.access = 0x89;
+    cpu_gdt[id].tss.granularity = 0;
+    cpu_gdt[id].tss.base_high = (base >> 24) & 0xFF;
+    cpu_gdt[id].tss.base_upper = base >> 32;
+    cpu_gdt[id].tss.reserved = 0;
+
+    cpu_gdtr[id].limit = sizeof(cpu_gdt[id]) - 1;
+    cpu_gdtr[id].base = (uint64_t) &cpu_gdt[id];
+
+    return &cpu_gdtr[id];
 }
 
-void flush_gdt(void);
+void gdt_meta_init(void)
+{
+    cpu_gdtr = kalloc(sizeof(struct gdtr)*ncpus);
+    cpu_gdt = kalloc(sizeof(struct gdt)*ncpus);
+    cpu_tss = kalloc(sizeof(struct tss)*ncpus);
+}
+
+void flush_gdt(void *addr);
 void gdt_init(void)
 {
-    init_tss();
-
-    gdtr.limit = sizeof(gdt) - 1;
-    gdtr.base = (uintptr_t) &gdt;
-
-    flush_gdt();
+    flush_gdt(make_gdt());
 }

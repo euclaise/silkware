@@ -24,19 +24,19 @@ void kmain(void)
     init_fb();
 
     printf("%c Silkware%c\n\n", COLOR_GREEN, COLOR_WHITE);
-    printf("CPU %d of %d\n", cpu_id = get_cpuid(), ncpus = get_ncpus());
     printf("Framebuffer: phys=%p virt=%p\n", screen.paddr, screen.vaddr);
 
     memmap_init();
+
     map_kern_pages();
     map_screen();
     refresh_pages(NULL);
 
     init_cpu_local();
+    printf("CPU %d of %d\n", cpu_id = get_cpu_data()->id, ncpus = get_ncpus());
 
     page_alloc_init();
     kalloc_init();
-
 
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
@@ -48,6 +48,7 @@ void kmain(void)
     printf("Syscall initialization complete\n");
 
     mp_init();
+
     sched_init();
     proc_init();
     schedule(proc_new((void *) user_main1, PAGE_SIZE), 1);

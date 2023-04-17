@@ -5,7 +5,7 @@
 
 void sched_update_duration(void)
 {
-    int cpuid = get_cpuid();
+    int cpuid = get_cpu_data()->id;
     uint32_t us;
     int n = sched_cpu_queues[cpuid].n;
     us = SCHED_US_PER_SWEEP / (n == 0 ? 1 : n);

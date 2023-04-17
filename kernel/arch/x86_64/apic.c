@@ -9,7 +9,6 @@
 
 struct madt *madt;
 static uintptr_t lapic_base;
-uint8_t lapic_ids[512];
 
 enum
 {
@@ -59,7 +58,7 @@ void apic_init(void)
         {
             case MADT_LAPIC:
                 if (p->data[LAPIC_FLAGS] & 1 || p->data[LAPIC_FLAGS] & 2)
-                    lapic_ids[numcores++] = p->data[LAPIC_ID];
+                    ++numcores;
                 break;
             case MADT_64BIT: /* 64-bit LAPIC address override */
                 lapic_base = *((uint64_t *) &p->data[LAPIC_PHYS_ADDR]);
@@ -69,7 +68,7 @@ void apic_init(void)
 
     assert_eq(numcores, ncpus);
     printf("LAPIC at phys=%p\n", lapic_base);
-    lapic_base = (uintptr_t) kmap_phys(lapic_base, PAGE_SIZE);
+    lapic_base = (uintptr_t) kmap_phys_nocache(lapic_base, PAGE_SIZE);
     apic_start();
 }
 

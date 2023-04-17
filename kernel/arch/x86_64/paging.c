@@ -1,4 +1,5 @@
 #include <u.h>
+#include <lock.h>
 #include <assert.h>
 #include <stdint.h>
 #include <paging.h>
@@ -19,11 +20,10 @@ struct limine_kernel_address_request kern_addr_req = {
 
 static struct limine_kernel_address_response kern_resp;
 
-page_tab cur_page_tab;
-
 #define X86_PAGE_PRESENT  (1 << 0)
 #define X86_PAGE_WRITABLE (1 << 1)
 #define X86_PAGE_USER     (1 << 2)
+#define X86_PAGE_NOCACHE  (1 << 4)
 #define X86_PAGE_LARGE    (1 << 7)
 #define X86_PAGE_NX       (1ULL << 63)
 
@@ -47,6 +47,7 @@ extern char kern_load[], kern_end[],
         data_start[], data_end[], page_tmp[];
 
 uintptr_t end_pos;
+lock_t end_pos_lock = LOCK_INIT;
 
 #define K2PHYSK(x) ( \
         (uintptr_t)(x) - kern_resp.virtual_base \
@@ -139,9 +140,17 @@ uintptr_t kvirt2phys(page_tab pml4, void *virt)
 void refresh_pages(pml4_t pml4)
 {
     uintptr_t phys;
+    struct cpu_data *cpu;
+
     if (pml4 == NULL) pml4 = kpml4;
+
     if (pml4 == kpml4) phys = K2PHYSK(pml4);
-    else phys = kvirt2phys(cur_page_tab, pml4); 
+    else
+    {
+        cpu = get_cpu_data();
+        phys = kvirt2phys(cpu->cur_pt ? cpu->cur_pt : kpml4, pml4);
+        cpu->cur_pt = pml4;
+    }
     /* TODO: This is hacky, using pml4==kpml4 as a proxy for if we're
      * initializing a processor or actually chainging the page table */
 
@@ -151,7 +160,6 @@ void refresh_pages(pml4_t pml4)
         : "r" (phys)
         : "memory"
     );
-    cur_page_tab = pml4;
 }
 
 void map_kern_pages(void)
@@ -160,6 +168,8 @@ void map_kern_pages(void)
         panic("Could not get kernel physical addr");
 
     kern_resp = *kern_addr_req.response;
+
+    ACQUIRE(&end_pos_lock);
 
     premap_pages(
         (uintptr_t) text_start,
@@ -180,18 +190,13 @@ void map_kern_pages(void)
         X86_PAGE_PRESENT | X86_PAGE_NX | X86_PAGE_WRITABLE
     );
     end_pos = round_up_page((uintptr_t) kern_end);
-
-    premap_pages(
-        (uintptr_t) cpu_data,
-        K2PHYSK(miniheap_alloc(PAGE_SIZE)),
-        PAGE_SIZE,
-        PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX
-    );
+    RELEASE(&end_pos_lock);
 }
 
 void map_screen(void)
 {
     size_t len =  screen.pitch * (screen.bpp/8) * screen.height;
+    ACQUIRE(&end_pos_lock);
     premap_pages(
         (uintptr_t) end_pos,
         (uintptr_t) screen.paddr,
@@ -200,6 +205,7 @@ void map_screen(void)
     );
     screen.vaddr = end_pos;
     end_pos = round_up_page((uintptr_t) end_pos + len);
+    RELEASE(&end_pos_lock);
 }
 
 void kunmap(void *virt, size_t len)
@@ -231,8 +237,6 @@ static void *getvirt_map(map *m, uintptr_t phys)
 
 void mp_pages(void)
 {
-    map_kern_pages();
-    map_screen();
     refresh_pages(NULL);
 }
 
@@ -249,7 +253,8 @@ void map_pages(
         (!!(flags & PAGE_PRESENT) * X86_PAGE_PRESENT)
         | (!!(flags & PAGE_USER) * X86_PAGE_USER)
         | (!!(flags & PAGE_WRITABLE) * X86_PAGE_WRITABLE)
-        | (!!(flags & PAGE_NX) * X86_PAGE_NX);
+        | (!!(flags & PAGE_NX) * X86_PAGE_NX)
+        | (!!(flags & PAGE_NOCACHE) * X86_PAGE_NOCACHE);
     int top_flags = X86_PAGE_PRESENT | X86_PAGE_USER | X86_PAGE_WRITABLE;
     uintptr_t dst_end = (dst + length + 0xFFF) & ~0xFFF;
     uintptr_t src_end = (src + length + 0xFFF) & ~0xFFF;
@@ -287,7 +292,9 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
 {
     uintptr_t aligned = phys & ~0xFFF;
     uintptr_t offset = phys - aligned;
-    uintptr_t res = end_pos + offset;
+    uintptr_t res;
+    ACQUIRE(&end_pos_lock);
+    res = end_pos + offset;
 
     if (!kmap_ready) premap_pages(
             end_pos,
@@ -308,6 +315,38 @@ void *kmap_phys(uintptr_t phys, uintptr_t len)
     for (uintptr_t p = res & ~0xFFF; p < end_pos; p += PAGE_SIZE)
         __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
 
+    RELEASE(&end_pos_lock);
+    return (void *) res;
+}
+
+void *kmap_phys_nocache(uintptr_t phys, uintptr_t len)
+{
+    uintptr_t aligned = phys & ~0xFFF;
+    uintptr_t offset = phys - aligned;
+    uintptr_t res;
+    ACQUIRE(&end_pos_lock);
+    res = end_pos + offset;
+
+    if (!kmap_ready) premap_pages(
+            end_pos,
+            aligned,
+            len,
+            X86_PAGE_PRESENT | X86_PAGE_WRITABLE | X86_PAGE_NOCACHE
+        );
+    else map_pages(
+            kpml4,
+            &kmap_pages,
+            end_pos,
+            aligned,
+            len,
+            PAGE_PRESENT | PAGE_WRITABLE | PAGE_NOCACHE
+        );
+    end_pos = round_up_page(end_pos + len);
+
+    for (uintptr_t p = res & ~0xFFF; p < end_pos; p += PAGE_SIZE)
+        __asm__ volatile ("invlpg (%0)" : : "b" (p) : "memory" );
+
+    RELEASE(&end_pos_lock);
     return (void *) res;
 }
 
