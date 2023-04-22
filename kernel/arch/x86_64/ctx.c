@@ -26,8 +26,8 @@ void ctx_switch(struct irq_frame *frame)
     proc_next();
 
     assert(cpu->proc_current != NULL);
-    printf("Switching to page table %p\n", cpu->proc_current->pt);
-    refresh_pages(cpu->proc_current->pt);
+    printf("Switching to page table %p\n", cpu->proc_current->space->addr);
+    flush_pages(cpu->proc_current->space);
     assert(cpu->proc_current->arch_state.rip);
     return_user_();
 }

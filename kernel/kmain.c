@@ -17,6 +17,8 @@ void return_user(void);
 void user_main1(void);
 void user_main2(void);
 
+struct proc kproc = {0};
+
 void kmain(void)
 {
     int cpu_id;
@@ -30,14 +32,15 @@ void kmain(void)
 
     map_kern_pages();
     map_screen();
-    refresh_pages(NULL);
+    init_cpu_early();
+    flush_pages(NULL);
 
-    init_cpu_local();
-    printf("CPU %d of %d\n", cpu_id = get_cpu_data()->id, ncpus = get_ncpus());
+    printf("CPU %d (%d total)\n", cpu_id = get_cpu_data()->id, ncpus = get_ncpus());
 
     page_alloc_init();
     kalloc_init();
 
+    init_cpu_local();
     printf("Remapped kernel\n");
     printf("Framebuffer mapped at: %p\n", screen.vaddr);
 
@@ -49,8 +52,8 @@ void kmain(void)
 
     mp_init();
 
-    sched_init();
     proc_init();
+    sched_init();
     schedule(proc_new((void *) user_main1, PAGE_SIZE), 1);
     schedule(proc_new((void *) user_main2, PAGE_SIZE), 2);
     sched_begin();

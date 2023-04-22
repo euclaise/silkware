@@ -22,22 +22,30 @@ void *acpi_find(const char *sig, size_t index)
         acpi_fadt_t *facp = acpi_find("FACP", 0);
         uintptr_t phys = (acpi64 ? facp->x_dsdt : (uint64_t) facp->dsdt);
         
-        dsdt = kmap_phys(phys, sizeof(acpi_header_t));
+        dsdt = map_anon(
+            phys,
+            sizeof(acpi_header_t),
+            PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX
+        );
         length = dsdt->length;
 
-        kunmap(dsdt, sizeof(acpi_header_t));
-        return kmap_phys(phys, length);
+        unmap_pages(dsdt, sizeof(acpi_header_t));
+        return map_anon(phys, length, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX);
     }
 
     if (xsdt == NULL)
     {
         uintptr_t phys = (acpi64 ? xsdp.xsdt : (uint64_t) xsdp.rsdt);
 
-        xsdt = kmap_phys(phys, sizeof(acpi_header_t));
+        xsdt = map_anon(
+            phys,
+            sizeof(acpi_header_t),
+            PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX
+        );
         uint32_t length = xsdt->h.length;
 
-        kunmap(xsdt, sizeof(acpi_header_t));
-        xsdt = kmap_phys(phys, length);
+        unmap_pages(xsdt, sizeof(acpi_header_t));
+        xsdt = map_anon(phys, length, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX);
 
         assert(memcmp(xsdt->h.signature + 1, "SDT", 3) == 0);
     }
@@ -51,16 +59,20 @@ void *acpi_find(const char *sig, size_t index)
         if (acpi64) phys = ((uint64_t *) xsdt->p)[i];
         else phys = (uintptr_t) ((uint32_t *) xsdt->p)[i];
 
-        t = kmap_phys(phys, sizeof(acpi_header_t));
+        t = map_anon(
+            phys,
+            sizeof(acpi_header_t),
+            PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX
+        );
         length = t->length;
 
-        kunmap(t, sizeof(acpi_header_t));
-        t = kmap_phys(phys, length);
+        unmap_pages(t, sizeof(acpi_header_t));
+        t = map_anon(phys, length, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX);
         
         if (memcmp(sig, t->signature, 4) == 0) ++count;
         if (count == index) return t;
 
-        if (t != (acpi_header_t *)xsdt) kunmap(t, length);
+        if (t != (acpi_header_t *)xsdt) unmap_pages(t, length);
     }
     return NULL;
 }

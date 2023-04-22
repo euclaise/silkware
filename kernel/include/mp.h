@@ -14,7 +14,6 @@ struct cpu_data
     void *kstack;
     struct proc *proc_current;
     int32_t id;
-    page_tab cur_pt;
 } _packed;
 
 extern struct cpu_data cpu_data[];
@@ -22,4 +21,5 @@ extern struct cpu_data cpu_data[];
 struct cpu_data *get_cpu_data(void);
 void init_cpu_local(void);
 void mp_init(void);
+void init_cpu_early(void);
 #endif

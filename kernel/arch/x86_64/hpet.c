@@ -47,7 +47,11 @@ void hpet_init(void)
     hpet_tab = acpi_find("HPET", 0);
     if (!hpet_tab) panic("silkware requires an HPET, could not find one\n");
 
-    hpet = kmap_phys(hpet_tab->addr.base, sizeof(struct hpet));
+    hpet = map_anon(
+        hpet_tab->addr.base,
+        sizeof(struct hpet),
+        PAGE_PRESENT | PAGE_WRITABLE | PAGE_NOCACHE | PAGE_NX
+    );
 
     printf("HPET at %p (phys=%p)\n", hpet, hpet_tab->addr.base);
 

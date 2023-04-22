@@ -38,9 +38,6 @@ void start(void)
     kmain();
 }
 
-extern map *kmap_pages;
-extern bool kmap_ready;
-
 
 void gdt_meta_init(void);
 
@@ -53,8 +50,6 @@ void arch_init(void)
     acpi64 = xsdp.revision >= 2 && xsdp.xsdt;
     hpet_init();
     rand_init();
-    kmap_pages = map_new(0x10);
-    kmap_ready = 1;
     lai_set_acpi_revision(xsdp.revision);
     lai_create_namespace();
     lai_enable_acpi(1);

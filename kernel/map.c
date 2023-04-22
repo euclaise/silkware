@@ -68,7 +68,6 @@ map *map_grow(map *m, size_t n)
             new->cell[idx].v = m->cell[i].v;
         }
 
-    new->cap = m->cap;
     kfree(m);
     return new;
 }

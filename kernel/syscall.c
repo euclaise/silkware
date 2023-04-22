@@ -21,8 +21,9 @@ void syscall_exit(void)
             cpu->proc_current->segs->item[i].kvirt,
             cpu->proc_current->segs->item[i].len
         );
-    map_free(cpu->proc_current->addrs);
-    page_free(cpu->proc_current->pt, PAGE_SIZE);
+    addrspace_free(cpu->proc_current->space->addr);
+    map_free(cpu->proc_current->space->physmap);
+    kfree(cpu->proc_current->space);
     map_del(procmap, &cpu->proc_current->pid, sizeof(pid_t));
 
     cpu->proc_current = NULL;

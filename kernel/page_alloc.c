@@ -97,7 +97,7 @@ void page_alloc_init(void)
          */
         do {
             void *virt;
-            virt = kmap_phys(phys, szp2);
+            virt = premap_anon(phys, szp2, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX);
             pools[j].base = (uintptr_t) virt;
             pools[j].end = (void *)((uintptr_t) virt + szp2);
             pools[j].start = virt;
