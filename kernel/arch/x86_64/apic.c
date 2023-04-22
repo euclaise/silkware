@@ -61,14 +61,18 @@ void apic_init(void)
                     ++numcores;
                 break;
             case MADT_64BIT: /* 64-bit LAPIC address override */
-                lapic_base = *((uint64_t *) &p->data[LAPIC_PHYS_ADDR]);
+                lapic_base = *(uint64_t *) &p->data[LAPIC_PHYS_ADDR];
                 break;
         }
     }
 
     assert_eq(numcores, ncpus);
-    printf("LAPIC at phys=%p\n", lapic_base);
-    lapic_base = (uintptr_t) kmap_phys_nocache(lapic_base, PAGE_SIZE);
+    printf("LAPIC at phys=%p, ", lapic_base);
+    lapic_base = (uintptr_t) map_anon(
+        lapic_base,
+        PAGE_SIZE, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NOCACHE
+    );
+    printf("virt=%p\n", lapic_base);
     apic_start();
 }
 
@@ -78,12 +82,11 @@ void apic_set_duration(uint32_t us)
 {
     uint32_t ticks_value = (ticks * us) / 1000;
     if (ticks_value == 0) ticks_value = 1;
-    
+
     lapic_write(LAPIC_REG_LVT_TMR, INT_TIMER | LAPIC_TMR_PERIODIC);
     lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
 
     lapic_write(LAPIC_REG_TMR_INITIAL, ticks_value);
-
 }
 
 void apic_start(void)
@@ -95,7 +98,7 @@ void apic_start(void)
     );
 
     lapic_write(LAPIC_REG_TMR_DIV, APIC_TMR_DIV_BY_16);
-    lapic_write(LAPIC_REG_TMR_INITIAL, 0xFFFFFFFF); /* -1 */
+    lapic_write(LAPIC_REG_TMR_INITIAL, 0xFFFFFFFF);
 
     timer_sleep_ms(10);
     lapic_write(LAPIC_REG_LVT_TMR, LAPIC_TMR_MASKED);

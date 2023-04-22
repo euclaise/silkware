@@ -4,7 +4,7 @@
 #include <flex.h>
 #include <types.h>
 #include <map.h>
-#include <paging.h>
+#include <addrspace.h>
 #include <arch/proc.h>
 #include <map.h>
 
@@ -26,15 +26,13 @@ struct proc
     pid_t pid;
     Flex(fd_t) *fsfd; /* fd->fsfd map */
     Flex(struct segment) *segs;
-    page_tab pt;
-    map *addrs;
+    struct addrspace *space;
 };
 
 extern map *procmap;
 
-void procp_init(struct proc *p);
-
-void proc_init(void);
 void proc_activate(pid_t proc);
 pid_t proc_new(void *start, size_t len);
+void procp_init(struct proc *p);
+void proc_init(void);
 #endif

@@ -26,7 +26,7 @@ pid_t proc_new(void *start, size_t len)
 
     p.pid = pid_cur;
     procp_init(&p);
-    newproc_pages(&p, start, len);
+    proc_pages_init(&p, start, len);
 
     map_insert(&procmap, &pid, sizeof(pid), &p, sizeof(p));
     return p.pid;

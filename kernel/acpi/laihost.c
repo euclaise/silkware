@@ -31,12 +31,12 @@ void *laihost_realloc(void *ptr, size_t newsize, size_t oldsize)
 
 void *laihost_map(size_t address, size_t count)
 {
-    return kmap_phys(address, count);
+    return map_anon(address, count, PAGE_PRESENT | PAGE_WRITABLE | PAGE_NX);
 }
 
 void laihost_unmap(void *address, size_t count)
 {
-    kunmap(address, count);
+    unmap_pages(address, count);
 }
 
 void laihost_log(int level, const char *msg)
